@@ -1,7 +1,6 @@
 class Solution {
 public:
-//     Method 1: One Pass (Everyday is a potential selling day, keep tarck of least value)
-//                 until now
+//     Method 1: Kadane's Algorithm (Everyday is a potential selling day, keep tarck of  // least value until now)
     int maxProfit(vector<int>& prices) {
         int minsofar = prices[0];
         int profitsofar = 0;
