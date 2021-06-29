@@ -146,11 +146,11 @@ public:
         // 1 indicates we have stock currently
         // 0 indicates no stock is possesed currently
         
-        if(hold==1)//sell or do nothing
+        if(hold==1)//sell and get +prices[i] because we are gaining money or do nothing
         {
             return dp[i][hold]=max(recurs(i+1,0,prices)+prices[i],recurs(i+1,1,prices));
         }
-        if(hold==0)//buy or do nothing
+        if(hold==0)//buy and lose -prices[i] because we are losing money or do nothing
         {
             return dp[i][hold]=max(recurs(i+1,1,prices)-prices[i],recurs(i+1,0,prices));
         }
