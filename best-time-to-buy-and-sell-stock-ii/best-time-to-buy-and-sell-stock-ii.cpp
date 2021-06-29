@@ -110,3 +110,56 @@ public:
         return maxprofit;
     }
    */
+
+// Method 6: Dynamic Programming Bottom Up Approach
+   /*
+    int maxProfit(vector<int>& prices) {
+        int sell[prices.size()];
+        int buy[prices.size()];
+        memset(sell,0,sizeof(sell));
+        memset(buy,0,sizeof(buy));
+        buy[0] = -prices[0];
+        for(int i=1; i<prices.size();i++) {
+            buy[i] = max(buy[i-1], sell[i-1] - prices[i]);
+            sell[i] = max(sell[i-1],prices[i] + buy[i-1]);
+        }
+        return max(buy[prices.size()-1],sell[prices.size()-1]);
+    }
+   */
+
+
+// Method 7: Using Recusion and DP
+   /*
+   class Solution {
+public:
+    
+    int dp[30001][2];
+    
+    int recurs(int i,bool hold,vector<int>& prices)
+    {
+        if(i>=prices.size())
+            return 0;
+        
+        if(dp[i][hold]!=-1)
+            return dp[i][hold];
+        
+        // 1 indicates we have stock currently
+        // 0 indicates no stock is possesed currently
+        
+        if(hold==1)//sell or do nothing
+        {
+            return dp[i][hold]=max(recurs(i+1,0,prices)+prices[i],recurs(i+1,1,prices));
+        }
+        if(hold==0)//buy or do nothing
+        {
+            return dp[i][hold]=max(recurs(i+1,1,prices)-prices[i],recurs(i+1,0,prices));
+        }
+        
+        return 0;
+    }
+    
+    int maxProfit(vector<int>& prices) {
+        memset(dp,-1,sizeof(dp));
+        return recurs(0,0,prices);
+    }
+   */
