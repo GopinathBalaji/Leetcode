@@ -64,7 +64,7 @@ public:
         result = mem(dp,n-1) + mem(dp,n-2) + mem(dp,n-3);
         }
         d[n] = result;
-        return result;
+        return dp[n];
     }
    */
 
