@@ -61,7 +61,56 @@ public:
     }
 };
 
-
-
-
-
+// Method 2: Finding Diameter method
+   /* 
+//     /* function that return nodes that form root with minimum height */
+//     static ArrayList <Integer> rootMinHeight(ArrayList<ArrayList<Integer>> adj, int v)
+//     {
+//         /* vector that stores degree of each tree vertex */
+//         ArrayList <Integer> degree = new ArrayList<>();
+//         Queue <Integer> q = new LinkedList<>();
+        
+//         for(int i=0;i<v;i++)
+//         {
+//             degree.add(adj.get(i).size());
+//             /* push leaf vertex (with degree 1) into the queue */
+//             if(adj.get(i).size() == 1)
+//             q.add(i);
+//         }
+        
+//         /* begin BFS starting from leaf vertices (and deleting them) 
+//         until only 2 or less vertices are left to 
+//         be traversed. These vertices left unvisited
+//         form roots with minimum height tree */
+//       while (v > 2)
+//       {
+//         for (int i = 0; i < q.size(); i++)
+//         {
+//           int top = q.poll();
+//           v--;
+    
+//           /* for neighbors of the leaf, decrease their degrees
+//           and if those vertices turn out to be  leaf vertices
+//           push them into the queue */
+//           Iterator itr = adj.get(top).iterator();
+          
+//           while (itr.hasNext())
+//           {
+//               int j = (Integer)itr.next();
+//             degree.set(j,degree.get(j)-1);
+//             if (degree.get(j) == 1)
+//               q.add(j);
+//           }
+//         }
+//       }
+    
+//       /* the only vertices (or vertex) remaining in the queue
+//       are the ones that form minimum height tree, store them
+//       into a vector and return the vector */
+//       ArrayList <Integer> result = new ArrayList<>();
+//       while (!q.isEmpty())
+//         result.add(q.poll());
+      
+//       return result;
+//     }
+ 
