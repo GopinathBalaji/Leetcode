@@ -17,6 +17,7 @@
 | [0080-remove-duplicates-from-sorted-array-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0080-remove-duplicates-from-sorted-array-ii) |
 | [0088-merge-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0088-merge-sorted-array) |
 | [0125-valid-palindrome](https://github.com/GopinathBalaji/Leetcode/tree/master/0125-valid-palindrome) |
+| [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 ## Sorting
 |  |
 | ------- |
@@ -38,4 +39,9 @@
 |  |
 | ------- |
 | [0125-valid-palindrome](https://github.com/GopinathBalaji/Leetcode/tree/master/0125-valid-palindrome) |
+| [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
+## Dynamic Programming
+|  |
+| ------- |
+| [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 <!---LeetCode Topics End-->
