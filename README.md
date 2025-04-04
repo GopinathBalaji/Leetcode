@@ -67,11 +67,13 @@
 | ------- |
 | [0003-longest-substring-without-repeating-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/0003-longest-substring-without-repeating-characters) |
 | [0017-letter-combinations-of-a-phone-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0017-letter-combinations-of-a-phone-number) |
+| [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0125-valid-palindrome](https://github.com/GopinathBalaji/Leetcode/tree/master/0125-valid-palindrome) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 ## Dynamic Programming
 |  |
 | ------- |
+| [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
@@ -188,6 +190,7 @@
 |  |
 | ------- |
 | [0017-letter-combinations-of-a-phone-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0017-letter-combinations-of-a-phone-number) |
+| [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0046-permutations](https://github.com/GopinathBalaji/Leetcode/tree/master/0046-permutations) |
 | [0077-combinations](https://github.com/GopinathBalaji/Leetcode/tree/master/0077-combinations) |
 <!---LeetCode Topics End-->
