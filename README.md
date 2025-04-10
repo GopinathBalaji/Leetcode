@@ -25,6 +25,7 @@
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
 | [0209-minimum-size-subarray-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0209-minimum-size-subarray-sum) |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
+| [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
 ## Two Pointers
 |  |
@@ -202,6 +203,7 @@
 |  |
 | ------- |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
+| [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
 ## Quickselect
 |  |
 | ------- |
