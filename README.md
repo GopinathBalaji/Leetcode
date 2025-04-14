@@ -38,6 +38,7 @@
 | [0080-remove-duplicates-from-sorted-array-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0080-remove-duplicates-from-sorted-array-ii) |
 | [0088-merge-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0088-merge-sorted-array) |
 | [0125-valid-palindrome](https://github.com/GopinathBalaji/Leetcode/tree/master/0125-valid-palindrome) |
+| [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 | [0167-two-sum-ii-input-array-is-sorted](https://github.com/GopinathBalaji/Leetcode/tree/master/0167-two-sum-ii-input-array-is-sorted) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 ## Sorting
@@ -45,6 +46,7 @@
 | ------- |
 | [0015-3sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0015-3sum) |
 | [0088-merge-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0088-merge-sorted-array) |
+| [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
 ## Hash Table
@@ -62,6 +64,7 @@
 | [0105-construct-binary-tree-from-preorder-and-inorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0105-construct-binary-tree-from-preorder-and-inorder-traversal) |
 | [0106-construct-binary-tree-from-inorder-and-postorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0106-construct-binary-tree-from-inorder-and-postorder-traversal) |
 | [0108-convert-sorted-array-to-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0108-convert-sorted-array-to-binary-search-tree) |
+| [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
@@ -178,6 +181,7 @@
 | ------- |
 | [0114-flatten-binary-tree-to-linked-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0114-flatten-binary-tree-to-linked-list) |
 | [0117-populating-next-right-pointers-in-each-node-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0117-populating-next-right-pointers-in-each-node-ii) |
+| [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 ## Stack
 |  |
 | ------- |
@@ -213,4 +217,8 @@
 |  |
 | ------- |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
+## Merge Sort
+|  |
+| ------- |
+| [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 <!---LeetCode Topics End-->
