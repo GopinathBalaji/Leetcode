@@ -87,6 +87,7 @@
 | ------- |
 | [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
+| [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
 ## Binary Search
@@ -225,4 +226,12 @@
 |  |
 | ------- |
 | [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
+## Math
+|  |
+| ------- |
+| [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
+## Memoization
+|  |
+| ------- |
+| [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
 <!---LeetCode Topics End-->
