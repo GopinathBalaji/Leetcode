@@ -20,6 +20,7 @@
 | [0105-construct-binary-tree-from-preorder-and-inorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0105-construct-binary-tree-from-preorder-and-inorder-traversal) |
 | [0106-construct-binary-tree-from-inorder-and-postorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0106-construct-binary-tree-from-inorder-and-postorder-traversal) |
 | [0108-convert-sorted-array-to-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0108-convert-sorted-array-to-binary-search-tree) |
+| [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0153-find-minimum-in-rotated-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0153-find-minimum-in-rotated-sorted-array) |
 | [0162-find-peak-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0162-find-peak-element) |
 | [0167-two-sum-ii-input-array-is-sorted](https://github.com/GopinathBalaji/Leetcode/tree/master/0167-two-sum-ii-input-array-is-sorted) |
@@ -57,6 +58,7 @@
 | [0017-letter-combinations-of-a-phone-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0017-letter-combinations-of-a-phone-number) |
 | [0105-construct-binary-tree-from-preorder-and-inorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0105-construct-binary-tree-from-preorder-and-inorder-traversal) |
 | [0106-construct-binary-tree-from-inorder-and-postorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0106-construct-binary-tree-from-inorder-and-postorder-traversal) |
+| [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
 ## Divide and Conquer
 |  |
@@ -81,6 +83,7 @@
 | [0017-letter-combinations-of-a-phone-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0017-letter-combinations-of-a-phone-number) |
 | [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0125-valid-palindrome](https://github.com/GopinathBalaji/Leetcode/tree/master/0125-valid-palindrome) |
+| [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 ## Dynamic Programming
 |  |
@@ -88,6 +91,7 @@
 | [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
+| [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
 ## Binary Search
@@ -234,4 +238,9 @@
 |  |
 | ------- |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
+| [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
+## Trie
+|  |
+| ------- |
+| [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 <!---LeetCode Topics End-->
