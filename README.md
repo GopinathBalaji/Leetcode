@@ -27,6 +27,7 @@
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
 | [0209-minimum-size-subarray-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0209-minimum-size-subarray-sum) |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
+| [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
 | [0772-construct-quad-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0772-construct-quad-tree) |
@@ -93,6 +94,7 @@
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
 | [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
+| [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
@@ -107,6 +109,7 @@
 | [0162-find-peak-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0162-find-peak-element) |
 | [0167-two-sum-ii-input-array-is-sorted](https://github.com/GopinathBalaji/Leetcode/tree/master/0167-two-sum-ii-input-array-is-sorted) |
 | [0209-minimum-size-subarray-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0209-minimum-size-subarray-sum) |
+| [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
 ## Greedy
 |  |
 | ------- |
