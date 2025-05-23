@@ -96,6 +96,7 @@
 | [0003-longest-substring-without-repeating-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/0003-longest-substring-without-repeating-characters) |
 | [0005-longest-palindromic-substring](https://github.com/GopinathBalaji/Leetcode/tree/master/0005-longest-palindromic-substring) |
 | [0017-letter-combinations-of-a-phone-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0017-letter-combinations-of-a-phone-number) |
+| [0020-valid-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0020-valid-parentheses) |
 | [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0072-edit-distance](https://github.com/GopinathBalaji/Leetcode/tree/master/0072-edit-distance) |
 | [0097-interleaving-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0097-interleaving-string) |
@@ -258,6 +259,7 @@
 ## Stack
 |  |
 | ------- |
+| [0020-valid-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0020-valid-parentheses) |
 | [0114-flatten-binary-tree-to-linked-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0114-flatten-binary-tree-to-linked-list) |
 | [0173-binary-search-tree-iterator](https://github.com/GopinathBalaji/Leetcode/tree/master/0173-binary-search-tree-iterator) |
 ## Design
