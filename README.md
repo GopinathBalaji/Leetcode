@@ -263,11 +263,13 @@
 | [0020-valid-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0020-valid-parentheses) |
 | [0071-simplify-path](https://github.com/GopinathBalaji/Leetcode/tree/master/0071-simplify-path) |
 | [0114-flatten-binary-tree-to-linked-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0114-flatten-binary-tree-to-linked-list) |
+| [0155-min-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0155-min-stack) |
 | [0173-binary-search-tree-iterator](https://github.com/GopinathBalaji/Leetcode/tree/master/0173-binary-search-tree-iterator) |
 ## Design
 |  |
 | ------- |
 | [0146-lru-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0146-lru-cache) |
+| [0155-min-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0155-min-stack) |
 | [0173-binary-search-tree-iterator](https://github.com/GopinathBalaji/Leetcode/tree/master/0173-binary-search-tree-iterator) |
 ## Binary Search Tree
 |  |
