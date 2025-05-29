@@ -14,6 +14,7 @@
 | [0039-combination-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0039-combination-sum) |
 | [0046-permutations](https://github.com/GopinathBalaji/Leetcode/tree/master/0046-permutations) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
+| [0056-merge-intervals](https://github.com/GopinathBalaji/Leetcode/tree/master/0056-merge-intervals) |
 | [0063-unique-paths-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0063-unique-paths-ii) |
 | [0064-minimum-path-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0064-minimum-path-sum) |
 | [0074-search-a-2d-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0074-search-a-2d-matrix) |
@@ -60,6 +61,7 @@
 |  |
 | ------- |
 | [0015-3sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0015-3sum) |
+| [0056-merge-intervals](https://github.com/GopinathBalaji/Leetcode/tree/master/0056-merge-intervals) |
 | [0088-merge-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0088-merge-sorted-array) |
 | [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
