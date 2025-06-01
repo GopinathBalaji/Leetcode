@@ -81,6 +81,7 @@
 | [0141-linked-list-cycle](https://github.com/GopinathBalaji/Leetcode/tree/master/0141-linked-list-cycle) |
 | [0146-lru-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0146-lru-cache) |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
+| [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 ## Divide and Conquer
 |  |
 | ------- |
@@ -97,6 +98,7 @@
 |  |
 | ------- |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
+| [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 ## String
 |  |
 | ------- |
@@ -110,6 +112,7 @@
 | [0097-interleaving-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0097-interleaving-string) |
 | [0125-valid-palindrome](https://github.com/GopinathBalaji/Leetcode/tree/master/0125-valid-palindrome) |
 | [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
+| [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 ## Dynamic Programming
 |  |
