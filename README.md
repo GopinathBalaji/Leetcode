@@ -59,6 +59,7 @@
 | [0141-linked-list-cycle](https://github.com/GopinathBalaji/Leetcode/tree/master/0141-linked-list-cycle) |
 | [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 | [0167-two-sum-ii-input-array-is-sorted](https://github.com/GopinathBalaji/Leetcode/tree/master/0167-two-sum-ii-input-array-is-sorted) |
+| [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 ## Sorting
 |  |
@@ -84,6 +85,7 @@
 | [0141-linked-list-cycle](https://github.com/GopinathBalaji/Leetcode/tree/master/0141-linked-list-cycle) |
 | [0146-lru-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0146-lru-cache) |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
+| [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
 | [0205-isomorphic-strings](https://github.com/GopinathBalaji/Leetcode/tree/master/0205-isomorphic-strings) |
 | [0242-valid-anagram](https://github.com/GopinathBalaji/Leetcode/tree/master/0242-valid-anagram) |
 | [0290-word-pattern](https://github.com/GopinathBalaji/Leetcode/tree/master/0290-word-pattern) |
@@ -331,6 +333,7 @@
 | [0002-add-two-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/0002-add-two-numbers) |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
+| [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
 ## Memoization
 |  |
 | ------- |
