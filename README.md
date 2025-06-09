@@ -26,6 +26,7 @@
 | [0106-construct-binary-tree-from-inorder-and-postorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0106-construct-binary-tree-from-inorder-and-postorder-traversal) |
 | [0108-convert-sorted-array-to-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0108-convert-sorted-array-to-binary-search-tree) |
 | [0120-triangle](https://github.com/GopinathBalaji/Leetcode/tree/master/0120-triangle) |
+| [0128-longest-consecutive-sequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0128-longest-consecutive-sequence) |
 | [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
 | [0153-find-minimum-in-rotated-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0153-find-minimum-in-rotated-sorted-array) |
@@ -81,6 +82,7 @@
 | [0017-letter-combinations-of-a-phone-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0017-letter-combinations-of-a-phone-number) |
 | [0105-construct-binary-tree-from-preorder-and-inorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0105-construct-binary-tree-from-preorder-and-inorder-traversal) |
 | [0106-construct-binary-tree-from-inorder-and-postorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0106-construct-binary-tree-from-inorder-and-postorder-traversal) |
+| [0128-longest-consecutive-sequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0128-longest-consecutive-sequence) |
 | [0138-copy-list-with-random-pointer](https://github.com/GopinathBalaji/Leetcode/tree/master/0138-copy-list-with-random-pointer) |
 | [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0141-linked-list-cycle](https://github.com/GopinathBalaji/Leetcode/tree/master/0141-linked-list-cycle) |
@@ -355,4 +357,8 @@
 |  |
 | ------- |
 | [0146-lru-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0146-lru-cache) |
+## Union Find
+|  |
+| ------- |
+| [0128-longest-consecutive-sequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0128-longest-consecutive-sequence) |
 <!---LeetCode Topics End-->
