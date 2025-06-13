@@ -22,6 +22,7 @@
 | [0057-insert-interval](https://github.com/GopinathBalaji/Leetcode/tree/master/0057-insert-interval) |
 | [0063-unique-paths-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0063-unique-paths-ii) |
 | [0064-minimum-path-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0064-minimum-path-sum) |
+| [0073-set-matrix-zeroes](https://github.com/GopinathBalaji/Leetcode/tree/master/0073-set-matrix-zeroes) |
 | [0074-search-a-2d-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0074-search-a-2d-matrix) |
 | [0080-remove-duplicates-from-sorted-array-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0080-remove-duplicates-from-sorted-array-ii) |
 | [0088-merge-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0088-merge-sorted-array) |
@@ -84,6 +85,7 @@
 | [0003-longest-substring-without-repeating-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/0003-longest-substring-without-repeating-characters) |
 | [0017-letter-combinations-of-a-phone-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0017-letter-combinations-of-a-phone-number) |
 | [0036-valid-sudoku](https://github.com/GopinathBalaji/Leetcode/tree/master/0036-valid-sudoku) |
+| [0073-set-matrix-zeroes](https://github.com/GopinathBalaji/Leetcode/tree/master/0073-set-matrix-zeroes) |
 | [0105-construct-binary-tree-from-preorder-and-inorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0105-construct-binary-tree-from-preorder-and-inorder-traversal) |
 | [0106-construct-binary-tree-from-inorder-and-postorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0106-construct-binary-tree-from-inorder-and-postorder-traversal) |
 | [0128-longest-consecutive-sequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0128-longest-consecutive-sequence) |
@@ -194,6 +196,7 @@
 | [0054-spiral-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0054-spiral-matrix) |
 | [0063-unique-paths-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0063-unique-paths-ii) |
 | [0064-minimum-path-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0064-minimum-path-sum) |
+| [0073-set-matrix-zeroes](https://github.com/GopinathBalaji/Leetcode/tree/master/0073-set-matrix-zeroes) |
 | [0074-search-a-2d-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0074-search-a-2d-matrix) |
 | [0221-maximal-square](https://github.com/GopinathBalaji/Leetcode/tree/master/0221-maximal-square) |
 | [0772-construct-quad-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0772-construct-quad-tree) |
