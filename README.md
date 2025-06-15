@@ -37,6 +37,7 @@
 | [0162-find-peak-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0162-find-peak-element) |
 | [0167-two-sum-ii-input-array-is-sorted](https://github.com/GopinathBalaji/Leetcode/tree/master/0167-two-sum-ii-input-array-is-sorted) |
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
+| [0189-rotate-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0189-rotate-array) |
 | [0209-minimum-size-subarray-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0209-minimum-size-subarray-sum) |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
 | [0219-contains-duplicate-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0219-contains-duplicate-ii) |
@@ -66,6 +67,7 @@
 | [0141-linked-list-cycle](https://github.com/GopinathBalaji/Leetcode/tree/master/0141-linked-list-cycle) |
 | [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 | [0167-two-sum-ii-input-array-is-sorted](https://github.com/GopinathBalaji/Leetcode/tree/master/0167-two-sum-ii-input-array-is-sorted) |
+| [0189-rotate-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0189-rotate-array) |
 | [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 ## Sorting
@@ -351,6 +353,7 @@
 | [0048-rotate-image](https://github.com/GopinathBalaji/Leetcode/tree/master/0048-rotate-image) |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
+| [0189-rotate-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0189-rotate-array) |
 | [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
 ## Memoization
 |  |
