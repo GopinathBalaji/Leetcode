@@ -30,6 +30,7 @@
 | [0106-construct-binary-tree-from-inorder-and-postorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0106-construct-binary-tree-from-inorder-and-postorder-traversal) |
 | [0108-convert-sorted-array-to-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0108-convert-sorted-array-to-binary-search-tree) |
 | [0120-triangle](https://github.com/GopinathBalaji/Leetcode/tree/master/0120-triangle) |
+| [0121-best-time-to-buy-and-sell-stock](https://github.com/GopinathBalaji/Leetcode/tree/master/0121-best-time-to-buy-and-sell-stock) |
 | [0128-longest-consecutive-sequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0128-longest-consecutive-sequence) |
 | [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
@@ -150,6 +151,7 @@
 | [0072-edit-distance](https://github.com/GopinathBalaji/Leetcode/tree/master/0072-edit-distance) |
 | [0097-interleaving-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0097-interleaving-string) |
 | [0120-triangle](https://github.com/GopinathBalaji/Leetcode/tree/master/0120-triangle) |
+| [0121-best-time-to-buy-and-sell-stock](https://github.com/GopinathBalaji/Leetcode/tree/master/0121-best-time-to-buy-and-sell-stock) |
 | [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
 | [0221-maximal-square](https://github.com/GopinathBalaji/Leetcode/tree/master/0221-maximal-square) |
 | [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
