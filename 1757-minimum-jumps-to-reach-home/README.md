@@ -1,4 +1,4 @@
-<h2><a href="https://leetcode.com/problems/minimum-jumps-to-reach-home">1757. Minimum Jumps to Reach Home</a></h2><h3>Medium</h3><hr><p>A certain bug&#39;s home is on the x-axis at position <code>x</code>. Help them get there from position <code>0</code>.</p>
+<h2><a href="https://leetcode.com/problems/minimum-jumps-to-reach-home">Minimum Jumps to Reach Home</a></h2> <img src='https://img.shields.io/badge/Difficulty-Medium-orange' alt='Difficulty: Medium' /><hr><p>A certain bug&#39;s home is on the x-axis at position <code>x</code>. Help them get there from position <code>0</code>.</p>
 
 <p>The bug jumps according to the following rules:</p>
 
