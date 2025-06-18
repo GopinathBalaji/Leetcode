@@ -54,6 +54,7 @@
 | [0772-construct-quad-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0772-construct-quad-tree) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
+| [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
 | [2254-check-if-every-row-and-column-contains-all-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/2254-check-if-every-row-and-column-contains-all-numbers) |
 ## Two Pointers
 |  |
@@ -168,6 +169,7 @@
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
+| [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
 ## Binary Search
 |  |
 | ------- |
@@ -275,6 +277,7 @@
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0530-minimum-absolute-difference-in-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0530-minimum-absolute-difference-in-bst) |
 | [0637-average-of-levels-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0637-average-of-levels-in-binary-tree) |
+| [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
 ## Binary Tree
 |  |
 | ------- |
