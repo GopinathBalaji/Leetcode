@@ -18,6 +18,7 @@
 | [0048-rotate-image](https://github.com/GopinathBalaji/Leetcode/tree/master/0048-rotate-image) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
 | [0054-spiral-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0054-spiral-matrix) |
+| [0055-jump-game](https://github.com/GopinathBalaji/Leetcode/tree/master/0055-jump-game) |
 | [0056-merge-intervals](https://github.com/GopinathBalaji/Leetcode/tree/master/0056-merge-intervals) |
 | [0057-insert-interval](https://github.com/GopinathBalaji/Leetcode/tree/master/0057-insert-interval) |
 | [0063-unique-paths-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0063-unique-paths-ii) |
@@ -152,6 +153,7 @@
 | [0005-longest-palindromic-substring](https://github.com/GopinathBalaji/Leetcode/tree/master/0005-longest-palindromic-substring) |
 | [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
+| [0055-jump-game](https://github.com/GopinathBalaji/Leetcode/tree/master/0055-jump-game) |
 | [0063-unique-paths-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0063-unique-paths-ii) |
 | [0064-minimum-path-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0064-minimum-path-sum) |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
@@ -182,6 +184,7 @@
 |  |
 | ------- |
 | [0011-container-with-most-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0011-container-with-most-water) |
+| [0055-jump-game](https://github.com/GopinathBalaji/Leetcode/tree/master/0055-jump-game) |
 | [0122-best-time-to-buy-and-sell-stock-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0122-best-time-to-buy-and-sell-stock-ii) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 ## Sliding Window
