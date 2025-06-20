@@ -47,6 +47,7 @@
 | [0219-contains-duplicate-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0219-contains-duplicate-ii) |
 | [0221-maximal-square](https://github.com/GopinathBalaji/Leetcode/tree/master/0221-maximal-square) |
 | [0228-summary-ranges](https://github.com/GopinathBalaji/Leetcode/tree/master/0228-summary-ranges) |
+| [0274-h-index](https://github.com/GopinathBalaji/Leetcode/tree/master/0274-h-index) |
 | [0289-game-of-life](https://github.com/GopinathBalaji/Leetcode/tree/master/0289-game-of-life) |
 | [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
@@ -92,6 +93,7 @@
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
 | [0242-valid-anagram](https://github.com/GopinathBalaji/Leetcode/tree/master/0242-valid-anagram) |
+| [0274-h-index](https://github.com/GopinathBalaji/Leetcode/tree/master/0274-h-index) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
 ## Hash Table
@@ -430,4 +432,8 @@
 |  |
 | ------- |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
+## Counting Sort
+|  |
+| ------- |
+| [0274-h-index](https://github.com/GopinathBalaji/Leetcode/tree/master/0274-h-index) |
 <!---LeetCode Topics End-->
