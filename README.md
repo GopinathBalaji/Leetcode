@@ -52,6 +52,7 @@
 | [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
+| [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
@@ -117,6 +118,7 @@
 | [0219-contains-duplicate-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0219-contains-duplicate-ii) |
 | [0242-valid-anagram](https://github.com/GopinathBalaji/Leetcode/tree/master/0242-valid-anagram) |
 | [0290-word-pattern](https://github.com/GopinathBalaji/Leetcode/tree/master/0290-word-pattern) |
+| [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 | [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
@@ -355,6 +357,7 @@
 | [0146-lru-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0146-lru-cache) |
 | [0155-min-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0155-min-stack) |
 | [0173-binary-search-tree-iterator](https://github.com/GopinathBalaji/Leetcode/tree/master/0173-binary-search-tree-iterator) |
+| [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 ## Binary Search Tree
 |  |
 | ------- |
@@ -397,6 +400,7 @@
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
 | [0189-rotate-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0189-rotate-array) |
 | [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
+| [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 ## Memoization
 |  |
 | ------- |
@@ -436,4 +440,8 @@
 |  |
 | ------- |
 | [0274-h-index](https://github.com/GopinathBalaji/Leetcode/tree/master/0274-h-index) |
+## Randomized
+|  |
+| ------- |
+| [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 <!---LeetCode Topics End-->
