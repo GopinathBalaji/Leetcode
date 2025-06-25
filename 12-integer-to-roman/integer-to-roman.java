@@ -1,3 +1,4 @@
+// My solution
 class Solution {
     public String intToRoman(int num) {
 
@@ -61,3 +62,27 @@ class Solution {
         return ans; 
     }
 }
+
+// More elegant GPT solution
+
+// class Solution {
+//     public String intToRoman(int num) {
+//         // 1) Table of all the “greedy” value→symbol mappings
+//         int[]   vals   = {1000, 900, 500, 400, 100,  90,  50,  40,  10,   9,   5,   4,   1};
+//         String[] syms  = {"M",  "CM","D", "CD","C", "XC","L", "XL","X", "IX","V", "IV","I"};
+
+//         StringBuilder sb = new StringBuilder();
+
+//         // 2) Greedily subtract as many of each value as we can
+//         for (int i = 0; i < vals.length; i++) {
+//             int count = num / vals[i];      // how many times this symbol fits
+//             num %= vals[i];                 // reduce the number
+//             // append that symbol count times
+//             while (count-- > 0) {
+//                 sb.append(syms[i]);
+//             }
+//         }
+
+//         return sb.toString();
+//     }
+// }
