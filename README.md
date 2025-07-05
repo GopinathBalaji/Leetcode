@@ -58,6 +58,7 @@
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
 | [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
+| [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
@@ -179,6 +180,7 @@
 | [0290-word-pattern](https://github.com/GopinathBalaji/Leetcode/tree/master/0290-word-pattern) |
 | [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
+| [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
@@ -309,6 +311,7 @@
 | [0226-invert-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0226-invert-binary-tree) |
 | [0230-kth-smallest-element-in-a-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0230-kth-smallest-element-in-a-bst) |
 | [0236-lowest-common-ancestor-of-a-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0236-lowest-common-ancestor-of-a-binary-tree) |
+| [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0530-minimum-absolute-difference-in-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0530-minimum-absolute-difference-in-bst) |
 | [0637-average-of-levels-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0637-average-of-levels-in-binary-tree) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
@@ -328,6 +331,7 @@
 | [0200-number-of-islands](https://github.com/GopinathBalaji/Leetcode/tree/master/0200-number-of-islands) |
 | [0226-invert-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0226-invert-binary-tree) |
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
+| [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0530-minimum-absolute-difference-in-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0530-minimum-absolute-difference-in-bst) |
 | [0637-average-of-levels-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0637-average-of-levels-in-binary-tree) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
@@ -456,6 +460,7 @@
 | [0128-longest-consecutive-sequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0128-longest-consecutive-sequence) |
 | [0130-surrounded-regions](https://github.com/GopinathBalaji/Leetcode/tree/master/0130-surrounded-regions) |
 | [0200-number-of-islands](https://github.com/GopinathBalaji/Leetcode/tree/master/0200-number-of-islands) |
+| [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 ## Simulation
 |  |
 | ------- |
@@ -485,4 +490,9 @@
 |  |
 | ------- |
 | [0133-clone-graph](https://github.com/GopinathBalaji/Leetcode/tree/master/0133-clone-graph) |
+| [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
+## Shortest Path
+|  |
+| ------- |
+| [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 <!---LeetCode Topics End-->
