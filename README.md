@@ -170,6 +170,7 @@
 | [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
 | [0028-find-the-index-of-the-first-occurrence-in-a-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0028-find-the-index-of-the-first-occurrence-in-a-string) |
 | [0058-length-of-last-word](https://github.com/GopinathBalaji/Leetcode/tree/master/0058-length-of-last-word) |
+| [0067-add-binary](https://github.com/GopinathBalaji/Leetcode/tree/master/0067-add-binary) |
 | [0071-simplify-path](https://github.com/GopinathBalaji/Leetcode/tree/master/0071-simplify-path) |
 | [0072-edit-distance](https://github.com/GopinathBalaji/Leetcode/tree/master/0072-edit-distance) |
 | [0097-interleaving-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0097-interleaving-string) |
@@ -439,6 +440,7 @@
 | [0048-rotate-image](https://github.com/GopinathBalaji/Leetcode/tree/master/0048-rotate-image) |
 | [0050-powx-n](https://github.com/GopinathBalaji/Leetcode/tree/master/0050-powx-n) |
 | [0066-plus-one](https://github.com/GopinathBalaji/Leetcode/tree/master/0066-plus-one) |
+| [0067-add-binary](https://github.com/GopinathBalaji/Leetcode/tree/master/0067-add-binary) |
 | [0069-sqrtx](https://github.com/GopinathBalaji/Leetcode/tree/master/0069-sqrtx) |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
@@ -477,6 +479,7 @@
 |  |
 | ------- |
 | [0054-spiral-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0054-spiral-matrix) |
+| [0067-add-binary](https://github.com/GopinathBalaji/Leetcode/tree/master/0067-add-binary) |
 | [0289-game-of-life](https://github.com/GopinathBalaji/Leetcode/tree/master/0289-game-of-life) |
 ## Rolling Hash
 |  |
@@ -514,4 +517,8 @@
 | ------- |
 | [0207-course-schedule](https://github.com/GopinathBalaji/Leetcode/tree/master/0207-course-schedule) |
 | [0210-course-schedule-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0210-course-schedule-ii) |
+## Bit Manipulation
+|  |
+| ------- |
+| [0067-add-binary](https://github.com/GopinathBalaji/Leetcode/tree/master/0067-add-binary) |
 <!---LeetCode Topics End-->
