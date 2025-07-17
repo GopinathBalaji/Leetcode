@@ -532,4 +532,8 @@
 | [0137-single-number-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0137-single-number-ii) |
 | [0190-reverse-bits](https://github.com/GopinathBalaji/Leetcode/tree/master/0190-reverse-bits) |
 | [0191-number-of-1-bits](https://github.com/GopinathBalaji/Leetcode/tree/master/0191-number-of-1-bits) |
+## Database
+|  |
+| ------- |
+| [0175-combine-two-tables](https://github.com/GopinathBalaji/Leetcode/tree/master/0175-combine-two-tables) |
 <!---LeetCode Topics End-->
