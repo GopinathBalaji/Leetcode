@@ -1,38 +1,59 @@
+// Backtracking
+/*
+Explanation of Backtraking Flow
+index tracks which digit position you're processing.
+
+At each position, get all letters mapped to that digit.
+
+Loop over those letters:
+
+Choose a letter.
+
+Recurse to next digit (index + 1).
+
+Undo the choice (backtrack by removing the last character from sb).
+*/
 class Solution {
     public List<String> letterCombinations(String digits) {
+        List<String> ans = new ArrayList<>();
         if(digits.length() == 0){
-            return new ArrayList<>();
+            return ans;
         }
-        
-        List<String> res = new ArrayList<>();
-        Map<Character, String> phone = Map.of('2', "abc", 
-                                              '3', "def", 
-                                              '4', "ghi", 
-                                              '5', "jkl",
-                                              '6', "mno", 
-                                              '7', "pqrs", 
-                                              '8', "tuv", 
-                                              '9', "wxyz");
 
-        dfs(digits, phone, digits.length(), res, 0, new StringBuilder());
+        HashMap<Character, String> map = new HashMap<>(){{
+            put('2', "abc");
+            put('3', "def");
+            put('4', "ghi");
+            put('5', "jkl");
+            put('6', "mno");
+            put('7', "pqrs");
+            put('8', "tuv");
+            put('9', "wxyz");
+        }};
 
-        return res;
+        StringBuilder sb = new StringBuilder();
+
+        backtrack(digits, ans, 0, map, sb);
+
+        return ans;
     }
 
-    public static void dfs(String digits, Map<Character, String> phone, Integer max, List<String> res, int currsize, StringBuilder path){
-        if(currsize == max){
-            res.add(path.toString());
+    private void backtrack(String digits, List<String> ans, int index, HashMap<Character, String> map, StringBuilder sb){
+        if(sb.length() == digits.length()){
+            String combination = sb.toString();
+            ans.add(combination);
+
             return;
         }
 
-        String letters = phone.get(digits.charAt(currsize));
+        char num = digits.charAt(index);
+        String letters = map.get(num);
 
-        for(char letter: letters.toCharArray()){
-            path.append(letter);
-            dfs(digits, phone, max, res, currsize + 1, path);
-            path.deleteCharAt(path.length() - 1);
+        for(char c: letters.toCharArray()){
+            sb.append(c);
+            backtrack(digits, ans, index + 1, map, sb);
+            sb.deleteCharAt(sb.length() - 1);
         }
-
     }
 }
 
