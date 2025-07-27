@@ -1,28 +1,34 @@
+// Backtracking with additional states (maintaining visited to prevent adding the same number again in the same permutation)
 class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<List<Integer>> ans = new ArrayList<>();
+        HashSet<Integer> visited = new HashSet<>();
 
-    public void dfs(Integer startIndex, List<List<Integer>> res, int[] nums, List<Integer> path, boolean[] used){
-        if(nums.length == path.size()){
-            List<Integer> li = new ArrayList<>(path);
-            res.add(li);
+        backtrack(nums, 0, visited, new ArrayList<Integer>(), ans);
+
+        return ans;
+    }
+
+    private void backtrack(int[] nums, int index, HashSet<Integer> visited, List<Integer> permutations, List<List<Integer>> ans){
+        if(permutations.size() == nums.length){
+            ans.add(new ArrayList<>(permutations));
+
             return;
         }
 
-        for(int i=0;i<nums.length;i++){
-            if(used[i]){
+
+        for(int i=0; i<nums.length; i++){
+            if(visited.contains(nums[i])){
                 continue;
             }
 
-            path.add(nums[i]);
-            used[i] = true;
-            dfs(startIndex + 1, res, nums, path, used);
-            path.remove(path.size() - 1);
-            used[i] = false;
-        }
-    }
+            permutations.add(nums[i]);
+            visited.add(nums[i]);
 
-    public List<List<Integer>> permute(int[] nums) {
-        List<List<Integer>> res = new ArrayList<>();
-        dfs(0, res, nums, new ArrayList<>(), new boolean[nums.length]);
-        return res;
+            backtrack(nums, index + 1, visited, permutations, ans);
+
+            permutations.remove(permutations.size() - 1);
+            visited.remove(nums[i]);
+        }
     }
 }
