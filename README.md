@@ -27,6 +27,7 @@
 | [0066-plus-one](https://github.com/GopinathBalaji/Leetcode/tree/master/0066-plus-one) |
 | [0073-set-matrix-zeroes](https://github.com/GopinathBalaji/Leetcode/tree/master/0073-set-matrix-zeroes) |
 | [0074-search-a-2d-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0074-search-a-2d-matrix) |
+| [0079-word-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0079-word-search) |
 | [0080-remove-duplicates-from-sorted-array-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0080-remove-duplicates-from-sorted-array-ii) |
 | [0088-merge-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0088-merge-sorted-array) |
 | [0105-construct-binary-tree-from-preorder-and-inorder-traversal](https://github.com/GopinathBalaji/Leetcode/tree/master/0105-construct-binary-tree-from-preorder-and-inorder-traversal) |
@@ -179,6 +180,7 @@
 | [0067-add-binary](https://github.com/GopinathBalaji/Leetcode/tree/master/0067-add-binary) |
 | [0071-simplify-path](https://github.com/GopinathBalaji/Leetcode/tree/master/0071-simplify-path) |
 | [0072-edit-distance](https://github.com/GopinathBalaji/Leetcode/tree/master/0072-edit-distance) |
+| [0079-word-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0079-word-search) |
 | [0097-interleaving-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0097-interleaving-string) |
 | [0125-valid-palindrome](https://github.com/GopinathBalaji/Leetcode/tree/master/0125-valid-palindrome) |
 | [0139-word-break](https://github.com/GopinathBalaji/Leetcode/tree/master/0139-word-break) |
@@ -274,6 +276,7 @@
 | [0064-minimum-path-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0064-minimum-path-sum) |
 | [0073-set-matrix-zeroes](https://github.com/GopinathBalaji/Leetcode/tree/master/0073-set-matrix-zeroes) |
 | [0074-search-a-2d-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0074-search-a-2d-matrix) |
+| [0079-word-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0079-word-search) |
 | [0130-surrounded-regions](https://github.com/GopinathBalaji/Leetcode/tree/master/0130-surrounded-regions) |
 | [0200-number-of-islands](https://github.com/GopinathBalaji/Leetcode/tree/master/0200-number-of-islands) |
 | [0221-maximal-square](https://github.com/GopinathBalaji/Leetcode/tree/master/0221-maximal-square) |
@@ -308,6 +311,7 @@
 ## Depth-First Search
 |  |
 | ------- |
+| [0079-word-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0079-word-search) |
 | [0098-validate-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0098-validate-binary-search-tree) |
 | [0100-same-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0100-same-tree) |
 | [0101-symmetric-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0101-symmetric-tree) |
@@ -430,6 +434,7 @@
 | [0039-combination-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0039-combination-sum) |
 | [0046-permutations](https://github.com/GopinathBalaji/Leetcode/tree/master/0046-permutations) |
 | [0077-combinations](https://github.com/GopinathBalaji/Leetcode/tree/master/0077-combinations) |
+| [0079-word-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0079-word-search) |
 ## Heap (Priority Queue)
 |  |
 | ------- |
