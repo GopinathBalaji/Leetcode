@@ -14,110 +14,177 @@
  * }
  */
 
-
-//  Middle element pivot for recursion
+// My Recursive DFS solution (Optimal and correct)
 /*
-
-## 1 · Why the “middle element” idea works
-
-A BST’s **in‑order traversal** visits nodes in ascending order.
-If we want the tree to be *balanced*, we should keep left and right sub‑trees roughly the same size.
-The most natural way is:
-
-1. **Pick the middle element** of the current sub‑array → make it the root.
-2. Recursively build the **left subtree** from the left half.
-3. Recursively build the **right subtree** from the right half.
-
-Because we always split near the middle, the height becomes `O(log n)` (perfectly balanced if the array length is `(2^k – 1)`).
-
----
-
-## 2 · Choosing the correct middle index
-
-For the slice `[start … end]` (inclusive):
-
-```text
-mid = start + (end - start) / 2
-```
-
-*Why this formula?*
-
-* `(end – start)/2` gives the **offset** to the midpoint.
-* Adding `start` shifts that offset into the original array’s coordinates.
-* Using integer division automatically floors the value (if the slice length is even, either middle works; this one biases to the left).
-
-> **Never subtract 1** after dividing—that pushes `mid` outside the slice for small ranges.
-
----
-
-## 3 · Recursive algorithm (divide‑and‑conquer)
-
-```text
-build(start, end):
-    if start > end → return null      (empty slice)
-    mid  = start + (end - start) // 2
-    node = new TreeNode(nums[mid])
-    node.left  = build(start, mid - 1)
-    node.right = build(mid + 1, end)
-    return node
-```
-
-
-### Why this works
-
-* **BST property:** elements in left slice `< nums[mid] <` elements in right slice.
-* **Balance:** each call cuts the slice roughly in half → height ≤ `⌈log₂ n⌉`.
-* **Correctness by induction:**
-
-  * Base: empty slice returns `null`.
-  * Inductive step: if recursive calls produce valid BSTs for sub‑slices, attaching them under `nums[mid]` keeps the BST ordering intact.
-
-### Complexity
-
-| Metric             | Value                                                                                                             |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| Time               | `O(n)` — each element becomes exactly one node.                                                                   |
-| Space (call stack) | `O(log n)` on average (`O(n)` worst if the array were badly skewed, but input is sorted so halves stay balanced). |
-
----
-
-## 5 · Common pitfalls & fixes
-
-| Pitfall                                   | Consequence                                        | Fix                            |
-| ----------------------------------------- | -------------------------------------------------- | ------------------------------ |
-| `mid = (start + end) / 2` on large `int`s | Potential overflow                                 | Use `start + (end - start)/2`  |
-| `mid = (end - start) / 2 - 1`             | Off-by-one → negative index when slice length is 1 | Don’t subtract 1; add `start`. |
-| Forgetting base case `start > end`        | Infinite recursion                                 | Always include it.             |
-
----
-
-### Take‑away intuition
-
-A sorted array’s *middle element* is the perfect pivot: it splits the numbers so that everything left is smaller and everything right is larger **while also keeping sub‑arrays similar in size**, guaranteeing a balanced BST. Recursively repeating this partitioning builds the tree in linear time with logarithmic depth.
-
+Picking the middle index ensures the tree is height-balanced.
+The start > end base case guarantees termination.
+The mid formula avoids overflow (good habit).
 */
 class Solution {
     public TreeNode sortedArrayToBST(int[] nums) {
-        int mid = 0 + (nums.length - 1  - 0) / 2;
-        TreeNode root = new TreeNode(nums[mid]);
+        int mid = 0 + (nums.length - 0) / 2;
+        TreeNode node = new TreeNode(nums[mid]);
 
-        root.left = divideConquer(0, mid - 1, nums);
-        root.right = divideConquer(mid + 1, nums.length - 1, nums);
+        node.left = dfs(0, mid-1, nums);
+        node.right = dfs(mid+1, nums.length-1, nums);
 
-        return root;
+        return node;
     }
 
-    public TreeNode divideConquer(int start, int end, int[] nums){
-        if(start > end || end < start){
+    private TreeNode dfs(int start, int end, int[] nums){
+        if(start > end){
             return null;
         }
 
         int mid = start + (end - start) / 2;
-        TreeNode root = new TreeNode(nums[mid]);
+        TreeNode node = new TreeNode(nums[mid]);
 
-        root.left = divideConquer(start, mid - 1, nums);
-        root.right = divideConquer(mid + 1, end , nums);
+        node.left = dfs(start, mid-1, nums);
+        node.right = dfs(mid+1, end, nums);
 
-        return root;
+        return node;
     }
 }
+
+
+// Better DFS Code (More clean ChatGPT version)
+// class Solution {
+//     public TreeNode sortedArrayToBST(int[] nums) {
+//         return dfs(nums, 0, nums.length-1);
+//     }
+
+//     private TreeNode dfs(int[] nums, int start, int end){
+//         if(start > end){
+//             return null;
+//         }
+
+//         int mid = start + (end - start) / 2;
+//         TreeNode root = new TreeNode(nums[mid]);
+
+//         root.left = dfs(nums, start, mid-1);
+//         root.right = dfs(numn, mid+1, end);
+
+//         return root;
+//     }
+// }
+
+
+
+// Iterative DFS
+/*
+ranges holds [start, end, side]:
+    side = 0 means “root”
+    side = 1 means “attach as left”
+    side = 2 means “attach as right”
+
+nodes stack keeps the parent for that range.
+We push right before left so the left side is processed first when popped, mirroring recursive DFS.
+*/
+// class Solution {
+//     public TreeNode sortedArrayToBST(int[] nums) {
+//         if (nums == null || nums.length == 0) return null;
+
+//         // Root node initially unknown, so create a dummy placeholder
+//         TreeNode root = new TreeNode(0);
+
+//         // Each stack entry: {start, end, parent node, isLeftChild?}
+//         Deque<int[]> ranges = new ArrayDeque<>();
+//         Deque<TreeNode> nodes = new ArrayDeque<>();
+
+//         // Ranges holds: start, end, side. Side can be:
+//         // 0 = root, 1 = left, 2 = right
+//         ranges.push(new int[]{0, nums.length - 1, 0}); 
+//         nodes.push(root);
+
+//         while (!ranges.isEmpty()) {
+//             int[] range = ranges.pop();
+//             TreeNode parent = nodes.pop();
+
+//             int start = range[0], end = range[1], pos = range[2];
+//             if (start > end) continue;
+
+//             int mid = start + (end - start) / 2;
+//             TreeNode node = new TreeNode(nums[mid]);
+
+//             if (pos == 0) {
+//                 root = node; // this is the true root
+//             } else if (pos == 1) {
+//                 parent.left = node;
+//             } else {
+//                 parent.right = node;
+//             }
+
+//             // Push right then left (so left is processed first, like recursion)
+//             ranges.push(new int[]{mid + 1, end, 2});
+//             nodes.push(node);
+
+//             ranges.push(new int[]{start, mid - 1, 1});
+//             nodes.push(node);
+//         }
+
+//         return root;
+//     }
+// }
+
+
+
+// BFS version (Similar method to the iterative DFS)
+/*
+Start with the full range [0, n-1]. Create the root from its mid.
+Push the left range [start, mid-1] and right range [mid+1, end] into a queue, each paired with:
+    the parent node to attach to, and
+    which side to attach on (left/right).
+Repeatedly pop a range, create its mid node, attach it to the parent on the correct side, and enqueue its left/right subranges.
+*/
+// class Solution {
+//     public TreeNode sortedArrayToBST(int[] nums) {
+//         if (nums == null || nums.length == 0) return null;
+
+//         // Build root from the whole range
+//         int n = nums.length;
+//         int mid = (n - 1) / 2;
+//         TreeNode root = new TreeNode(nums[mid]);
+
+//         // Queues: one for ranges [start, end, side], one for parent nodes
+//         // side: 1 = left child, 2 = right child (root’s children use these)
+//         Deque<int[]> ranges = new ArrayDeque<>();
+//         Deque<TreeNode> parents = new ArrayDeque<>();
+
+//         // Enqueue left and right subranges with their parent (root)
+//         if (mid - 1 >= 0) {
+//             ranges.offer(new int[]{0, mid - 1, 1});
+//             parents.offer(root);
+//         }
+//         if (mid + 1 <= n - 1) {
+//             ranges.offer(new int[]{mid + 1, n - 1, 2});
+//             parents.offer(root);
+//         }
+
+//         while (!ranges.isEmpty()) {
+//             int[] rg = ranges.poll();
+//             TreeNode par = parents.poll();
+
+//             int start = rg[0], end = rg[1], side = rg[2];
+//             if (start > end) continue;
+
+//             int m = start + (end - start) / 2;
+//             TreeNode node = new TreeNode(nums[m]);
+
+//             // attach to parent
+//             if (side == 1) par.left = node;
+//             else           par.right = node;
+
+//             // enqueue children ranges with this node as parent
+//             if (start <= m - 1) {
+//                 ranges.offer(new int[]{start, m - 1, 1});
+//                 parents.offer(node);
+//             }
+//             if (m + 1 <= end) {
+//                 ranges.offer(new int[]{m + 1, end, 2});
+//                 parents.offer(node);
+//             }
+//         }
+
+//         return root;
+//     }
+// }
