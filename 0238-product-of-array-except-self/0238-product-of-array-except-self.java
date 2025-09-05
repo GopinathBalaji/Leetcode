@@ -1,117 +1,95 @@
-// Using extra space to maintain Prefix and Suffix products
+// Computing Prefix and Suffix Product Arrays (Uses extra space)
 class Solution {
     public int[] productExceptSelf(int[] nums) {
-        int[] prefix = new int[nums.length];
-        int[] suffix = new int[nums.length];
+        int prefixProduct = 1;
+        int suffixProduct = 1;
 
-        int prefixProduct = nums[0];
-        prefix[0] = nums[0];
-        
-        for(int i=1;i<nums.length;i++){
+        int[] prefixPro = new int[nums.length];
+        int[] suffixPro = new int[nums.length];
+        int[] ans = new int[nums.length];
+
+        for(int i=0; i<nums.length; i++){
             prefixProduct = prefixProduct * nums[i];
-            prefix[i] = prefixProduct;
+            prefixPro[i] = prefixProduct; 
         }
 
-        int suffixProduct = nums[nums.length -1];
-        suffix[nums.length -1] = nums[nums.length -1];
-
-        for(int i=nums.length-2;i>=0;i--){
+        for(int i=nums.length-1; i>=0; i--){
             suffixProduct = suffixProduct * nums[i];
-            suffix[i] = suffixProduct;
+            suffixPro[i] = suffixProduct;
         }
 
-        for(int i=0;i<nums.length;i++){
+        for(int i=0; i<nums.length; i++){
             if(i == 0){
-                nums[i] = suffix[i+1];
+                ans[i] = suffixPro[i+1];
             }else if(i == nums.length - 1){
-                nums[i] = prefix[i-1];
+                ans[i] = prefixPro[i-1];
             }else{
-                int temp = prefix[i-1] * suffix[i+1];
-                nums[i] = temp;
+                ans[i] = prefixPro[i-1] * suffixPro[i+1];
             }
         }
 
-        return nums;
+        return ans;
     }
 }
 
-// Using O(1) space
+
+// No Extra Space
 /*
-The left product we call the prefix product.
+We only need the prefix up to i-1 and the suffix from i+1, which can be folded into two passes using just the output array and one running suffix.
 
-The right product we call the suffix product.
+How it works:
+* After the first pass, `ans[i]` holds the product of all elements **to the left** of `i`.
+* The second pass walks from right to left keeping a running `suffix` = product of elements **to the right** of `i`. Multiply it into `ans[i]`.
+* This naturally handles **zeros**:
 
-First pass (left prefixes)
-
-Initialize res[0] = 1 because there are no elements before index 0.
-
-For i = 1…n-1:
-
-
-res[i] = res[i-1] * nums[i-1];
-After this loop, res[i] equals :
-
-​
-product of j=0 to j=i-1 (nums[j]).
-
-Second pass (right suffixes)
-
-Keep a scalar suffix = 1 to represent: 
-
-​
-Product of j=n to j=n-1 (nums[j]), i.e. empty.
-
-Iterate i from n-1 down to 0:
-
-Multiply the accumulated suffix into res[i]:
+  * One zero → only that index gets the non-zero product; others become 0.
+  * Two or more zeros → all results are 0.
 
 
-res[i] *= suffix;
-Now res[i] = (left product) × (right product so far).
+### Walkthrough
 
-Update the suffix to include nums[i] for the next step left:
+`nums = [1, 2, 3, 4]`
 
+* Pass 1 (prefix): `ans = [1, 1, 2, 6]`
+* Pass 2 (suffix running):
 
-suffix *= nums[i];
-By the time you finish, each res[i] has been multiplied by the product of all elements to its right.
+  * i=3: ans\[3] \*= 1 → 6; suffix \*= 4 → 4
+  * i=2: ans\[2] \*= 4 → 8; suffix \*= 3 → 12
+  * i=1: ans\[1] \*= 12 → 12; suffix \*= 2 → 24
+  * i=0: ans\[0] \*= 24 → 24
+    Result: `[24, 12, 8, 6]`.
 
-Space complexity
+`nums = [1, 2, 0, 4]`
 
-We only ever use:
+* Pass 1: `ans = [1, 1, 2, 0]`
+* Pass 2: suffix=1
 
-the input array nums (given),
+  * i=3: ans\[3]=0\*1=0; suffix=4
+  * i=2: ans\[2]=2\*4=8; suffix=0
+  * i=1: ans\[1]=1\*0=0
+  * i=0: ans\[0]=1\*0=0
+    Result: `[0, 0, 8, 0]`.
 
-the output array res (which doesn’t count extra, since it’s required),
-
-two integers (i in the loops and suffix).
-
-That’s O(1) auxiliary space.
-
-Time complexity
-
-Two simple scans of the array → O(n) overall.
+This meets O(n) time and O(1) extra space (excluding the output array), avoids out-of-bounds, and handles zeros correctly.
 */
-
 // class Solution {
 //     public int[] productExceptSelf(int[] nums) {
 //         int n = nums.length;
-//         int[] res = new int[n];
+//         int[] ans = new int[n];
+//         if (n == 0) return ans;
         
-//         // 1) First pass: compute prefix products into res[]
-//         //    res[i] will hold the product of all nums[0..i-1].
-//         res[0] = 1;
+//         // 1) ans[i] = product of nums[0..i-1]  (prefix before i)
+//         ans[0] = 1;
 //         for (int i = 1; i < n; i++) {
-//             res[i] = res[i - 1] * nums[i - 1];
+//             ans[i] = ans[i - 1] * nums[i - 1];
 //         }
-        
-//         // 2) Second pass: sweep from the right, maintaining a running suffix product.
-//         //    At each i, multiply res[i] (which is “product of left side”) by suffix
+
+//         // 2) Multiply by suffix product of nums[i+1..n-1]
 //         int suffix = 1;
 //         for (int i = n - 1; i >= 0; i--) {
-//             res[i] = res[i] * suffix;
-//             suffix = suffix * nums[i];
+//             ans[i] *= suffix;
+//             suffix *= nums[i];
 //         }
-        
-//         return res;
+//         return ans;
 //     }
 // }
