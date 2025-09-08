@@ -1,47 +1,46 @@
-// My two pass solution
+// Remove trailing spaces, then count characters
 class Solution {
     public int lengthOfLastWord(String s) {
-        int n = s.length()-1;
-        for(int i=s.length()-1;i>=0;i--){
+
+        int i;
+        for(i=s.length()-1; i>=0; i--){
             if(s.charAt(i) == ' '){
-                n--;
+                continue;
+            }else{
+                break;
+            }
+        }
+        
+        int ans = 0;
+        for(int j=i; j>=0; j--){
+            if(s.charAt(j) != ' '){
+                ans++;
             }else{
                 break;
             }
         }
 
-        int count = 0;
-        for(int i=n;i>=0;i--){
-            if(s.charAt(i) != ' '){
-                count++;
-            }else{
-                break;
-            }
-        }
-
-        return count;
+        return ans;
     }
 }
 
-// GPT Single pass solution
+
+
+
+// More clean code but same approach
 // class Solution {
 //     public int lengthOfLastWord(String s) {
-//         int count = 0;
-//         boolean inWord = false;
-        
-//         // One pass from the end:
-//         for (int i = s.length() - 1; i >= 0; i--) {
-//             if (s.charAt(i) != ' ') {
-//                 // once we hit a letter, we’re in the last word
-//                 inWord = true;
-//                 count++;
-//             } else if (inWord) {
-//                 // we’ve counted the last word and now hit a space → done
-//                 break;
-//             }
-//             // if it's a space and inWord==false, we’re still skipping trailing spaces
+//         int i = s.length() - 1;
+
+//         // skip trailing spaces
+//         while (i >= 0 && s.charAt(i) == ' ') i--;
+
+//         // count last word
+//         int ans = 0;
+//         while (i >= 0 && s.charAt(i) != ' ') {
+//             ans++;
+//             i--;
 //         }
-        
-//         return count;
+//         return ans; // returns 0 if there is no word
 //     }
 // }
