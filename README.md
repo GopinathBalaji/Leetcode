@@ -14,6 +14,7 @@
 | [0035-search-insert-position](https://github.com/GopinathBalaji/Leetcode/tree/master/0035-search-insert-position) |
 | [0036-valid-sudoku](https://github.com/GopinathBalaji/Leetcode/tree/master/0036-valid-sudoku) |
 | [0039-combination-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0039-combination-sum) |
+| [0042-trapping-rain-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0042-trapping-rain-water) |
 | [0045-jump-game-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0045-jump-game-ii) |
 | [0046-permutations](https://github.com/GopinathBalaji/Leetcode/tree/master/0046-permutations) |
 | [0048-rotate-image](https://github.com/GopinathBalaji/Leetcode/tree/master/0048-rotate-image) |
@@ -85,6 +86,7 @@
 | [0026-remove-duplicates-from-sorted-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0026-remove-duplicates-from-sorted-array) |
 | [0027-remove-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0027-remove-element) |
 | [0028-find-the-index-of-the-first-occurrence-in-a-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0028-find-the-index-of-the-first-occurrence-in-a-string) |
+| [0042-trapping-rain-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0042-trapping-rain-water) |
 | [0080-remove-duplicates-from-sorted-array-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0080-remove-duplicates-from-sorted-array-ii) |
 | [0082-remove-duplicates-from-sorted-list-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0082-remove-duplicates-from-sorted-list-ii) |
 | [0086-partition-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0086-partition-list) |
@@ -204,6 +206,7 @@
 | ------- |
 | [0005-longest-palindromic-substring](https://github.com/GopinathBalaji/Leetcode/tree/master/0005-longest-palindromic-substring) |
 | [0022-generate-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0022-generate-parentheses) |
+| [0042-trapping-rain-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0042-trapping-rain-water) |
 | [0045-jump-game-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0045-jump-game-ii) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
 | [0055-jump-game](https://github.com/GopinathBalaji/Leetcode/tree/master/0055-jump-game) |
@@ -411,6 +414,7 @@
 |  |
 | ------- |
 | [0020-valid-parentheses](https://github.com/GopinathBalaji/Leetcode/tree/master/0020-valid-parentheses) |
+| [0042-trapping-rain-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0042-trapping-rain-water) |
 | [0071-simplify-path](https://github.com/GopinathBalaji/Leetcode/tree/master/0071-simplify-path) |
 | [0114-flatten-binary-tree-to-linked-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0114-flatten-binary-tree-to-linked-list) |
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
@@ -565,4 +569,8 @@
 | [0175-combine-two-tables](https://github.com/GopinathBalaji/Leetcode/tree/master/0175-combine-two-tables) |
 | [0181-employees-earning-more-than-their-managers](https://github.com/GopinathBalaji/Leetcode/tree/master/0181-employees-earning-more-than-their-managers) |
 | [0182-duplicate-emails](https://github.com/GopinathBalaji/Leetcode/tree/master/0182-duplicate-emails) |
+## Monotonic Stack
+|  |
+| ------- |
+| [0042-trapping-rain-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0042-trapping-rain-water) |
 <!---LeetCode Topics End-->
