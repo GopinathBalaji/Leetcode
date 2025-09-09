@@ -1,164 +1,228 @@
-// Method 1: An array of StringBuilders to append each row of characters
+// Method 1: First find cycle length, the top and bottom rows will follow this.
+// The middle rows to vertical, and vertical to middle rows have a different jump
 /*
-Detailed Explanation
-Handle trivial cases
+# Key idea (in plain terms)
 
-If numRows == 1, there’s nowhere to zig or zag—you just return the original string.
+* A full “V” in the zigzag repeats every **cycleLen = 2*(numRows-1)*\* characters.
+* **Top row (0)** and **bottom row (numRows-1)** take characters spaced exactly `cycleLen` apart.
+* **Middle rows (i)** take **two** characters per cycle: one from the vertical stroke and one from the diagonal stroke.
 
-Similarly, if the string’s length is ≤ numRows, each character would occupy its own row in the first vertical pass, so again the result is the same as the input.
+  * The gaps between picks in a middle row alternate:
 
-Rows as buckets
+    * `gapA = cycleLen - 2*i`
+    * `gapB = 2*i`
+* Special cases:
 
-We create an array of StringBuilder of size numRows.
+  * If `numRows == 1` or `numRows >= s.length()`, the string doesn’t change.
 
-Each rows[i] will collect all characters that belong to the ith row in the zigzag pattern.
 
-Simulate the zigzag traversal
+**Why this is safe:**
 
-Initialize curRow = 0 (start at the top row) and direction = +1 (moving downward).
+* For middle rows `1..numRows-2`, both `gapA` and `gapB` are positive.
+* For the top and bottom rows, we never use `gapA/gapB`; we only step by `cycle`.
+* We never access out of bounds; every `j` is checked against `n`.
 
-For each character c in s:
+**Complexity:**
 
-Append it to rows[curRow].
+* Time: O(n) — each character is appended exactly once.
+* Space: O(n) for the output builder.
 
-Check for direction change:
+---
 
-If curRow just reached the bottom row (numRows–1), next step must go up, so set direction = –1.
+# Thorough example walkthrough
 
-If curRow just reached the top row (0), next step must go down, so set direction = +1.
+**Input:**
+`s = "PAYPALISHIRING"`, `numRows = 4`
+Indices and chars:
 
-Advance curRow += direction.
+```
+ idx:  0 1 2 3 4 5 6 7 8 9 10 11 12 13
+ char: P A Y P A L I S H I  R  I  N  G
+```
 
-Build the final string
+**cycleLen = 2*(4-1) = 6*\*
 
-After placing every character in its proper bucket, simply concatenate rows[0], rows[1], …, rows[numRows–1].
+We’ll build the answer row by row:
 
-That gives the characters in the order required by reading the zigzag pattern row by row.
+### Row 0 (top row)
 
-Complexity
-Time: O(n), where n = s.length(). Each character is appended once and then rows are concatenated in O(n) total.
+* Step by `+6`: indices `0, 6, 12`
+* Chars: `P (0)`, `I (6)`, `N (12)`
+  → Row 0 contributes: **"PIN"**
 
-Space: O(n), for the sum of all buckets plus the output string. The number of rows numRows is at most min(n, numRows), so extra space is proportional to the input size.
+### Row 1 (middle row, row=1)
+
+* `gapA = 6 - 2*1 = 4`, `gapB = 2*1 = 2`, alternate 4,2,4,2,...
+* Start at `j = 1`:
+
+  * append `s[1] = 'A'`, j += 4 → 5
+  * append `s[5] = 'L'`, j += 2 → 7
+  * append `s[7] = 'S'`, j += 4 → 11
+  * append `s[11] = 'I'`, j += 2 → 13
+  * append `s[13] = 'G'`, j += 4 → 17 (stop)
+    → Row 1 contributes: **"ALSIG"**
+
+### Row 2 (middle row, row=2)
+
+* `gapA = 6 - 4 = 2`, `gapB = 2*2 = 4`, alternate 2,4,2,4,...
+* Start at `j = 2`:
+
+  * append `s[2] = 'Y'`, j += 2 → 4
+  * append `s[4] = 'A'`, j += 4 → 8
+  * append `s[8] = 'H'`, j += 2 → 10
+  * append `s[10] = 'R'`, j += 4 → 14 (stop)
+    → Row 2 contributes: **"YAHR"**
+
+### Row 3 (bottom row)
+
+* Step by `+6`: indices `3, 9`
+* Chars: `P (3)`, `I (9)`
+  → Row 3 contributes: **"PI"**
+
+**Concatenate rows in order:**
+Row0 + Row1 + Row2 + Row3 = `"PIN"` + `"ALSIG"` + `"YAHR"` + `"PI"`
+**Result:** `"PINALSIGYAHRPI"` (which matches the expected LeetCode output).
+
+---
+
+## Quick edge cases to sanity-check
+
+* `numRows = 1` → return original string (`"ABCD" → "ABCD"`).
+* `numRows >= s.length()` → return original string.
+* `s = "AB"`, `numRows = 2`:
+
+  * cycle = 2
+  * Row0: idx 0 → "A"
+  * Row1: idx 1 → "B"
+  * Result "AB" (same as input, as expected).
+*/
+
+/*
+How to Derive the Formulas instead of memorizing them:
+
+# 1) Cycle length (why `2*(numRows-1)`)
+
+Draw one full “V” of the zigzag:
+
+* You go **down** from row `0` to row `numRows-1`: that’s `numRows-1` steps.
+* Then you go **up** from row `numRows-1` back to row `0`: another `numRows-1` steps.
+* Total characters covered before the pattern repeats:
+  **`cycleLen = (numRows-1) + (numRows-1) = 2*(numRows-1)`**.
+
+Quick sanity:
+
+* If `numRows = 1`, there’s no zig or zag → cycle is effectively the whole string (treat as a guard case).
+* If `numRows = 4`, cycle = `2*(4-1)=6`. You can literally count 6 steps to return to the same row *and direction*.
+
+# 2) Where do characters for a given row fall inside a cycle?
+
+Think “position mod cycle”. For any index `t` in the string, let `x = t % cycleLen`.
+
+* The row occupied by `t` is `row(t) = min(x, cycleLen - x)` (reflecting the “down then up”).
+* For a fixed row `r`, the indices within each cycle that land on row `r` satisfy:
+
+  * `x = r`  (the **vertical** stroke),
+  * `x = cycleLen - r` (the **diagonal** stroke),
+    except for the **top** (`r=0`) and **bottom** (`r=numRows-1`) rows, where these coincide (so they only have one pick per cycle).
+
+This gives you the insight: **middle rows appear twice per cycle**; top/bottom only once.
+
+# 3) Jump lengths for middle rows (why `gapA = cycleLen - 2*r`, `gapB = 2*r`)
+
+Within a single cycle, a middle row `r` hits two positions: `x=r` and `x=cycleLen - r`.
+
+* From **vertical → diagonal** in the same cycle:
+  distance = `(cycleLen - r) - r = cycleLen - 2*r` → **`gapA`**.
+* From **diagonal → next cycle’s vertical**:
+  next vertical is at `x=r` in the *next* cycle, i.e., index `… + cycleLen + r`.
+  distance = `(cycleLen + r) - (cycleLen - r) = 2*r` → **`gapB`**.
+
+So the row’s jumps **alternate** between `gapA` and `gapB`. Notice `gapA + gapB = cycleLen` (nice consistency check).
+
+Edge rows:
+
+* `r = 0` → `gapA = cycleLen`, `gapB = 0` → only use `cycleLen` (one pick per cycle).
+* `r = numRows-1` → `gapA = 0`, `gapB = cycleLen` → again, only `cycleLen`.
+
+# 4) A tiny numeric check (so you can do it live)
+
+Say `numRows = 4` → `cycleLen = 6`.
+
+* Row `r=1`: `gapA = 6 - 2 = 4`, `gapB = 2`. Alternates **+4, +2, +4, +2…**
+* Row `r=2`: `gapA = 6 - 4 = 2`, `gapB = 4`. Alternates **+2, +4, +2, +4…**
+* Row `r=0` and `r=3` (top/bottom): step **+6** each time.
+
+# 5) Interview-friendly recipe (what to *say* out loud)
+
+1. “One zigzag cycle goes down `R-1` and up `R-1`, so `L = 2*(R-1)`.”
+2. “Per row `r`, picks happen at residues `r` and `L - r` modulo `L` (top/bottom only once).”
+3. “The two jumps for middle rows are the distances between those residues:
+   `gapA = L - 2r`, `gapB = 2r`, and they alternate. Edge rows only use `L`.”
+
+If you blank under pressure, just draw 4 rows, annotate indices 0.., mark where a row is hit inside a 6-length cycle, and read off the gaps—you’ll re-derive the formulas in \~20 seconds.
 */
 class Solution {
     public String convert(String s, int numRows) {
-        if(numRows == 1 || s.length() <= numRows){
-            return s;
-        }
+        int n = s.length();
+        // Edge cases where the zigzag is identical to the original string
+        if (numRows == 1 || numRows >= n) return s;
 
-        StringBuilder[] rows = new StringBuilder[numRows];
-        for(int i=0;i<numRows;i++){
-            rows[i] = new StringBuilder();
-        }
+        StringBuilder ans = new StringBuilder(n);
+        int cycle = 2 * (numRows - 1);
 
-        int currRow = 0;
-        int direction = 1;
-
-        for(char c : s.toCharArray()){
-            rows[currRow].append(c);
-
-            if(currRow == numRows - 1){
-                direction = -1;
-            }else if(currRow == 0){
-                direction = +1;
+        for (int row = 0; row < numRows; row++) {
+            // First and last rows: simple step by full cycle
+            if (row == 0 || row == numRows - 1) {
+                for (int j = row; j < n; j += cycle) {
+                    ans.append(s.charAt(j));
+                }
+            } else {
+                // Middle rows: alternate between two gap sizes within each cycle
+                int gapA = cycle - 2 * row; // jump from vertical to diagonal char
+                int gapB = 2 * row;         // jump from diagonal back to next vertical
+                boolean useA = true;
+                int j = row;
+                while (j < n) {
+                    ans.append(s.charAt(j));
+                    j += useA ? gapA : gapB;
+                    useA = !useA;
+                }
             }
-
-            currRow += direction;
         }
 
-        StringBuilder result = new StringBuilder();
-        for(StringBuilder rowSb : rows){
-            result.append(rowSb);
-        }
-        
-        return result.toString();
+        return ans.toString();
     }
 }
 
-// Method 2: Adding characters row by row by using the fact that each cycle (down once and up once) lasts for 2*numRows-2
+
+
+
+
+// Method 2: Simulating the patter with pointer that goes up and down 
+// (Easier but inefficient approach: (O(n) time, O(n) extra space)
 /*
-## Detailed Explanation
-
-1. **Why `cycleLen = 2*numRows - 2`?**
-
-   * In a full “zig” down and “zag” up, you visit `numRows` characters going down, then `numRows-2` characters coming back up (excluding the top and bottom which were already counted).
-   * Together that makes one **cycle** of length
-
- 
-       = 2*numRows - 2.
-
-2. **Row-by-row extraction**
-
-   * We treat each row `i` independently and collect exactly the characters that would land in that row in the zigzag.
-
-3. **Vertical characters**
-
-   * Every cycle contributes one character directly “below” in row `i` at index
-
-     $$
-       j = i + k * cycleLen
-     $$
-
-     for `k = 0, 1, 2, …` as long as `j < s.length()`.
-
-4. **Diagonal characters (middle rows only)**
-
-   * For rows strictly between the top (`0`) and bottom (`numRows-1`), each cycle also has a “zig” character on the way back up.
-   * That character’s index is
-
-     $$
-       j + (cycleLen - 2*i)
-     $$
-   * We compute `diag = j + cycleLen - 2*row`. If `diag < n`, that diagonal character is valid and belongs to row `i`.
-
-5. **Putting it all together**
-
-   * We loop `row` from `0` to `numRows-1`.
-   * For each `row`, we step through the string in strides of `cycleLen`, appending the vertical char, and—if `row` is not the first or last—also the diagonal char.
-   * This visits each original character exactly once, in the same order as the zigzag reading by rows.
-
-6. **Complexity**
-
-   * **Time:** O(n), since we touch each character at most twice (vertical + diagonal).
-   * **Space:** O(n) for the output `StringBuilder`.
-
-This cycle‐based approach avoids explicitly simulating the up/down direction on every character and directly jumps to the two indices in each cycle that map to the current row.
-
+Simulate the zigzag with a pointer that goes “down” then “up” across rows.
+Keep a StringBuilder per row; append characters as you walk; then join them.
 */
+
 // class Solution {
 //     public String convert(String s, int numRows) {
 //         int n = s.length();
-//         if (numRows == 1 || numRows >= n) {
-//             // No zigzagging needed
-//             return s;
+//         if (numRows == 1 || numRows >= n) return s;
+
+//         List<StringBuilder> rows = new ArrayList<>(numRows);
+//         for (int i = 0; i < numRows; i++) rows.add(new StringBuilder());
+
+//         int r = 0, dir = 1; // +1 = down, -1 = up
+//         for (int k = 0; k < n; k++) {
+//             rows.get(r).append(s.charAt(k));
+//             if (r == 0) dir = 1;
+//             else if (r == numRows - 1) dir = -1;
+//             r += dir;
 //         }
-        
-//         // The cycle length: go down numRows, then up numRows-2
-//         int cycleLen = 2 * numRows - 2;
-//         StringBuilder sb = new StringBuilder(n);
-        
-//         // Build row by row
-//         for (int row = 0; row < numRows; row++) {
-//             // For each cycle starting at index 0, cycleLen, 2*cycleLen, …
-//             for (int j = row; j < n; j += cycleLen) {
-//                 // 1) The “vertical” character for this row
-//                 sb.append(s.charAt(j));
-                
-//                 // 2) For middle rows, there’s an extra “diagonal” char
-//                 //    at offset (cycleLen - row) within each cycle
-//                 int diag = j + cycleLen - 2 * row;
-//                 // Only append if it’s in‐bounds and not the same as the vertical
-//                 // Intuitively:
-//                 // You start at the downward position downIndex.
-//                 // You then need to jump forward by the remainder of the
-//                 // cycle, minus the distance you’ve already descended (i),
-//                 // to land on that upward stroke.
-//                 if (row > 0 && row < numRows - 1 && diag < n) {
-//                     sb.append(s.charAt(diag));
-//                 }
-//             }
-//         }
-        
-//         return sb.toString();
+
+//         StringBuilder ans = new StringBuilder(n);
+//         for (StringBuilder sb : rows) ans.append(sb);
+//         return ans.toString();
 //     }
 // }
