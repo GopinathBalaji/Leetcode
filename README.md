@@ -198,6 +198,7 @@
 | [0205-isomorphic-strings](https://github.com/GopinathBalaji/Leetcode/tree/master/0205-isomorphic-strings) |
 | [0208-implement-trie-prefix-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0208-implement-trie-prefix-tree) |
 | [0211-design-add-and-search-words-data-structure](https://github.com/GopinathBalaji/Leetcode/tree/master/0211-design-add-and-search-words-data-structure) |
+| [0224-basic-calculator](https://github.com/GopinathBalaji/Leetcode/tree/master/0224-basic-calculator) |
 | [0242-valid-anagram](https://github.com/GopinathBalaji/Leetcode/tree/master/0242-valid-anagram) |
 | [0290-word-pattern](https://github.com/GopinathBalaji/Leetcode/tree/master/0290-word-pattern) |
 | [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
@@ -428,6 +429,7 @@
 | [0150-evaluate-reverse-polish-notation](https://github.com/GopinathBalaji/Leetcode/tree/master/0150-evaluate-reverse-polish-notation) |
 | [0155-min-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0155-min-stack) |
 | [0173-binary-search-tree-iterator](https://github.com/GopinathBalaji/Leetcode/tree/master/0173-binary-search-tree-iterator) |
+| [0224-basic-calculator](https://github.com/GopinathBalaji/Leetcode/tree/master/0224-basic-calculator) |
 ## Design
 |  |
 | ------- |
@@ -490,6 +492,7 @@
 | [0172-factorial-trailing-zeroes](https://github.com/GopinathBalaji/Leetcode/tree/master/0172-factorial-trailing-zeroes) |
 | [0189-rotate-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0189-rotate-array) |
 | [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
+| [0224-basic-calculator](https://github.com/GopinathBalaji/Leetcode/tree/master/0224-basic-calculator) |
 | [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 ## Memoization
 |  |
@@ -509,6 +512,7 @@
 | [0002-add-two-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/0002-add-two-numbers) |
 | [0021-merge-two-sorted-lists](https://github.com/GopinathBalaji/Leetcode/tree/master/0021-merge-two-sorted-lists) |
 | [0050-powx-n](https://github.com/GopinathBalaji/Leetcode/tree/master/0050-powx-n) |
+| [0224-basic-calculator](https://github.com/GopinathBalaji/Leetcode/tree/master/0224-basic-calculator) |
 ## Doubly-Linked List
 |  |
 | ------- |
