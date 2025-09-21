@@ -8,49 +8,62 @@
  *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
  * }
  */
+
+// Method 1: My answer by creating new nodes
 class Solution {
     public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
-        ListNode temp = new ListNode(0);
-        ListNode ans = temp;
+        ListNode dummy = new ListNode(-1);
+        ListNode curr = dummy;
 
         while(list1 != null && list2 != null){
             if(list1.val <= list2.val){
-                ans.next = list1;
+                curr.next = new ListNode(list1.val);
+                curr = curr.next;
                 list1 = list1.next;
             }else{
-                ans.next = list2;
+                curr.next = new ListNode(list2.val);
+                curr = curr.next;
                 list2 = list2.next;
             }
-
-            ans = ans.next;
         }
 
-        if(list1 != null){
-            ans.next = list1;
-        }else{
-            ans.next = list2;
+        while(list1 != null){
+            curr.next = new ListNode(list1.val);
+            curr = curr.next;
+            list1 = list1.next;
         }
 
-        return temp.next;
+        while(list2 != null){
+            curr.next = new ListNode(list2.val);
+            curr = curr.next;
+            list2 = list2.next;
+        }
+
+        return dummy.next;
     }
 }
 
 
-// class Solution{
-//     public ListNode mergeTwoLists(ListNode list1, ListNode list2){
-//         if(list1 == null){
-//             return list2;
-//         }
-//         if(list2 == null){
-//             return list1;
+// Method 1.5: Same answer without creating new nodes
+// class Solution {
+//     public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+//         ListNode dummy = new ListNode(0);
+//         ListNode cur = dummy;
+
+//         while (list1 != null && list2 != null) {
+//             if (list1.val <= list2.val) {
+//                 cur.next = list1;          // reuse node
+//                 list1 = list1.next;
+//             } else {
+//                 cur.next = list2;          // reuse node
+//                 list2 = list2.next;
+//             }
+//             cur = cur.next;
 //         }
 
-//         if(list1.val <= list2.val){
-//             list1.next = mergeTwoList(list1.next, list2);
-//             return list1;
-//         }else{
-//             list2.next = mergeTwoList(list1, list2.next);
-//             return list2;           
-//         }
+//         // attach the leftover list (one of them is null)
+//         cur.next = (list1 != null) ? list1 : list2;
+
+//         return dummy.next;
 //     }
 // }
