@@ -14,29 +14,35 @@ class Solution {
             return head;
         }
 
-        ListNode lesser = new ListNode(-101);
-        ListNode cpyLe = lesser;
-        ListNode greaterEq = new ListNode(101);
-        ListNode cpyGe = greaterEq;
+        ListNode dummy1 = new ListNode(-1);
+        dummy1.next = head;
+        ListNode curr1 = dummy1;
 
-        ListNode copy1 = head;
+        ListNode dummy2 = new ListNode(-2);
+        // dummy2.next = head;
+        ListNode curr2 = dummy2;
 
-        while(copy1 != null){
-            if(copy1.val < x){
-                lesser.next = copy1;
-                lesser = lesser.next;
-            }else{
-                greaterEq.next = copy1;
-                greaterEq = greaterEq.next;
+        ListNode dummy3 = new ListNode(-3);
+        // dummy3 = head;
+        ListNode curr3 = dummy3;
+
+        while(curr1.next != null){
+            if(curr1.next != null && curr1.next.val < x){
+                curr2.next = curr1.next;
+                curr2 = curr2.next;
+                curr1 = curr1.next;
+            }else if(curr1.next != null && curr1.next.val >= x){
+                curr3.next = curr1.next;
+                curr3 = curr3.next;
+                curr1 = curr1.next;
             }
 
-            copy1 = copy1.next;
+            // curr1 = curr1.next;
         }
 
-        greaterEq.next = null;
+        curr3.next = null;
+        curr2.next = dummy3.next;
 
-        lesser.next = cpyGe.next;
-
-        return cpyLe.next;
+        return dummy2.next;
     }
 }
