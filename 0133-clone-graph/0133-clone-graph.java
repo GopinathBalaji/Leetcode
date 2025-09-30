@@ -19,184 +19,159 @@ class Node {
 */
 
 
-// //////////////////
-// Using BFS
-/*
-Intuition
-
-Great question.
-
-To solve **Leetcode 133. Clone Graph**, here's the **intuition** and **mental model** you should build, without jumping to code:
-
----
-
-###  **What Are You Being Asked?**
-
-You are given a **reference node** of an **undirected graph**, and you're asked to create a **deep copy** (clone) of the entire graph.
-
-This means:
-
-* Every node must be **copied** (not referenced).
-* All edges between nodes must be **reconstructed** exactly as they appear in the original graph.
-* The cloned graph must be **structurally identical** but made of **new node instances**.
-
----
-
-### **Key Challenge: Cycles and Repeated Nodes**
-
-Graphs can contain:
-
-* **Cycles** (e.g. A → B → A)
-* **Multiple neighbors**
-* **Shared neighbors** (two nodes pointing to the same third)
-
-So the major challenge is:
-
-> How do you avoid **cloning the same node multiple times**, or going into **infinite recursion** due to cycles?
-
----
-
-###  **Core Idea (Mental Model)**
-
-You want to **visit each node once** and **remember** its cloned version so you can:
-
-* Reuse the cloned node if it's already been created.
-* Link it properly in the neighbor list of the current node.
-
-This leads to the intuition of using a **visited map** (or `HashMap<Node, Node>`) where:
-
-* Key = original node
-* Value = its clone
-
----
-
-### **How to Traverse?**
-
-Two approaches work equally well:
-
-* **DFS** (depth-first search): Recurse into each neighbor.
-* **BFS** (breadth-first search): Traverse layer by layer using a queue.
-
-Both rely on the same invariant:
-
-> “If I've seen a node before, I shouldn't recreate its clone—I'll just reuse the one in my map.”
-
----
-
-###  **What You’re Building**
-
-* A new **Node** for each original node.
-* A new list of **neighbors**, where each neighbor is also a **cloned node**, not a reference.
-
----
-
-###  Recap of the Thought Process:
-
-1. **Clone the first node**.
-2. **Use a map** to track already cloned nodes.
-3. **Traverse the graph** using DFS or BFS.
-4. **When visiting neighbors**, clone them if not already cloned, and add them to the neighbor list of the current node.
-
----
-*/
-class Solution{
+// Method 1: My iterative DFS appraoch
+class Solution {
     public Node cloneGraph(Node node) {
-        if (node == null) return null;
+        if(node == null){
+            return node;
+        }
 
-        // Map from original node to its clone
-        Map<Node, Node> cloneMap = new HashMap<>();
-        
-        // Clone the starting node
-        cloneMap.put(node, new Node(node.val));
-        
-        // BFS queue
-        Queue<Node> queue = new LinkedList<>();
-        queue.add(node);
+        HashMap<Node, Node> map = new HashMap<>();
 
-        while (!queue.isEmpty()) {
-            Node current = queue.poll();
+        HashSet<Node> visited = new HashSet<>();
+        Deque<Node> stack = new ArrayDeque<>();
+        stack.addFirst(node);
 
-            // Go through each neighbor
-            for (Node neighbor : current.neighbors) {
-                if (!cloneMap.containsKey(neighbor)) {
-                    // Clone it if not already cloned
-                    cloneMap.put(neighbor, new Node(neighbor.val));
-                    queue.add(neighbor); // Visit this neighbor later
+        while(!stack.isEmpty()){
+            Node oldNode = stack.pop();
+            if(visited.contains(oldNode)){
+                continue;
+            }
+
+            visited.add(oldNode);
+
+            Node newNode;
+            if(!map.containsKey(oldNode)){
+                newNode = new Node(oldNode.val);
+                map.put(oldNode, newNode);
+            }else{
+                newNode = map.get(oldNode);
+            }
+
+            for(Node n : oldNode.neighbors){
+                stack.addFirst(n);
+
+                Node newNeighbor;
+                if(map.containsKey(n)){
+                    newNeighbor = map.get(n);
+                    newNode.neighbors.add(newNeighbor);
+                }else{
+                    newNeighbor = new Node(n.val);
+                    map.put(n, newNeighbor);
+                    newNode.neighbors.add(newNeighbor);
                 }
-                // Link the clone of the current node to the clone of the neighbor
-                cloneMap.get(current).neighbors.add(cloneMap.get(neighbor));
             }
         }
 
-        // Return the clone of the input node
-        return cloneMap.get(node);
+        return map.get(node);
     }
 }
 
 
-// DFS code
+
+// Method 1.5: Better Iterative DFS approach (O(V+E))
 /*
-### \U0001f9e0 Thought Process
-
-1. **Base Case**: If `node == null`, return `null`.
-2. **Visited Map**: Use `cloneMap` to remember already cloned nodes and avoid cycles.
-3. **Recursive Step**: For each neighbor, recursively call `dfs` and attach the clone of that neighbor to the current clone's `neighbors`.
-
----
-
-### \U0001f4a1 How DFS Works Here
-
-If the graph looks like:
-
-```
-1 -- 2
-|    |
-4 -- 3
-```
-
-* Call `dfs(1)`:
-
-  * Clone 1
-  * Visit neighbor 2 → `dfs(2)`
-
-    * Clone 2
-    * Visit neighbor 3 → `dfs(3)`
-
-      * Clone 3
-      * Visit 4 → `dfs(4)`
-
-        * Clone 4
-        * Visit 1 → Already cloned → return cloned 1
-      * Attach cloned 1 to cloned 4, and so on...
-
-Each node gets cloned **once**, and recursion naturally traverses the full graph.
-
----
-
+Why this is robust:
+No visited set needed: the map tells us if we’ve seen a node.
+Push once per node: we only push(v) the very first time we discover v.
+Edges added exactly once per original adjacency: For each (u,v) in original, we add u'->v' when processing u. In LC’s undirected graphs, v also contains u in its neighbor list, so the reverse edge will be added when v is processed.
 */
 
-// class Solution{
+// class Solution {
 //     public Node cloneGraph(Node node) {
-//         if(node == null){
-//             return null;
+//         if (node == null) return null;
+
+//         Map<Node, Node> map = new HashMap<>();
+//         Deque<Node> st = new ArrayDeque<>();
+
+//         // create clone for the start node and seed the stack
+//         map.put(node, new Node(node.val));
+//         st.push(node);
+
+//         while (!st.isEmpty()) {
+//             Node u = st.pop();
+//             Node uClone = map.get(u);
+
+//             for (Node v : u.neighbors) {
+//                 if (!map.containsKey(v)) {
+//                     // first time we see v: create its clone and push original v
+//                     map.put(v, new Node(v.val));
+//                     st.push(v);
+//                 }
+//                 // add edge u' -> v'
+//                 uClone.neighbors.add(map.get(v));
+//             }
 //         }
-        
-//         HashMap<Node, Node> cloneMap = new HashMap<>();    
-//         return dfs(node, cloneMap);
+//         return map.get(node);
+//     }
+// }
+
+
+
+
+// Method 2: BFS approach  (O(V+E))
+// class Solution {
+//     public Node cloneGraph(Node node) {
+//         if (node == null) return null;
+
+//         Map<Node, Node> map = new HashMap<>();
+//         Queue<Node> q = new ArrayDeque<>();
+
+//         map.put(node, new Node(node.val));
+//         q.offer(node);
+
+//         while (!q.isEmpty()) {
+//             Node u = q.poll();
+//             Node uClone = map.get(u);
+
+//             for (Node v : u.neighbors) {
+//                 if (!map.containsKey(v)) {
+//                     map.put(v, new Node(v.val));
+//                     q.offer(v);
+//                 }
+//                 uClone.neighbors.add(map.get(v));
+//             }
+//         }
+//         return map.get(node);
+//     }
+// }
+
+
+
+
+// Method 3: Recursive DFS approach
+/*
+The key is to use a HashMap<Node, Node> to memoize already-cloned nodes so you (1) avoid infinite recursion on cycles, and (2) reuse clones when neighbors point back.
+
+Idea:
+If node == null → return null.
+If we’ve already cloned node, return the clone from the map.
+ Otherwise:
+Create a clone with the same value.
+Put it in the map before cloning neighbors (prevents infinite loops).
+Recursively clone each neighbor and append to the clone’s neighbor list.
+*/
+
+// class Solution {
+//     private Map<Node, Node> map = new HashMap<>();
+
+//     public Node cloneGraph(Node node) {
+//         if (node == null) return null;
+//         return dfs(node);
 //     }
 
-//     public Node dfs(Node node, HashMap<Node, Node> cloneMap){
-//         if(cloneMap.containsKey(node)){
-//             return cloneMap.get(node);
-//         }
-        
-//         Node clone = new Node(node.val);
-//         cloneMap.put(node, clone);
+//     private Node dfs(Node u) {
+//         // already cloned? return it
+//         if (map.containsKey(u)) return map.get(u);
 
-//         for(Node neighbor: node.neighbors){
-//             clone.neighbors.add(dfs(neighbor));
-//         }
+//         // create clone and memoize immediately
+//         Node copy = new Node(u.val);
+//         map.put(u, copy);
 
-//         return clone;
+//         // clone all neighbors recursively
+//         for (Node v : u.neighbors) {
+//             copy.neighbors.add(dfs(v));
+//         }
+//         return copy;
 //     }
 // }
