@@ -1,292 +1,170 @@
-// Checking cycle using DFS (Topological sort)
+// Method 1: Topological Sort (Cycle Detection) using Recursive DFS
 /*
-Using a recStack to check if we visited the node in the currect DFS attempt.
+## What’s wrong in my previous attempt:
 
-### ✅ Example Directed Graph (with cycle):
+1. **Wrong visitation bookkeeping.**
+   You use a single `visited` set to mean both “seen before” and “on the current recursion path.” That conflates two different states. You need **three states** (or two sets):
 
-```java
-graph = {
-    1 → [2],
-    2 → [3],
-    3 → [4, 5],
-    4 → [],
-    5 → [2],   // back edge to 2 creates a cycle: 2 → 3 → 5 → 2
-    6 → []
-}
-```
+   * `0 = unvisited`
+   * `1 = visiting` (on current DFS stack / path)
+   * `2 = done` (fully explored)
+     A cycle exists iff you reach a node that’s already **visiting**.
 
-### \U0001f9e0 Cycle:
+2. **You ignore DFS return values.**
+   Inside the loop you call `dfs(...)` but you don’t check its result. If a child finds a cycle, you must **propagate `false` up** immediately.
 
-* **2 → 3 → 5 → 2**
-  Back edge from 5 to 2 → this is the cycle.
+3. **You only start DFS from one node.**
+   Doing `dfs(..., prerequisites[0][0])` explores a single component. The graph can be **disconnected**. You must run DFS from **every course 0..numCourses-1** that’s unvisited.
 
----
-
-## \U0001fa9c Step-by-step Trace
-
-### Initial state:
-
-```java
-visited = {}
-recStack = {}
-Start from node = 1
-```
+4. **Edge direction & null checks.**
+   Typical modeling is `prereq -> course` (i.e., to take `course`, you must take `prereq` first). Your code uses `u -> v` where `u=course, v=prereq`. Either direction works **if consistent**, but be careful when reasoning about cycles. Also, `graph.get(curr)` can be `null`.
 
 ---
 
-### Call: `dfs(1)`
+## Correct recursive DFS = cycle detection with 3-state coloring
 
-* `visited = {1}`
-* `recStack = {1}`
-* neighbors of 1 → \[2]
 
----
+### Why this works
 
-### Call: `dfs(2)`
+* **Cycle detection:** During DFS, encountering a **visiting** node means a back-edge → cycle.
+* **Termination:** Nodes marked **done** won’t be re-explored.
+* **Coverage:** We start DFS from every unvisited course, so disconnected components are handled.
 
-* `visited = {1, 2}`
-* `recStack = {1, 2}`
-* neighbors of 2 → \[3]
+### If you prefer two sets instead of colors
 
----
+Use `onPath` (recursion stack) and `seen`:
 
-### Call: `dfs(3)`
-
-* `visited = {1, 2, 3}`
-* `recStack = {1, 2, 3}`
-* neighbors of 3 → \[4, 5]
+* When you enter a node: add to `onPath`, add to `seen`.
+* If you reach a neighbor already in `onPath` → cycle.
+* When you exit a node: remove from `onPath`.
 
 ---
 
-### Call: `dfs(4)`
+## Quick walkthrough
 
-* `visited = {1, 2, 3, 4}`
-* `recStack = {1, 2, 3, 4}`
-* neighbors of 4 → \[]
-
-➡️ backtrack:
-
-* `recStack = {1, 2, 3}`
-
----
-
-### Back in `dfs(3)`, now visit `5`
-
-### Call: `dfs(5)`
-
-* `visited = {1, 2, 3, 4, 5}`
-* `recStack = {1, 2, 3, 5}`
-* neighbors of 5 → \[2]
-
-Now we check:
-
-```java
-if (recStack.contains(2)) → true
-```
-
-### ✅ CYCLE FOUND: return true
-
----
-
-### \U0001f9ed Recursion Tree
+### Example 1 (cycle)
 
 ```
-dfs(1)
-  └── dfs(2)
-        └── dfs(3)
-              ├── dfs(4) ✅ returns false
-              └── dfs(5)
-                    └── dfs(2) ❌ already in recStack → CYCLE
+numCourses = 2
+prerequisites = [[0,1],[1,0]]
+Edges: 1 -> 0, 0 -> 1
 ```
 
+* Start at 0: visiting(0) → go to 1: visiting(1) → neighbor 0 is visiting → **cycle** → return false.
+
+### Example 2 (no cycle)
+
+```
+numCourses = 4
+prerequisites = [[1,0],[2,0],[3,1],[3,2]]
+Edges: 0->1, 0->2, 1->3, 2->3
+```
+
+* DFS(0): visit 1 (then 3), back, visit 2 (then 3 already done), mark 0 done → no cycles. Other nodes done/unvisited → return true.
+
 ---
 
-### ✅ Key Insight:
+## Common pitfalls to avoid
 
-`visited` tracks all nodes ever visited — it never shrinks.
-
-`recStack` tracks nodes *on the current DFS path*. Once you backtrack (return from the call), you `recStack.remove(node)`.
-
-So, for example:
-
-* `4` is in `visited` but not in `recStack` anymore when we return to `dfs(3)`.
-* Only `2 → 3 → 5` are in the **recStack** when the back edge is found.
+* Using one `visited` set for both “seen” and “on the current recursion stack.”
+* Not checking/propagating the child DFS boolean result.
+* Only exploring from one node.
+* Forgetting to handle nodes with **no outgoing edges** (ensure adjacency lists exist for all courses).
+* Building edges in the opposite direction and then reasoning as if it were prereq → course.
 
 ---
 
-### \U0001f501 After cycle:
+### Bonus: Kahn’s algorithm (BFS topological sort)
 
-Once cycle is detected, all recursive calls immediately return `true`.
+Another standard solution: compute indegrees and repeatedly pop 0-indegree nodes. If you process all `numCourses`, no cycle. If you can’t, there’s a cycle. (You asked for recursive DFS, so the code above sticks to that.)
 */
 class Solution {
     public boolean canFinish(int numCourses, int[][] prerequisites) {
-        
-        HashMap<Integer, List<Integer>> graph = new HashMap<>();
+        // Build adjacency list: prereq -> course
+        List<Integer>[] g = new ArrayList[numCourses];
+        for (int i = 0; i < numCourses; i++) g[i] = new ArrayList<>();
 
-        for(int i=0;i<prerequisites.length;i++){
-            int from = prerequisites[i][1];
-            int to = prerequisites[i][0];
-
-            graph.putIfAbsent(from, new ArrayList<>());
-            graph.get(from).add(to);
+        for (int[] p : prerequisites) {
+            int course = p[0], prereq = p[1];
+            g[prereq].add(course);
         }
 
-        // If cycle exists return false
-        return !hasCycle(graph);
-    }
+        // 0 = unvisited, 1 = visiting, 2 = done
+        int[] state = new int[numCourses];
 
-    public boolean hasCycle(HashMap<Integer, List<Integer>> graph){
-        Set<Integer> visited = new HashSet<>();
-        Set<Integer> recStack = new HashSet<>();
-
-        for(int node: graph.keySet()){
-            if(!visited.contains(node)){
-                if(dfs(graph, node, visited, recStack)){
-                    return true;
-                }
+        for (int i = 0; i < numCourses; i++) {
+            if (state[i] == 0 && hasCycle(i, g, state)) {
+                return false; // cycle found → cannot finish all courses
             }
         }
-
-        return false;
+        return true; // no cycles
     }
 
-    public boolean dfs(HashMap<Integer, List<Integer>> graph, int node, Set<Integer> visited, Set<Integer> recStack){
-        visited.add(node);
-        recStack.add(node);
+    private boolean hasCycle(int u, List<Integer>[] g, int[] state) {
+        if (state[u] == 1) return true;   // back-edge to node on current path → cycle
+        if (state[u] == 2) return false;  // already fully processed
 
-        for(int neighbor: graph.getOrDefault(node, new ArrayList<>())){
-            if(!visited.contains(neighbor)){
-                if(dfs(graph, neighbor, visited, recStack)){
-                    return true;
-                }
-            }else if(recStack.contains(neighbor)){
-                return true; 
-            }
+        state[u] = 1; // mark as visiting
+        for (int v : g[u]) {
+            if (hasCycle(v, g, state)) return true;
         }
-
-        // backtrack to remove the node from the current DFS recStack
-        recStack.remove(node); 
+        state[u] = 2; // mark as done
         return false;
     }
 }
 
-// Using BFS to check if a cycle exists (Khan's Toplogical Sort Algorithm)
+
+
+
+// Method 2: Using Kahn’s Algorithm (BFS Topological Sort)
 /*
+### How it works
 
----
+* Count indegrees (how many prerequisites each course still needs).
+* Start with all courses whose indegree is 0 (ready to take).
+* Repeatedly “take” them (pop from queue), and decrement indegrees of dependents.
+* Any dependent hitting indegree 0 becomes ready and enters the queue.
+* If you process all `numCourses`, there’s **no cycle** → `true`; otherwise a cycle blocked progress → `false`.
 
-### \U0001f9e0 **Kahn’s Algorithm: Intuition**
+**Time:** `O(V + E)`
+**Space:** `O(V + E)`
 
-Kahn’s Algorithm is based on **topological sorting**. It only works on **Directed Acyclic Graphs (DAGs)**.
-
-> If we can do a complete topological sort (i.e., visit all nodes), then the graph has **no cycle**.
-> If some nodes remain unvisited, it means there's a **cycle** blocking us from continuing.
-
----
-
-### ✅ Algorithm Steps:
-
-1. Compute **in-degree** of all nodes.
-2. Add all **nodes with in-degree 0** to a queue.
-3. While the queue is not empty:
-
-   * Pop a node.
-   * Reduce the in-degree of its neighbors.
-   * If a neighbor's in-degree becomes 0, add it to the queue.
-4. Keep a **count** of how many nodes we visited.
-5. If count == number of nodes → **no cycle**
-   Else → **cycle exists**
-
----
-
-### ✅ Java Code
-
-```
-
----
-
-### \U0001f9ea Example
-
-Let’s reuse this graph:
-
-```
-graph = {
-    1 → [2],
-    2 → [3],
-    3 → [4, 5],
-    4 → [],
-    5 → [2],   // cycle here: 2 → 3 → 5 → 2
-    6 → []
-}
-```
-
-### \U0001f4ca In-Degree Calculation:
-
-| Node | In-degree     |
-| ---- | ------------- |
-| 1    | 0             |
-| 2    | 2 (from 1, 5) |
-| 3    | 1 (from 2)    |
-| 4    | 1 (from 3)    |
-| 5    | 1 (from 3)    |
-| 6    | 0             |
-
-* Start queue: `[1, 6]`
-* After processing:
-
-  * 1 → reduces in-degree of 2 → now 1
-  * 6 → nothing
-* **No new nodes added to queue**
-* Loop ends after visiting 1 and 6 → `visitedCount = 2`
-
-But total nodes = 6 → `2 != 6` → **Cycle exists**
-
----
-
-### \U0001f9e0 Summary
-
-| Method         | Technique         | Detects Cycle? | Can Show Cycle? | Use When                                                           |
-| -------------- | ----------------- | -------------- | --------------- | ------------------------------------------------------------------ |
-| **DFS**        | Recursive stack   | ✅              | Yes (back edge) | When you want to **trace** cycle path                              |
-| **Kahn's BFS** | In-degree + queue | ✅              | No              | When checking if graph is a **DAG** or want a **topological sort** |
+If you also want the **actual order** (for LC 210), you can push `u` into a list where we increment `taken`, and return that list if its size equals `numCourses`.
 */
-// public class Solution {
-//     public boolean hasCycle(HashMap<Integer, List<Integer>> graph) {
-//         Map<Integer, Integer> inDegree = new HashMap<>();
-//         Queue<Integer> queue = new LinkedList<>();
 
-//         // Step 1: Initialize in-degree for all nodes
-//         for (int node : graph.keySet()) {
-//             inDegree.putIfAbsent(node, 0); // in case node has no incoming edges
-//             for (int neighbor : graph.get(node)) {
-//                 inDegree.put(neighbor, inDegree.getOrDefault(neighbor, 0) + 1);
+// class Solution {
+//     public boolean canFinish(int numCourses, int[][] prerequisites) {
+//         // Build adjacency list: prereq -> list of courses that depend on it
+//         List<Integer>[] graph = new ArrayList[numCourses];
+//         for (int i = 0; i < numCourses; i++) graph[i] = new ArrayList<>();
+
+//         // indegree[c] = number of prerequisites needed before taking course c
+//         int[] indegree = new int[numCourses];
+
+//         for (int[] p : prerequisites) {
+//             int course = p[0], prereq = p[1];
+//             graph[prereq].add(course);
+//             indegree[course]++;
+//         }
+
+//         // Queue of courses with no remaining prerequisites
+//         Deque<Integer> q = new ArrayDeque<>();
+//         for (int c = 0; c < numCourses; c++) {
+//             if (indegree[c] == 0) q.offer(c);
+//         }
+
+//         int taken = 0;
+
+//         while (!q.isEmpty()) {
+//             int u = q.poll();
+//             taken++; // we can take this course now
+
+//             for (int v : graph[u]) {
+//                 if (--indegree[v] == 0) q.offer(v);
 //             }
 //         }
 
-//         // Step 2: Add nodes with in-degree 0 to the queue
-//         for (int node : inDegree.keySet()) {
-//             if (inDegree.get(node) == 0) {
-//                 queue.offer(node);
-//             }
-//         }
-
-//         // Step 3: BFS and count processed nodes
-//         int visitedCount = 0;
-//         while (!queue.isEmpty()) {
-//             int curr = queue.poll();
-//             visitedCount++;
-
-//             for (int neighbor : graph.getOrDefault(curr, new ArrayList<>())) {
-//                 inDegree.put(neighbor, inDegree.get(neighbor) - 1);
-//                 if (inDegree.get(neighbor) == 0) {
-//                     queue.offer(neighbor);
-//                 }
-//             }
-//         }
-
-//         // Step 4: If all nodes were processed, no cycle
-//         return visitedCount != inDegree.size();
+//         // If we managed to "take" all courses, there's no cycle
+//         return taken == numCourses;
 //     }
 // }
-
-
