@@ -1,267 +1,166 @@
-// BFS (Level order Graph traversal)
+// Graph BFS (BFS in graph finds shortest distance)
 /*
+Notes:
+Instead of "Pair" a tiny helper class can be used (e.g., State { int pos; int dist; }), or an int[], or parallel queues.
 
-## \U0001f4cc Part 1: **Thought Process Behind the Problem (Snakes and Ladders)**
+Visited should be by final landing square (after snake/ladder).
 
-This is a **shortest path problem** on a **weirdly-shaped board**.
 
----
 
-### \U0001f3af Objective:
+## 1) Reframe the problem
 
-Go from **square 1 to square $n \times n$** in **minimum number of moves**, moving only by rolling a die (1 to 6 steps), and accounting for **snakes and ladders**.
-
----
-
-### \U0001f9e0 Key Ideas:
-
-#### 1. **Model the board as a graph**
-
-* Each square on the board is a **node**.
-* You can move from a node to up to 6 other nodes (by rolling 1–6).
-* If you land on a square with a snake/ladder (`board[row][col] != -1`), it **redirects you** to another square.
-
-➡️ This is a classic case of a **graph traversal** where:
-
-* Nodes = board squares (1 to n²),
-* Edges = dice rolls + snake/ladder jumps.
-
-#### 2. **Find the shortest path**
-
-* We're looking for the **minimum number of dice rolls** to reach the final square.
-* Since all moves have equal "cost", use **BFS (Breadth-First Search)**.
-
-Why BFS? Because:
-
-* It explores all squares reachable in 1 move, then in 2 moves, etc.
-* First time you reach the goal = shortest path.
-
-#### 3. **Convert board structure**
-
-The board is in **2D**, but you must navigate it **linearly** (from square 1 to n²), and the square numbers follow a **zigzag** pattern.
+* Think of each square `1..N²` as a **node** in a graph.
+* From any node `u`, you can roll a die `1..6` → edges to `u+1, u+2, …, u+6` (bounded by `N²`).
+* **Snakes/Ladders**: if a landing square `v` has a snake/ladder to `w` (board cell has a number ≠ -1), the move ends at **`w`**, not `v`.
+* You want the **minimum number of moves** from `1` to `N²` → that’s a classic **BFS** on an unweighted graph.
 
 ---
 
-## \U0001f5fa️ Visualization of Board Numbering (n=6)
+## 2) The tricky part: coordinates ↔ label mapping
 
-```
-36 35 34 33 32 31  ← row 0
-25 26 27 28 29 30  → row 1
-24 23 22 21 20 19  ← row 2
-13 14 15 16 17 18  → row 3
-12 11 10  9  8  7  ← row 4
- 1  2  3  4  5  6  → row 5
-```
+* The board labels are **serpentine** starting from the **bottom row**:
 
-* Square numbers go **left-to-right** on even-numbered rows **from the bottom**, and **right-to-left** on odd-numbered rows.
-* So, to access `board[row][col]`, you must map the square number to `(row, col)` correctly.
+  * Bottom row (last row index): `1..N` left→right
+  * Next row up: `N+1..2N` **right→left**
+  * Alternating direction as you go up.
+* You’ll need a function to convert a **label** `k (1..N²)` to `(row, col)`:
 
----
+  * Compute `rowFromBottom = (k-1) / N` and `colInRow = (k-1) % N`.
+  * Real row index: `row = N-1 - rowFromBottom` (because 0 is top).
+  * If `rowFromBottom` is **even** → left→right: `col = colInRow`
+  * If **odd** → right→left: `col = N-1 - colInRow`
+* Similarly, when you read `board[row][col]`, a value `-1` means “no snake/ladder here”; otherwise it gives the **destination label**.
 
-## ✅ Part 2: **Detailed Explanation of the Code**
-
-### \U0001f9e9 Coordinates Helper Method
-
-```java
-public int[] coordinates(int number, int n) {
-    number = number - 1;
-    int rowFromBottom = number / n;
-    int row = n - 1 - rowFromBottom;
-
-    int col;
-    if (rowFromBottom % 2 == 0) {
-        col = number % n; // left to right
-    } else {
-        col = n - 1 - (number % n); // right to left
-    }
-
-    return new int[]{row, col};
-}
-```
-
-#### What this does:
-
-* Given a square number (1 to n²), this returns its position on the board.
-* Accounts for the zigzag layout by flipping `col` direction based on the row.
+> Hint: Write and test this mapping with a tiny board (e.g., `N=3`) to make sure you don’t mix up the zig-zag.
 
 ---
 
-### \U0001f9ee Main BFS Loop
+## 3) BFS scaffolding (no code, just plan)
 
-```java
-public int snakesAndLadders(int[][] board) {
-    int n = board.length;
+* Queue stores **(label, movesSoFar)**.
+* Start from `(1, 0)`.
+* While queue not empty:
 
-    HashSet<Integer> visited = new HashSet<>();
-    Queue<Integer> queue = new LinkedList<>();
-    int count = 0;
+  * Pop `u`.
+  * For each roll `r` in `1..6`:
 
-    queue.add(1);
-    visited.add(1);
-```
+    * `v = min(u + r, N²)`
+    * Convert `v` to `(row,col)` and check the board:
 
-* Start at square `1`, mark as visited.
-* `count` is number of dice rolls (levels in BFS).
-
----
-
-### \U0001f501 BFS Loop
-
-```java
-while (!queue.isEmpty()) {
-    int size = queue.size();
-
-    for (int i = 0; i < size; i++) {
-        int curr = queue.poll();
-```
-
-* For all squares you can reach in `count` moves:
-
-  * Poll them one by one.
-  * For each, simulate rolling a die:
-
-```java
-        for (int move = 1; move <= 6; move++) {
-            int next = curr + move;
-            if (next > n * n) continue;
-```
-
-* From current square, try moving 1 to 6 steps ahead.
-* Ignore if `next` is beyond the board.
+      * If board has destination `w != -1`, set `v = w`.
+    * If `v` is not **visited**, mark visited and push `(v, movesSoFar + 1)`.
+    * If `v == N²`, you can return `movesSoFar + 1` early.
+* If BFS ends without reaching `N²`, answer is `-1`.
 
 ---
 
-### \U0001f3af Handling Snakes and Ladders
+## 4) Visiting policy
 
-```java
-            int[] coords = coordinates(next, n);
-            int row = coords[0], col = coords[1];
-
-            if (board[row][col] != -1) {
-                next = board[row][col]; // snake or ladder
-            }
-```
-
-* If you land on a snake or ladder (board value ≠ -1), jump to the destination square.
+* Mark **visited by label** (1..N²), **after** applying snake/ladder jump.
+* Avoid revisiting nodes to prevent cycles (snakes could point down).
 
 ---
 
-### ✅ Check if Reached End
+## 5) Edge cases to think through
 
-```java
-            if (next == n * n) return count + 1;
-```
-
-* If you're at the final square, return the number of moves it took to reach here.
-
----
-
-### \U0001f4cd Visit and Enqueue
-
-```java
-            if (!visited.contains(next)) {
-                visited.add(next);
-                queue.add(next);
-            }
-        }
-    }
-
-    count++;
-}
-```
-
-* Only visit each square once to avoid cycles or redundant paths.
-* BFS processes all current-level nodes before incrementing `count`.
+* `N=1` → already at target (`1 == N²`) → `0` moves.
+* Snakes/ladders **on the path of the initial row**.
+* Multiple snakes/ladders chained? (Per problem, you **only** follow the one on the **landing** square, not further chaining in the same move.)
+* Landing on a square that jumps **backwards** (snake) — ensure BFS still handles correctly.
+* Dice overshoot: clamp at `N²`.
 
 ---
 
-### ⛔ No Solution
+## 6) Testing your mapping
 
-```java
-return -1;
-```
+Before BFS, sanity-check your `label → (row,col)` helper:
 
-If BFS completes and you never reach square `n²`, it means it’s **unreachable** — possibly due to the board layout.
+* For `N=3`, labels should map like:
 
----
-
-## ✅ Summary of the Solution
-
-| Part                       | Role                                              |
-| -------------------------- | ------------------------------------------------- |
-| `coordinates()`            | Converts square number to (row, col) on the board |
-| `queue`                    | Tracks positions to explore using BFS             |
-| `visited`                  | Avoids revisiting squares                         |
-| `count`                    | Tracks number of dice rolls (levels in BFS)       |
-| `if board[row][col] != -1` | Handles ladders/snakes                            |
-| `if next == n*n`           | Checks for winning condition                      |
+  * Row 2 (bottom): `1 2 3`
+  * Row 1:          `6 5 4`
+  * Row 0 (top):    `7 8 9`
+* Verify a few conversions both ways (at least `1`, `N`, `N+1`, `N²`).
 
 ---
 
-## \U0001f9e0 Final Thoughts
+## 7) Complexity
 
-This is a fantastic example of:
+* At most `N²` nodes, each with up to 6 edges → **O(N²)** time.
+* Visited array of size `N²+1` → **O(N²)** space.
 
-* Converting a non-standard board to a linear structure.
-* Using BFS for shortest path.
-* Handling direction flips and jump logic elegantly.
+---
+
+## 8) Common pitfalls
+
+* Off-by-one in label math (`(k-1) / N`, `(k-1) % N` is safer).
+* Forgetting the serpentine direction flip every row.
+* Marking visited **before** applying snake/ladder (do it **after** you jump).
+* Trying to chain multiple jumps in a single die roll (don’t).
+
+
+Why this works:
+BFS guarantees the first time you reach a square (after applying snake/ladder) is with the minimum number of rolls.
+The serpentine mapping converts labels ↔ board indices correctly:
+bottom row left→right when rowFromBottom is even,
+next row right→left when odd.
+
+Quick sanity checks:
+n=1 → start equals goal → returns 0.
+If a die roll lands on a ladder, you jump once (no chaining).
+Overshoots clamp at goal.
+visited prevents cycles (e.g., snakes pointing back).
 */
+
 class Solution {
     public int snakesAndLadders(int[][] board) {
+
         int n = board.length;
-        if (n == 1) return 0;
-
-        int count = 0;
+        int goal = n*n;
+                
         HashSet<Integer> visited = new HashSet<>();
-        Queue<Integer> queue = new LinkedList<>();
+        Deque<Pair<Integer, Integer>> q = new ArrayDeque<>();
+        q.offer(new Pair<>(1, 0));
+        visited.add(1);
 
-        queue.add(1); // start from square 1
-        visited.add(1); // mark as visited
 
-        while (!queue.isEmpty()) {
-            int size = queue.size(); // process all nodes at this level
+        while(!q.isEmpty()){
+            Pair<Integer, Integer> cur = q.poll();
+            int currNode = cur.getKey();
+            int diceRolls = cur.getValue();
 
-            for (int i = 0; i < size; i++) {
-                int curr = queue.poll();
 
-                // Try all dice rolls from 1 to 6
-                for (int move = 1; move <= 6; move++) {
-                    int next = curr + move;
-                    if (next > n * n) continue;  // don't go off board
-
-                    int[] coords = coordinates(next, n);
-                    int row = coords[0], col = coords[1];
-
-                    // If there's a snake or ladder, jump to that square
-                    if (board[row][col] != -1) {
-                        next = board[row][col];
-                    }
-
-                    if (next == n * n) return count + 1;  // reached end
-
-                    if (!visited.contains(next)) {
-                        visited.add(next);
-                        queue.add(next);
-                    }
-                }
+            if(currNode == goal){
+                return diceRolls;
             }
 
-            count++;  // all squares reachable in 'count' moves
+            for(int i=1; i<=6; i++){
+                int v = Math.min(currNode + i, goal);
+                int[] coord = getCoord(v, n);
+                if(board[coord[0]][coord[1]] != -1){
+                    v = board[coord[0]][coord[1]];
+                }
+                if(!visited.contains(v)){
+                    visited.add(v);
+                    q.offer(new Pair<>(v, diceRolls + 1));
+                }
+            }
         }
 
-        return -1;  // not reachable
+        return -1;
     }
 
-    public int[] coordinates(int number, int n) {
-        number = number - 1;
-        int rowFromBottom = number / n;
-        int row = n - 1 - rowFromBottom;
+    private int[] getCoord(int k, int n){
+        int rowFromBottom = (k-1) / n;
+        int colInRow = (k-1) % n;
 
+        int row = n-1 - rowFromBottom;
         int col;
-        if (rowFromBottom % 2 == 0) {
-            col = number % n;
-        } else {
-            col = n - 1 - (number % n);
+
+        if(rowFromBottom % 2 == 0){
+            col = colInRow;
+        }else{
+            col = n-1 - colInRow;
         }
 
         return new int[]{row, col};
