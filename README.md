@@ -69,6 +69,7 @@
 | [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
+| [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
@@ -116,6 +117,7 @@
 | [0242-valid-anagram](https://github.com/GopinathBalaji/Leetcode/tree/master/0242-valid-anagram) |
 | [0274-h-index](https://github.com/GopinathBalaji/Leetcode/tree/master/0274-h-index) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
+| [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
 ## Hash Table
 |  |
@@ -269,6 +271,7 @@
 | [0134-gas-station](https://github.com/GopinathBalaji/Leetcode/tree/master/0134-gas-station) |
 | [0135-candy](https://github.com/GopinathBalaji/Leetcode/tree/master/0135-candy) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
+| [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 ## Sliding Window
 |  |
 | ------- |
@@ -482,6 +485,7 @@
 | [0023-merge-k-sorted-lists](https://github.com/GopinathBalaji/Leetcode/tree/master/0023-merge-k-sorted-lists) |
 | [0215-kth-largest-element-in-an-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0215-kth-largest-element-in-an-array) |
 | [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
+| [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 ## Quickselect
 |  |
 | ------- |
