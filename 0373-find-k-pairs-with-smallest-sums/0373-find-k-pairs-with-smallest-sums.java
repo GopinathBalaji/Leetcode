@@ -1,287 +1,209 @@
-// Method 1: Adding values using Min Heap but avoiding all pairs check.
-// Also keeping track of index of nums2 so that we can use it later to explore
-// other values in nums2. (Note: The third values we are adding, i.e the index of nums2,
-// is not part of the priority comparison we have defined. It only exists to give extra info,
-// and not decide priority.)
+// Method 1.5: Min-heap of indices (atmost k values in heap at all times), O(k log m)
 /*
-How does Java know to compare only the first two?
-Because of this custom comparator:
+# Why this works
 
-PriorityQueue<int[]> minHeap = new PriorityQueue<>(
-    (a, b) -> Integer.compare(a[0] + a[1], b[0] + b[1])
-);
-This tells the PriorityQueue:
-
-"Whenever you compare two items a and b, use the sum a[0] + a[1] and b[0] + b[1]."
-
-This comparator only uses index 0 and index 1 of the array.
-It completely ignores a[2] or b[2] (even though it’s part of the array being stored).
-
-
-
-
-##  Example for code walkthrough
-
-Let's use:
-
-```java
-nums1 = [1, 7]
-nums2 = [3, 5, 6]
-k = 5
-```
-
-That means we want the **5 pairs with the smallest sums** from all possible combinations of one element from `nums1` and one from `nums2`.
-
----
-
-###  All Possible Pairs (with sums):
-
-| Pair   | Sum |
-| ------ | --- |
-| (1, 3) | 4   |
-| (1, 5) | 6   |
-| (1, 6) | 7   |
-| (7, 3) | 10  |
-| (7, 5) | 12  |
-| (7, 6) | 13  |
-
-Out of these, we want the **5 smallest sum pairs** → result should be:
+Think of each fixed `i` in `nums1` as producing a sorted “row” of sums with `nums2`:
 
 ```
-[[1,3], [1,5], [1,6], [7,3], [7,5]]
+Row i: (nums1[i] + nums2[0]) ≤ (nums1[i] + nums2[1]) ≤ ... ≤ (nums1[i] + nums2[n-1])
 ```
 
----
+All rows are individually sorted (because `nums2` is sorted). We want the global k smallest across all rows. That’s the classic **k-way merge** pattern:
 
-##  Code Structure and Logic
+* Seed the heap with the first element of each row: `(i, 0)` for `i = 0..min(m-1, k-1)`.
+* Repeatedly pop the smallest sum `(i, j)` and append `(nums1[i], nums2[j])` to the answer.
+* From the same row `i`, the **next** candidate is `(i, j+1)` (since rows are sorted). Push it if it exists.
+* Stop after `k` pops.
 
-We're using a **min-heap (priority queue)** where each element is a triplet:
+This explores only **O(k)** pairs (plus the initial seeding), instead of generating all `m*n` pairs.
 
-```java
-new int[] { nums1[i], nums2[j], j }
-```
-
-| Index | Value     | Meaning                   |
-| ----- | --------- | ------------------------- |
-| 0     | nums1\[i] | First number of the pair  |
-| 1     | nums2\[j] | Second number of the pair |
-| 2     | j         | Current index in nums2    |
-
-We do this to efficiently generate the next smallest pair for the same `nums1[i]` by incrementing `j`.
+**Time:** heap holds at most `min(m, k)` nodes ⇒ each pop/push is `O(log min(m, k))`.
+We do ≤ `k` pops ⇒ **`O(k log min(m, k))`**.
+**Space:** heap + result ⇒ **`O(min(m, k))`** (result is `O(k)` as required).
 
 ---
 
-##  Detailed Walkthrough
+# Thorough example walkthrough
 
-### ➤ Initial Heap Setup
+**Input**
+`nums1 = [1, 7, 11]`
+`nums2 = [2, 4, 6]`
+`k = 5`
 
-We insert the **first `min(k, nums1.length)`** pairs using `nums2[0]` (smallest element in `nums2`) for each `nums1[i]`.
+We want 5 pairs with smallest sums.
 
-```java
-for (int i = 0; i < Math.min(nums1.length, k); i++) {
-    minHeap.offer(new int[] { nums1[i], nums2[0], 0 });
-}
-```
+## Seed
 
-### Initial Heap Contents:
+Push `(i,0)` for `i = 0..min(3,5)-1 = 0..2`:
 
-* `{1, 3, 0}` → sum = 4
-* `{7, 3, 0}` → sum = 10
+* Push `(0,0)` sum = 1+2=3
+* Push `(1,0)` sum = 7+2=9
+* Push `(2,0)` sum = 11+2=13
 
-Heap stores pairs ordered by `nums1[i] + nums2[j]`
+Heap (by sum): `[ (0,0:3), (1,0:9), (2,0:13) ]`
 
----
+## Pop 1 (k=5 → 4)
 
-###  Begin Popping & Pushing
+* Pop `(0,0)` → pair is `[1,2]`
+* Push next from same row `i=0`: `(0,1)` sum=1+4=5
+* Heap: `[ (0,1:5), (2,0:13), (1,0:9) ]`  (ordering shown by sums)
 
-We'll now extract the smallest-sum pair and, if possible, push the next pair using the same `nums1[i]` and `nums2[j + 1]`.
+**Result so far:** `[[1,2]]`
 
----
+## Pop 2 (k=4 → 3)
 
-###  Iteration 1
+* Pop `(0,1)` → pair `[1,4]`
+* Push `(0,2)` sum=1+6=7
+* Heap: `[ (0,2:7), (2,0:13), (1,0:9) ]`
 
-**Pop:** `{1, 3, 0}` → sum = 4 → add `[1, 3]` to result
-**j = 0** → we can try `j + 1 = 1`
-**Push:** `{1, 5, 1}` → sum = 6
+**Result:** `[[1,2],[1,4]]`
 
-**Result so far:** `[[1, 3]]`
+## Pop 3 (k=3 → 2)
 
-**Heap now contains:**
+* Pop `(0,2)` → pair `[1,6]`
+* Next `(0,3)` doesn’t exist (j+1==3 == n), so push nothing.
+* Heap: `[ (1,0:9), (2,0:13) ]`
 
-* `{1, 5, 1}` → sum = 6
-* `{7, 3, 0}` → sum = 10
+**Result:** `[[1,2],[1,4],[1,6]]`
 
----
+## Pop 4 (k=2 → 1)
 
-###  Iteration 2
+* Pop `(1,0)` → pair `[7,2]`
+* Push `(1,1)` sum=7+4=11
+* Heap: `[ (1,1:11), (2,0:13) ]`
 
-**Pop:** `{1, 5, 1}` → sum = 6 → add `[1, 5]` to result
-**j = 1** → push `{1, 6, 2}` → sum = 7
+**Result:** `[[1,2],[1,4],[1,6],[7,2]]`
 
-**Result so far:** `[[1, 3], [1, 5]]`
+## Pop 5 (k=1 → 0)
 
-**Heap:**
+* Pop `(1,1)` → pair `[7,4]`
+* Push `(1,2)` sum=7+6=13
+* Heap: `[ (2,0:13), (1,2:13) ]` (two 13s remain, but we already have k=0)
 
-* `{1, 6, 2}` → sum = 7
-* `{7, 3, 0}` → sum = 10
-
----
-
-###  Iteration 3
-
-**Pop:** `{1, 6, 2}` → sum = 7 → add `[1, 6]`
-**j = 2** → no next element in `nums2`, so **don't push anything**
-
-**Result so far:** `[[1, 3], [1, 5], [1, 6]]`
-
-**Heap:**
-
-* `{7, 3, 0}` → sum = 10
+**Final 5 pairs:**
+`[[1,2], [1,4], [1,6], [7,2], [7,4]]`
+(these are indeed the 5 smallest sums)
 
 ---
 
-###  Iteration 4
+# Subtleties & tips
 
-**Pop:** `{7, 3, 0}` → sum = 10 → add `[7, 3]`
-**j = 0** → push `{7, 5, 1}` → sum = 12
+* **Why indices, not values?**
+  Using `(i, j)` lets us generate only the next needed neighbor `(i, j+1)` from a row. If you store values only, you lose the ability to advance in `nums2` without recomputing or duplicating.
+* **No visited set needed:**
+  We only ever push `(i, 0)` once per row, and from a popped `(i, j)` we push only `(i, j+1)`. That never creates duplicates.
+* **Bounds & early exits:**
 
-**Result so far:** `[[1, 3], [1, 5], [1, 6], [7, 3]]`
-
-**Heap:**
-
-* `{7, 5, 1}` → sum = 12
-
----
-
-###  Iteration 5
-
-**Pop:** `{7, 5, 1}` → sum = 12 → add `[7, 5]`
-**j = 1** → push `{7, 6, 2}` → sum = 13 (we won’t need this, since `k = 5`)
-
-**Result so far:** `[[1, 3], [1, 5], [1, 6], [7, 3], [7, 5]]`  Done!
+  * If either array is empty or `k == 0`, return `[]`.
+  * If `k > m*n`, the loop stops when the heap empties; you’ll simply return all `m*n` pairs.
+* **Comparator overflow:**
+  The code stores `sum` as `long` so the comparator doesn’t overflow if inputs are large.
 
 ---
 
-### Final Output:
+# (Optional) Alternative approaches
 
-```java
-[[1, 3], [1, 5], [1, 6], [7, 3], [7, 5]]
-```
+1. **Brute force + heap:** Push all `m*n` pairs, pop `k`.
 
----
+   * **Time/Space:** `O(mn log (mn))` / `O(mn)` → not viable for large inputs.
 
-##  What's Great About This Approach
+2. **Binary search on the sum threshold:**
 
-| Strength                                 | Why It Matters                                          |
-| ---------------------------------------- | ------------------------------------------------------- |
-| **Avoids full O(mn) cartesian product**  | Only inserts pairs when needed, up to `k` elements      |
-| **Min-heap keeps smallest sum on top**   | We only pop and push the next possible smallest sum     |
-| **Index tracking avoids duplicate work** | By knowing `j`, we can build new pairs only when needed |
-
----
-
-##  Visual Summary of Heap State (iteration by iteration)
-
-```
-Heap: [(1,3,0), (7,3,0)]           → Pop (1,3,0), push (1,5,1)
-Heap: [(1,5,1), (7,3,0)]           → Pop (1,5,1), push (1,6,2)
-Heap: [(1,6,2), (7,3,0)]           → Pop (1,6,2), no push
-Heap: [(7,3,0)]                    → Pop (7,3,0), push (7,5,1)
-Heap: [(7,5,1)]                    → Pop (7,5,1), push (7,6,2) (ignored)
-```
+   * Binary search a value `S` such that the number of pairs with sum `≤ S` is ≥ `k`, then gather the first `k` pairs.
+   * **Time:** `O((m + n) log (maxSum − minSum))` to count, plus gathering.
+   * More complex to implement correctly; the min-heap method above is preferred for interviews.
 */
+
 class Solution {
+
+    // Heap node holds indices (i, j) into nums1 and nums2, plus their sum
+    static class Node {
+        int i, j;
+        long sum; // use long to avoid overflow in comparator
+        Node(int i, int j, long sum) { this.i = i; this.j = j; this.sum = sum; }
+    }
+
     public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-        List<List<Integer>> result = new ArrayList<>();
+        List<List<Integer>> res = new ArrayList<>();
+        int m = nums1.length, n = nums2.length;
+        if (k == 0 || m == 0 || n == 0) return res;
 
-        // Base case: if either array is empty
-        if (nums1.length == 0 || nums2.length == 0 || k == 0)
-            return result;
-
-        // Min-heap sorted by sum of pair: (a[0] + a[1])
-        PriorityQueue<int[]> minHeap = new PriorityQueue<>(
-            (a, b) -> Integer.compare(a[0] + a[1], b[0] + b[1])
+        // Min-heap by pair sum
+        PriorityQueue<Node> pq = new PriorityQueue<>(
+                Comparator.comparingLong(a -> a.sum)
         );
 
-        // Insert first k pairs (nums1[i], nums2[0]) into the heap
-        for (int i = 0; i < Math.min(nums1.length, k); i++) {
-            minHeap.offer(new int[] { nums1[i], nums2[0], 0 }); // third element is index in nums2
+        // Seed the heap with (i, 0) (i.e. the first column of the 2D grid) for i = 0..min(m-1, k-1)
+        int limit = Math.min(m, k);
+        for (int i = 0; i < limit; i++) {
+            pq.offer(new Node(i, 0, (long) nums1[i] + nums2[0]));
         }
 
-        while (k-- > 0 && !minHeap.isEmpty()) {
-            int[] pair = minHeap.poll();
-            result.add(Arrays.asList(pair[0], pair[1]));
+        // Extract the next smallest pair up to k times
+        while (k > 0 && !pq.isEmpty()) {
+            Node cur = pq.poll();
+            int i = cur.i, j = cur.j;
+            res.add(Arrays.asList(nums1[i], nums2[j]));
+            k--;
 
-            int i = pair[0];
-            int j = pair[2];
-
-            // Push next pair (same nums1[i], nums2[j + 1])
-            if (j + 1 < nums2.length) {
-                minHeap.offer(new int[] { pair[0], nums2[j + 1], j + 1 });
+            // Push the next pair from the same i: (i, j+1)
+            if (j + 1 < n) {
+                pq.offer(new Node(i, j + 1, (long) nums1[i] + nums2[j + 1]));
             }
         }
 
-        return result;
+        return res;
     }
 }
 
 
 
-// Method 2: Min-Heap of Index-Pairs
-/*
- Heap Element: int[] = {i, j}
-Heap holds indices into nums1 and nums2 (instead of values).
 
-Comparisons are done using nums1[i] + nums2[j]
 
- How it Works
-Start by inserting the first min(k, nums1.length) pairs of the form (i, 0) into the heap (i.e., index in nums1 with first element in nums2).
 
-On each pop:
-
-Convert (i, j) into the actual pair: nums1[i], nums2[j].
-
-Push the next pair (i, j+1) into the heap.
-
-This avoids duplicate pairs like (nums1[i], nums2[j]) and keeps track of next column for a given row.
-*/
-
+// Method 1: My ineffieicient answer by adding all pairs to the Min-heap
 // class Solution {
+
+//     static class Pair{
+//         private int first;
+//         private int second;
+        
+//         Pair() {}
+
+//         Pair(int first, int second){
+//             this.first = first;
+//             this.second = second;
+//         }
+
+//         public int getFirst(){
+//             return first;
+//         }
+
+//         public int getSecond(){
+//             return second;
+//         }
+//     }
+
+//     /*
+//     record Pair(int first, int second) {}
+//     PriorityQueue<Pair> pq = new PriorityQueue<>(Comparator.comparingInt(p -> p.first() + p.second()));
+//     */
+
 //     public List<List<Integer>> kSmallestPairs(int[] nums1, int[] nums2, int k) {
-//         List<List<Integer>> result = new ArrayList<>();
+//         List<List<Integer>> res = new ArrayList<>();
+//         PriorityQueue<Pair> pq = new PriorityQueue<>((p1, p2) -> Integer.compare(p1.getFirst() + p1.getSecond(), p2.getFirst() + p2.getSecond()));
 
-//         if (nums1.length == 0 || nums2.length == 0 || k == 0)
-//             return result;
-
-//         // Min-heap: compare by nums1[i] + nums2[j]
-//         PriorityQueue<int[]> minHeap = new PriorityQueue<>(
-//             (a, b) -> Integer.compare(nums1[a[0]] + nums2[a[1]], nums1[b[0]] + nums2[b[1]])
-//         );
-//         /*
-//         Another way to define this Min heap by using Compactor:
-//         PriorityQueue<int[]> minHeap = new PriorityQueue<>(new Comparator<int[]>() {
-//             @Override
-//             public int compare(int[] a, int[] b){
-//                 return (nums1[a[0]] + nums2[a[1]]) - (nums1[b[0]] + nums2[b[1]]);
-//             }
-//         });
-//         */
-
-//         // Start with first element in each row: (i, 0)
-//         for (int i = 0; i < Math.min(nums1.length, k); i++) {
-//             minHeap.offer(new int[] { i, 0 });  // i = index in nums1, j = index in nums2
+//         for(int i=0; i<nums1.length; i++){
+//             for(int j=0; j<nums2.length; j++){
+//                 pq.add(new Pair(nums1[i], nums2[j]));
+//             }   
 //         }
 
-//         while (k-- > 0 && !minHeap.isEmpty()) {
-//             int[] indices = minHeap.poll();
-//             int i = indices[0], j = indices[1];
-//             result.add(Arrays.asList(nums1[i], nums2[j]));
-
-//             if (j + 1 < nums2.length) {
-//                 minHeap.offer(new int[] { i, j + 1 });
-//             }
+//         for(int i=0; i<k; i++){
+//             Pair p = pq.poll();
+//             res.add(List.of(p.getFirst(), p.getSecond()));
 //         }
 
-//         return result;
+//         return res;
 //     }
 // }
