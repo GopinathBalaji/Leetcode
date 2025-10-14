@@ -1,121 +1,90 @@
-// Reversing only half of the number and checking if they are equal
+// Method 1: No strings for reversal (Reverse only half the number)
 /*
-Certainly! Let’s walk through the **logic behind the code** for checking whether an integer is a palindrome — **without converting it to a string**, and **by reversing only half of the number**.
+## Quick observations (filter fast cases)
 
----
+1. **Negative numbers** can’t be palindromes (a leading `-` has no trailing match).
+2. **Numbers ending in 0** (e.g., 10, 100) are **not** palindromes unless the number **is 0** (palindrome).
 
-### \U0001f50d Problem:
+These two checks let you return early for many inputs.
 
-Check if an integer reads the same forward and backward (e.g., 121, 1221), without converting it to a string.
+## Two main approaches
 
----
+### A) String approach (simple, acceptable unless restricted)
 
-### ✅ Key Idea:
+* Convert to string.
+* Two pointers: `l` at start, `r` at end; move toward center comparing chars.
+* Stop when `l ≥ r` or a mismatch is found.
 
-Instead of reversing the **entire number** (which can cause overflow), we **reverse only half** of the digits and compare the two halves.
+> Hints:
+> • Don’t forget the negative check before converting.
+> • You can skip allocation by comparing characters directly without building a reversed copy.
 
----
+### B) Math approach (no string conversion) — preferred in interviews
 
-### \U0001f9e0 Logic Breakdown:
+* **Key trick:** reverse **only half** of the integer, not the whole number, to avoid overflow and extra work.
+* Steps:
 
-```java
-public boolean isPalindrome(int x) {
-```
+  1. Handle fast rejects (negatives, trailing zero unless 0).
+  2. Build `rev` by repeatedly taking the last digit of `x` (`x % 10`) and appending it to `rev` (`rev = rev*10 + digit`).
+  3. Stop when `rev ≥ x` (means you’ve reversed half the digits).
+  4. For even digit counts: `x == rev` → palindrome.
+     For odd digit counts: `x == rev/10` (middle digit can be ignored).
 
-* We define a function that returns `true` if `x` is a palindrome, `false` otherwise.
+> Why it works:
+> When you reverse half, you’re effectively comparing the left half of `x` with the reversed right half. For odd lengths, the middle digit doesn’t matter.
 
----
+## Corner cases to test mentally
 
-#### \U0001f6d1 Step 1: Early Exit for Invalid Cases
+* `0` → true (single digit)
+* `121` → true (odd length, compare `12` vs `12` after dropping middle)
+* `1221` → true (even length)
+* `10` → false (trailing zero)
+* `-121` → false (negative)
 
-```java
-if (x < 0 || (x % 10 == 0 && x != 0)) return false;
-```
+## Pitfalls to avoid
 
-* If `x < 0`: it's negative — never a palindrome (e.g., -121).
-* If `x % 10 == 0 && x != 0`: it's divisible by 10 but not 0 — can't be a palindrome.
+* Reversing the **whole** number can overflow 32-bit int (unnecessary risk). Reversing **half** avoids this.
+* Forgetting the **trailing zero** rule (e.g., 1001 is fine, 10 is not).
+* Not handling **odd vs even digit counts** in the math approach.
 
-  * e.g., `10` → reversed is `01`, not valid.
+## Complexity targets
 
----
+* Time: `O(d)` where `d` is number of digits (≤ 10 for 32-bit ints).
+* Space: `O(1)` for the math approach; `O(d)` if you build strings (but still small).
 
-#### \U0001f504 Step 2: Reverse Half the Number
+## If you’re stuck
 
-```java
-int reversed = 0;
-while (x > reversed) {
-    reversed = reversed * 10 + x % 10;
-    x /= 10;
-}
-```
+* Start with the string two-pointer method to lock in the logic.
+* Then implement the half-reverse math version using the stopping condition `rev ≥ x` and the two equality checks (`x == rev` or `x == rev/10`).
 
-Let’s take an example: `x = 1221`
-
-1. `reversed = 0`
-2. First iteration:
-
-   * `x % 10 = 1`
-   * `reversed = 0 * 10 + 1 = 1`
-   * `x = 122`
-3. Second iteration:
-
-   * `x % 10 = 2`
-   * `reversed = 1 * 10 + 2 = 12`
-   * `x = 12`
-
-Now: `x == reversed` → both are `12` → we stop.
-
-This works because:
-
-* For **even-length palindromes**, the two halves become equal.
-* For **odd-length palindromes**, the middle digit doesn't matter, so we divide `reversed` by 10.
-
----
-
-#### ✅ Step 3: Check Equality
-
-```java
-return x == reversed || x == reversed / 10;
-```
-
-* If even digits (like 1221), `x == reversed` (both become 12).
-* If odd digits (like 12321):
-
-  * At end, `x = 12`, `reversed = 123`
-  * Ignore the middle digit by `reversed / 10 = 12`
-  * So again: `x == reversed / 10`
-
----
-
-### \U0001f501 Why It Works:
-
-| Original `x` | Reversed half | Reason             |
-| ------------ | ------------- | ------------------ |
-| 1221         | 12            | x == reversed      |
-| 12321        | 123           | x == reversed / 10 |
-| 10           | 1             | not equal → false  |
-
----
-
-### \U0001f680 Time and Space Complexity:
-
-* **Time**: O(log₁₀(n)) — We process half the digits.
-* **Space**: O(1) — Constant space, no array/string used.
-
----
+With these hints you should be able to implement both versions confidently and pass all edge cases.
 */
+
 class Solution {
     public boolean isPalindrome(int x) {
-    if (x < 0 || (x % 10 == 0 && x != 0)) return false;
+        if(x < 0){
+            return false;
+        }
+        if(x == 0){
+            return true;
+        }
+        if(x % 10 == 0){
+            return false;
+        }
 
-    int reversed = 0;
-    while (x > reversed) {
-        reversed = reversed * 10 + x % 10;
-        x /= 10;
-    }
+        int rev = 0;
+        int last = 0;
 
-    // For even-length numbers: x == reversed
-    // For odd-length numbers: x == reversed / 10
-    return x == reversed || x == reversed / 10;
+        while(rev < x){
+            last = x % 10;
+            x = x / 10;
+            rev = rev * 10 + last;
+        }
+
+        if((rev == x) || (rev/10 == x)){
+            return true;
+        }
+
+        return false;
     }
 }
