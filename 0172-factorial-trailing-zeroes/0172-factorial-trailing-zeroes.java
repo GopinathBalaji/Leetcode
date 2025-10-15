@@ -1,119 +1,76 @@
-// Answer by factorization by 5. (Recursive answer does not work)
+// Method 1: Keeping n constant and growing divisor
 /*
-## ✅ What are "trailing zeroes"?
+## 1) What creates a trailing zero?
 
-Trailing zeroes in a number are the `0`s at the end of the number.
-For example:
+* A trailing zero comes from a factor **10 = 2 × 5**.
+* In **n!**, there are **far more 2s than 5s**, so the number of trailing zeros equals the **count of factor 5s** in the prime factorization of **n!**.
 
-* `5! = 120` → 1 trailing zero
-* `10! = 3628800` → 2 trailing zeroes
-* `25! = 15511210043330985984000000` → 6 trailing zeroes
+## 2) How many 5s are in n!?
 
-Trailing zeroes are caused by **multiplying by 10**, and:
+* Every multiple of **5** contributes **at least one** factor 5.
+* Every multiple of **25 = 5²** contributes **an extra** factor 5 (so it contributes two in total).
+* Every multiple of **125 = 5³** contributes yet another extra, and so on.
+* Therefore, the total number of 5s is:
 
-```
-10 = 2 × 5
-```
+  * **⌊n/5⌋ + ⌊n/25⌋ + ⌊n/125⌋ + …** (stop when the term becomes zero).
 
-Every time the factorial multiplies a pair of `(2 × 5)`, we get a trailing zero.
+## 3) Why this works
 
----
+* You’re counting how many numbers ≤ n are divisible by 5 (one 5 each), plus how many are divisible by 25 (their **second** 5), plus those divisible by 125 (their **third** 5), etc.
 
-## ✅ Why only count 5s?
+## 4) How to compute efficiently
 
-In `n!`, we multiply all numbers from `1` to `n`.
+* Repeatedly divide n by 5 and **accumulate the quotient**.
+* This takes **O(log₅ n)** steps—very fast even for large n.
 
-Every even number gives us a **factor of 2** — so there are **plenty** of 2s.
+## 5) Edge cases & pitfalls
 
-But **5s** are rarer than 2s. So every time we find a 5 in the factorization, and we have a 2 (which we always do), we form a trailing zero.
+* Don’t try to compute **n!** directly (overflow and time blow-up).
+* The result fits in 32-bit **int** for typical constraints.
+* If n = 0, answer is 0 (0! = 1 has no trailing zero).
+* For very large n, use a loop that stops when n becomes 0 after dividing by 5.
+* Be careful not to double-count: the summation formula already accounts for multiples of 25, 125, etc.
 
-So:
-➡️ **Number of trailing zeroes = Number of 5s in the prime factorization of n!**
+## 6) Sanity checks (do by hand)
 
----
+* **n = 5** → one multiple of 5 → **1** zero.
+* **n = 10** → multiples of 5: {5,10} → **2** zeros.
+* **n = 25** → ⌊25/5⌋=5 plus ⌊25/25⌋=1 → **6** zeros.
+* **n = 100** → 20 + 4 = **24** zeros.
 
-## ✅ Counting the number of 5s in n!
+## 7) Mental template (algorithm steps)
 
-You might think we just do:
-`n / 5`
+* Initialize a counter to 0.
+* While n > 0:
 
-But there’s a catch!
-
-Some numbers contribute **more than one 5**:
-
-* `25 = 5 × 5` → contributes **2** 5s
-* `125 = 5 × 5 × 5` → contributes **3** 5s
-
-So we do:
-
-```java
-count += n / 5;
-count += n / 25;
-count += n / 125;
-...
-```
-
-In code:
-
-```java
-while (n > 0) {
-    n = n / 5;
-    count += n;
-}
-```
-
-This keeps dividing `n` by `5`, `25`, `125`, ... until `n` becomes 0.
-
----
-
-### ✅ Example: `n = 100`
-
-```
-n / 5 = 100 / 5 = 20        → counts 5, 10, 15, ..., 100 (1 five each)
-n / 25 = 100 / 25 = 4       → counts 25, 50, 75, 100 (each has 2 fives)
-n / 125 = 100 / 125 = 0     → stop
-
-→ Total trailing zeroes = 20 + 4 = 24
-```
-
-So `100!` has **24 trailing zeroes**.
-
----
-
-## ✅ Time Complexity
-
-* Runs in **O(log₅n)** time, since we keep dividing `n` by 5.
-* Much faster than computing factorial, which is **O(n)** and can overflow quickly.
-
----
-
-## ✅ Space Complexity
-
-* Constant space: **O(1)**.
-
----
-
-## ✅ Summary
-
-| Insight                                | Why It Matters                             |
-| -------------------------------------- | ------------------------------------------ |
-| Trailing zeroes come from `10 = 2 × 5` | But 2s are abundant, 5s are the bottleneck |
-| Count how many 5s are in `n!`          | Count how often 5, 25, 125... divide `n`   |
-| Use integer division to avoid overflow | Never compute `n!` directly                |
-
----
-
-Let me know if you'd like to see the same logic implemented **recursively** or in a different language.
+  * Divide n by 5, add the quotient to the counter.
+  * Replace n with that quotient and repeat.
+* Return the counter.
 */
 class Solution {
     public int trailingZeroes(int n) {
-        int count = 0;
+        int ans = 0;
+        int divisor = 5;
 
-        while(n > 0){
-            n = n / 5;
-            count += n;
+        while(divisor <= n){
+            ans += (n / divisor);
+            divisor *= 5;
         }
-
-        return count;
+        return ans;
     }
 }
+
+
+
+// Method 2: Keep divinding by 5 and reducing n
+// class Solution {
+//     public int trailingZeroes(int n) {
+//         int ans = 0;
+
+//         while(n > 0){
+//             n /= 5;
+//             ans += n;
+//         }
+//         return ans;
+//     }
+// }
