@@ -134,3 +134,122 @@ Tip: If TLE on huge inputs, you can also pre-group dict by length or first chara
 //         return dp[n];
 //     }
 // }
+
+
+
+
+
+// Method 3: Trie
+/*
+## How it works (big picture)
+
+* Build a **Trie** from `wordDict`. Each `end` flag marks a complete word.
+* Let `dp[i]` mean: the prefix `s[0..i)` is segmentable.
+* For every start `j` where `dp[j]` is true, **walk the trie forward** along `s[j], s[j+1], …`.
+
+  * Every time you hit a trie node with `end = true` at position `k`, set `dp[k+1] = true`.
+  * Stop walking if the next character isn’t in the trie (mismatch).
+
+This replaces `dict.contains(s.substring(j,i))` checks with a single linear trie walk from each valid `j`.
+
+
+## Why this is efficient
+
+* **No substring objects:** we never call `s.substring(j, i)`.
+* **Pruning “for free”:** the trie walk stops as soon as a character doesn’t match any child, implicitly limiting the word length explored.
+* **DP ensures coverage:** `dp[i]` becomes true only if the prefix up to `i` can be fully covered by words (no gaps/overlaps).
+
+**Time complexity (intuition):**
+At most, from each `j` with `dp[j]=true`, you scan forward until a trie mismatch. So roughly `O(total matched characters)`, typically ≤ `O(n * L)` where `L` is the longest word length.
+**Space:** `O(sum of word lengths)` for the trie + `O(n)` for `dp`.
+
+---
+
+## Thorough walkthrough
+
+Example: `s = "leetcode"`, `dict = ["leet", "code"]`
+
+1. **Trie**
+
+* `l → e → e → t (end)`
+* `c → o → d → e (end)`
+
+2. **DP init**
+   `dp = [true, false, false, false, false, false, false, false, false]`
+   Indices mean: `dp[i]` ⇒ `s[0..i)` segmentable.
+
+3. **j = 0** (`dp[0]=true`), walk trie from `s[0]`:
+
+* `l` ✓ → `e` ✓ → `e` ✓ → `t` ✓ and node.end = true ⇒ set `dp[4]=true`
+  `dp = [T, F, F, F, T, F, F, F, F]`
+* Next char is `c`, but from current node there’s no child `c` → stop this walk.
+
+4. **j = 1,2,3** are false → skip.
+
+5. **j = 4** (`dp[4]=true`), walk from `s[4]`:
+
+* `c` ✓ → `o` ✓ → `d` ✓ → `e` ✓ and node.end = true ⇒ set `dp[8]=true`
+  `dp = [T, F, F, F, T, F, F, F, T]`
+
+6. Return `dp[8] = true` → the whole string is segmentable: `"leet" + "code"`.
+
+---
+
+## Common pitfalls (and how this code avoids them)
+
+* **Starting from every index “fresh”:** We only start walks at indices `j` where `dp[j]` is already `true`.
+* **Overlaps/gaps:** `dp[k+1]` is set only when `s[j..k]` is a complete word, ensuring contiguous coverage.
+* **Substring cost:** Using a trie + per-character traversal avoids `substring` allocations and repeated hash lookups.
+
+If you want a strictly-`char[26]` trie (assuming lowercase a–z) for even faster performance, I can share that variant too.
+*/
+// class Solution {
+//     // ---- Trie node ----
+//     static class TrieNode {
+//         Map<Character, TrieNode> next = new HashMap<>();
+//         boolean end = false;
+//     }
+
+//     public boolean wordBreak(String s, List<String> wordDict) {
+//         int n = s.length();
+//         if (n == 0) return true;
+
+//         // 1) Build trie
+//         TrieNode root = buildTrie(wordDict);
+
+//         // 2) Bottom-up DP over string indices
+//         boolean[] dp = new boolean[n + 1];
+//         dp[0] = true; // empty prefix is segmentable
+
+//         for (int j = 0; j < n; j++) {
+//             if (!dp[j]) continue; // can't start a word here
+
+//             TrieNode node = root;
+//             // Walk the trie forward from position j
+//             for (int k = j; k < n; k++) {
+//                 char c = s.charAt(k);
+//                 node = node.next.get(c);
+//                 if (node == null) break;       // no further match from j
+
+//                 if (node.end) {
+//                     dp[k + 1] = true;          // s[j..k] is a dict word
+//                     if (k + 1 == n) return true; // early success
+//                 }
+//             }
+//         }
+//         return dp[n];
+//     }
+
+//     private TrieNode buildTrie(List<String> words) {
+//         TrieNode root = new TrieNode();
+//         for (String w : words) {
+//             TrieNode cur = root;
+//             for (int i = 0; i < w.length(); i++) {
+//                 char c = w.charAt(i);
+//                 cur = cur.next.computeIfAbsent(c, ch -> new TrieNode());
+//             }
+//             cur.end = true;
+//         }
+//         return root;
+//     }
+// }
