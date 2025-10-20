@@ -1,242 +1,261 @@
-// Top Down DP approach
+// Method 1: Top-Down DP Approach
 /*
-My following base case condition is invalid:
-if(list >= triangle.size() || idx >= triangle[list].size()){
-            return 0;
-}
-because this base‐case will silently let you “fall off” the triangle and pretend those nonexistent paths cost you nothing, which can corrupt your min‐sum. In particular:
-You never pick up the value in the bottom row.
-Once you recurse past the last list, you return 0 instead of the actual triangle entry you landed on.
-Invalid indices shouldn’t contribute a zero cost.
-If idx runs past the end of a row, that path really isn’t valid—you’d want to treat it as “infinite” cost, not zero, so it never wins the Math.min.
+### Idea:
 
+* **Memoization** stores `dp(i, j)` once; later calls return in O(1).
+* **Base at last row** avoids extra `dp(n, *)` calls and never touches invalid indices.
+* Time: O(R²) with R = number of rows (there are ~R² states). Space: O(R²) for memo, O(R) recursion depth.
 
-We don't recur inside a loop because of the following reason:
-If we loop over i runs from 0…triangle.length, rather than from currList+1 to the end means you’re reconsidering all earlier lists  on every call, rather than only looking “forward.”
+### Quick walkthrough
 
-Why not a 1-D memo array?
-In our top-down DP, the subproblem is characterized by two parameters—list (which row you’re on) and idx (which position in that row). A 1-D array can only cache a single varying parameter. You’d lose information about where in the triangle you came from, and different (list, idx) pairs could collide in the same slot.
-*/
-class Solution {
-    public int minimumTotal(List<List<Integer>> triangle) {
-        
-        int[][] memo = new int[triangle.size()][triangle.size()];
-        for(int[] row : memo){
-            Arrays.fill(row, -1);
-        }
-        return dp(0, 0, triangle, memo);
-    }
+```
+[
+  [2],          // i=0
+  [3, 4],       // i=1
+  [6, 5, 7],    // i=2
+  [4, 1, 8, 3]  // i=3  (last row)
+]
+```
 
-    public int dp(int list, int idx, List<List<Integer>> triangle, int[][] memo){
-        if(list == triangle.size()-1){
-            return triangle.get(list).get(idx);
-        }
+### Reminder of the function
 
-        if(memo[list][idx] != -1){
-            return memo[list][idx];
-        }
-
-        int val = triangle.get(list).get(idx);
-
-        int bestBelow = Math.min(dp(list + 1, idx, triangle, memo), dp(list + 1, idx + 1, triangle, memo));
-
-        memo[list][idx] = bestBelow + val;
-        return memo[list][idx];
-    }
-}
-
-// Bottom Up DP
-/*
-## Detailed Explanation
-
-1. **DP State**
-   We use a 1D array `dp` of length `n`, where after processing row `i`,
-
-   ```
-   dp[j] = minimum path sum from triangle[i][j] down to the last row.
-   ```
-
-   In particular, before any processing, we set `dp[j]` to the values in the last row (when `i = n-1`).
-
-2. **Initialization**
-
-   ```java
-   for (int j = 0; j < n; j++) {
-       dp[j] = triangle.get(n - 1).get(j);
-   }
-   ```
-
-   At this point, `dp[j]` correctly holds the min-sum for the bottom row trivially, since “the path from a bottom‐row element to itself” is just that element.
-
-3. **Bottom‐Up Recurrence**
-   We move upward through the triangle. For each row `i` from `n-2` down to `0`, and for each position `j` in that row:
-
-   ```java
-   dp[j] = triangle.get(i).get(j)
-         + Math.min(dp[j], dp[j + 1]);
-   ```
-
-   * `dp[j]` on the right-hand side is the min‐sum from the element *directly below* (`i+1, j`).
-   * `dp[j+1]` is the min‐sum from the element *below‐and‐to‐the‐right* (`i+1, j+1`).
-     We choose the smaller of those two “child” paths and add the current cell’s value.
-
-4. **In‐Place Update**
-   By overwriting `dp[j]` in place as we go, we ensure that after finishing row `i`, `dp[0..i]` represent the correct values for that row. We don’t care about `dp[i+1..]` anymore, so it’s safe to discard.
-
-5. **Final Answer**
-   Once we process up to row 0, `dp[0]` is exactly the minimum total path sum from the top of the triangle to the bottom.
+* `dp(i, j)` = minimum path sum from `triangle[i][j]` down to the bottom.
+* Base: if `i == lastRow`, return `triangle[i][j]`.
+* Memo: `if (memo[i][j] != null) return memo[i][j];`
+* Recur: `triangle[i][j] + min(dp(i+1,j), dp(i+1,j+1))`.
 
 ---
 
+## Step-by-step call flow (with memo activity)
+
+We start with `dp(0,0)`.
+
+1. **dp(0,0)**
+   Needs **dp(1,0)** and **dp(1,1)**. No memo yet.
+
+2. **dp(1,0)**
+   Needs **dp(2,0)** and **dp(2,1)**.
+
+3. **dp(2,0)**
+   Needs **dp(3,0)** and **dp(3,1)** (last row).
+
+   * **dp(3,0)** → base row ⇒ returns `4`.
+   * **dp(3,1)** → base row ⇒ returns `1`.
+
+   Compute: `dp(2,0) = 6 + min(4,1) = 6 + 1 = 7`.
+   **Write memo[2][0] = 7.**
+
+4. Back to **dp(1,0)**, now compute **dp(2,1)**
+   Needs **dp(3,1)** and **dp(3,2)** (last row).
+
+   * **dp(3,1)** → base row ⇒ `1`.
+   * **dp(3,2)** → base row ⇒ `8`.
+
+   Compute: `dp(2,1) = 5 + min(1,8) = 6`.
+   **Write memo[2][1] = 6.**
+
+5. Finish **dp(1,0)**: `3 + min(dp(2,0), dp(2,1)) = 3 + min(7,6) = 9`.
+   **Write memo[1][0] = 9.**
+
+6. Back to **dp(0,0)**, now compute **dp(1,1)**
+   Needs **dp(2,1)** and **dp(2,2)**.
+
+   * **dp(2,1)**: **Memo hit!** `memo[2][1] = 6` (no recursion done here).
+   * **dp(2,2)** needs **dp(3,2)** and **dp(3,3)** (last row):
+
+     * **dp(3,2)** → base row ⇒ `8`.
+     * **dp(3,3)** → base row ⇒ `3`.
+
+     Compute: `dp(2,2) = 7 + min(8,3) = 10`.
+     **Write memo[2][2] = 10.**
+
+7. Finish **dp(1,1)**: `4 + min(dp(2,1), dp(2,2)) = 4 + min(6,10) = 10`.
+   **Write memo[1][1] = 10.**
+
+8. Finish **dp(0,0)**: `2 + min(dp(1,0), dp(1,1)) = 2 + min(9,10) = 11`.
+   **Write memo[0][0] = 11.**
+
+**Answer = 11.**
+
+---
+
+## Where memoization saved work
+
+* The overlapping subproblem **`dp(2,1)`** appears **twice**:
+
+  * First under `dp(1,0)` (we computed and **stored** it as 6).
+  * Then under `dp(1,1)` (we **hit** the memo and returned 6 immediately).
+
+Without memoization, `dp(2,1)` would recursively recompute `dp(3,1)` and `dp(3,2)` again. Here it returned in **O(1)** thanks to:
+
+```java
+if (memo[i][j] != null) return memo[i][j];
+```
+
+On larger triangles, this reuse is dramatic: every `dp(i,j)` is computed **once**, turning an exponential recursion tree into **O(R²)** total work (there are ~R² states for R rows).
+
+---
+
+## Final memo table (values after completion)
+
+(Only entries that were needed are filled.)
+
+```
+i\j    0    1    2    3
+-------------------------
+0:     11
+1:      9   10
+2:      7    6   10
+3:      4    1    8    3   (base row, returned directly—not stored in memo[][])
+```
+
+* Every **write** corresponds to the first time we solve that `(i,j)`.
+* Every later reference to the same `(i,j)` is a **read hit**, skipping recursion.
+*/
+class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int n = triangle.size();
+        Integer[][] memo = new Integer[n][n];
+        return dp(triangle, 0, 0, n, memo);
+    }
+
+    private int dp(List<List<Integer>> triangle, int i, int j, int n, Integer[][] memo){
+        if(i == n - 1){
+            return triangle.get(i).get(j);
+        }
+
+        if(memo[i][j] != null){
+            return memo[i][j];
+        }
+
+        int down = dp(triangle, i+1, j, n, memo);
+        int diag = dp(triangle, i+1, j+1, n, memo);
+        return memo[i][j] = triangle.get(i).get(j) + Math.min(down, diag);
+    }
+}
+
+
+
+// Method 2: Better Bottom-Up 1-D DP using O(n) extra space
+/*
+# Key idea
+
+* Let `dp[j]` hold the **minimum path sum from row `i+1` downward** starting at column `j`.
+* Initialize `dp` with the **last row** (these are already the costs from bottom to bottom).
+* Then, for each row going upward (`i = n-2 … 0`), update in place:
+
+  ```
+  dp[j] = triangle[i][j] + min(dp[j], dp[j+1])
+  ```
+
+  After finishing the top row, `dp[0]` is the answer.
+
+Why O(n)? `dp` is a single array of length equal to the last row size, which equals the number of rows in a triangle.
+
+
 ### Complexity
 
-* **Time:**
+* **Time:** O(n²) (you touch each triangle cell once).
+* **Space:** O(n) for the 1-D `dp`.
 
-  * We process each of the \~`n(n+1)/2` elements exactly once in the nested loops.
-  * That gives **O(n²)** time, where `n` is the number of rows.
+---
 
-* **Space:**
+## Thorough example walkthrough
 
-  * We only use the 1D `dp` array of size `n`, plus a handful of loop variables.
-  * That’s **O(n)** extra space, optimal for this problem.
-
-
-## Walkthrough on the example
-
-Triangle (n=4):
+Triangle:
 
 ```
-    [2]
-   [3,4]
-  [6,5,7]
- [4,1,8,3]
+[
+  [2],          // row 0
+  [3, 4],       // row 1
+  [6, 5, 7],    // row 2
+  [4, 1, 8, 3]  // row 3 (bottom)
+]
 ```
 
-### Step 1: Initialize with last row
-
-We set
+### Step 1 — Initialize `dp` with last row
 
 ```
 dp = [4, 1, 8, 3]
 ```
 
-because each bottom‐row element’s min‐path to itself is just its own value.
+Meaning: the minimum cost from each bottom cell to the bottom is just itself.
 
-| j      | 0 | 1 | 2 | 3 |
-| ------ | - | - | - | - |
-| dp\[j] | 4 | 1 | 8 | 3 |
+### Step 2 — Process row 2 (i = 2, values [6, 5, 7])
 
----
+For each `j = 0..2`:
 
-### Step 2: Process row i = 2  (values `[6,5,7]`)
+* `j=0`: `dp[0] = 6 + min(dp[0], dp[1]) = 6 + min(4, 1) = 7`
+* `j=1`: `dp[1] = 5 + min(dp[1], dp[2]) = 5 + min(1, 8) = 6`
+* `j=2`: `dp[2] = 7 + min(dp[2], dp[3]) = 7 + min(8, 3) = 10`
 
-We only update `dp[0]`, `dp[1]`, and `dp[2]` (because row 2 has 3 elements):
-
-* **j = 0**:
-
-  * `below    = dp[0] = 4`
-  * `belowRight = dp[1] = 1`
-  * Pick `min(4,1)=1` and add `triangle[2][0]=6` → new `dp[0] = 6+1 = 7`
-
-* **j = 1**:
-
-  * `below    = dp[1] = 1`
-  * `belowRight = dp[2] = 8`
-  * Pick `1` and add `5` → `dp[1] = 5+1 = 6`
-
-* **j = 2**:
-
-  * `below    = dp[2] = 8`
-  * `belowRight = dp[3] = 3`
-  * Pick `3` and add `7` → `dp[2] = 7+3 = 10`
-
-After row 2, `dp` becomes:
-
-| j   | 0 | 1 | 2  | 3   |
-| --- | - | - | -- | --- |
-| old | 4 | 1 | 8  | 3   |
-| new | 7 | 6 | 10 | 3\* |
-
-\* `dp[3]` is stale now (we only use `dp[0..2]` going forward).
-
----
-
-### Step 3: Process row i = 1  (values `[3,4]`)
-
-* **j = 0**:
-
-  * `below    = dp[0] = 7`
-  * `belowRight = dp[1] = 6`
-  * Pick `6` and add `3` → `dp[0] = 3+6 = 9`
-
-* **j = 1**:
-
-  * `below    = dp[1] = 6`
-  * `belowRight = dp[2] = 10`
-  * Pick `6` and add `4` → `dp[1] = 4+6 = 10`
-
-After row 1, `dp` is:
-
-| j   | 0 | 1  | 2\* | 3\* |
-| --- | - | -- | --- | --- |
-| old | 7 | 6  | 10  | 3   |
-| new | 9 | 10 | —   | —   |
-
-\* Only `dp[0..1]` are now relevant.
-
----
-
-### Step 4: Process row i = 0  (value `[2]`)
-
-* **j = 0**:
-
-  * `below    = dp[0] = 9`
-  * `belowRight = dp[1] = 10`
-  * Pick `9` and add `2` → `dp[0] = 2+9 = 11`
-
-Now `dp[0] = 11`, which is the minimum path sum:
+Now:
 
 ```
-2 → 3 → 5 → 1  gives 2+3+5+1 = 11
+dp = [7, 6, 10, 3]
 ```
+
+Interpretation: from row 2,
+
+* min path starting at (2,0) is 7,
+* at (2,1) is 6,
+* at (2,2) is 10.
+
+### Step 3 — Process row 1 (i = 1, values [3, 4])
+
+* `j=0`: `dp[0] = 3 + min(dp[0], dp[1]) = 3 + min(7, 6) = 9`
+* `j=1`: `dp[1] = 4 + min(dp[1], dp[2]) = 4 + min(6,10) = 10`
+
+Now:
+
+```
+dp = [9, 10, 10, 3]
+```
+
+### Step 4 — Process row 0 (i = 0, values [2])
+
+* `j=0`: `dp[0] = 2 + min(dp[0], dp[1]) = 2 + min(9, 10) = 11`
+
+Final:
+
+```
+dp = [11, 10, 10, 3]
+```
+
+### Result
+
+`dp[0] = 11` — the minimum path sum from the top (`2 → 3 → 5 → 1`).
 
 ---
 
-## Why this works
+## Why in-place works safely
 
-* We **reuse** the same `dp[]` array, always holding the min‐sums for the row *below* our current one.
-* By overwriting from left to right within each row, we ensure we never accidentally use an out‐of‐date value.
-* At the end, `dp[0]` has been chased all the way up to represent the top element’s best path.
+At row `i`, you only read `dp[j]` and `dp[j+1]` from the **previous row’s results** (which live in `dp` from the iteration below). Because you update `j` left-to-right, `dp[j+1]` hasn’t been overwritten yet in the current row’s pass, so each update uses the correct pair from the row beneath.
 
-This is an **O(n²)** algorithm (you visit each triangle element once), using only **O(n)** extra space.
-
+That’s the essence of achieving **O(n)** extra space while preserving correctness.
 */
 
 // class Solution {
 //     public int minimumTotal(List<List<Integer>> triangle) {
 //         int n = triangle.size();
-//         // dp[j] will hold the minimum path sum starting from
-//         // position j in the “current” row down to the bottom.
-//         // We initialize it with the values of the last row.
+//         // dp length equals last row length == n
 //         int[] dp = new int[n];
+
+//         // 1) Initialize dp as the bottom row
+//         List<Integer> last = triangle.get(n - 1);
 //         for (int j = 0; j < n; j++) {
-//             dp[j] = triangle.get(n - 1).get(j);
+//             dp[j] = last.get(j);
 //         }
 
-//         // Now work our way upward, from the second‐to‐last row up to row 0
+//         // 2) Roll upwards: for row i, update dp[j] using dp[j] and dp[j+1]
 //         for (int i = n - 2; i >= 0; i--) {
-//             // For each element in row i (there are i+1 elements)
+//             List<Integer> row = triangle.get(i);
 //             for (int j = 0; j <= i; j++) {
-//                 // The best path from triangle[i][j] is its own value
-//                 // plus the min of the two possible paths directly below it
-//                 dp[j] = triangle.get(i).get(j) + Math.min(dp[j], dp[j + 1]);
+//                 dp[j] = row.get(j) + Math.min(dp[j], dp[j + 1]);
 //             }
-//             // After this inner loop, dp[0..i] hold the correct min-sums
-//             // for row i. dp[i+1] is now “stale” and will be ignored.
 //         }
 
-//         // By the time we reach row 0, dp[0] is the min path sum from top to bottom.
+//         // 3) dp[0] now holds the min path sum from the top
 //         return dp[0];
 //     }
 // }
-
