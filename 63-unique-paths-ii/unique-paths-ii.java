@@ -1,261 +1,222 @@
-// My Tow Down Approach
+// Method 1: Top-Down DP
 /*
-The recursion tree for the first example:
-dp(0,0)
-├─ dp(0,1)
-│  ├─ dp(0,2)
-│  │  ├─ dp(0,3) → 0 (oob)
-│  │  └─ dp(1,2)
-│  │     ├─ dp(1,3) → 0 (oob)
-│  │     └─ dp(2,2) → 1 (goal; memo[2][2]=1)
-│  │     → memo[1][2] = 1
-│  │  → memo[0][2] = 1
-│  └─ dp(1,1) → 0 (obstacle)
-│  → memo[0][1] = 1 + 0 = 1
-│
-└─ dp(1,0)
-   ├─ dp(1,1) → 0 (obstacle)
-   └─ dp(2,0)
-      ├─ dp(2,1)
-      │  ├─ dp(2,2) → 1 (memo hit)
-      │  └─ dp(3,1) → 0 (oob)
-      │  → memo[2][1] = 1
-      └─ dp(3,0) → 0 (oob)
-      → memo[2][0] = 1
-   → memo[1][0] = 0 + 1 = 1
+### Why this works
 
-→ memo[0][0] = dp(0,1=1) + dp(1,0=1) = 2
+* **0 for impossible states**: sums stay correct because paths are counts.
+* **Base cases**:
 
-Think of “how many ways are there from this cell to the finish?” as your central question, and cache the answers so you never recompute the same sub‐problem twice.
+  * out-of-bounds/obstacle ⇒ 0 paths;
+  * at target ⇒ 1 path.
+* **Memoization**: each cell’s count computed once ⇒ O(m·n) time, O(m·n) space.
 
----
+### Quick walkthrough
 
-### 1) Define the DP state
+Grid:
 
 ```
-dp(r,c) = number of unique obstacle-free paths from grid cell (r,c) to the bottom‐right corner  
+[ [0,0,0],
+  [0,1,0],
+  [0,0,0] ]
 ```
 
-where `(r,c)` runs from `0 ≤ r < m`, `0 ≤ c < n`.
-
----
-
-### 2) Identify your base cases
-
-1. **Out of bounds**
-   If `r ≥ m` or `c ≥ n`, you’ve stepped off the grid—there are **0** ways from an invalid cell.
-
-2. **Obstacle cell**
-   If `obstacleGrid[r][c] == 1`, you can’t stand here—so **0** ways.
-
-3. **Goal cell**
-   If `(r,c)` is exactly `(m-1,n-1)` and it’s not blocked, you’ve arrived—there’s exactly **1** “empty” path (you’re already there).
-
----
-
-### 3) Write the recurrence
-
-From any free, in-bounds, non-goal cell, you have two moves available (down or right), so
-
-```
-dp(r,c) = dp(r+1, c)   +   dp(r, c+1)  
-```
-
-—sum the number of ways from the cell below and the cell to the right.
-
----
-
-### 4) Use memoization to avoid exponential blow-up
-
-A naïve recursion from `(0,0)` would branch into two calls at each step, revisiting the same `(r,c)` over and over (exponential time). Instead:
-
-* Allocate a 2D array `memo[m][n]`, initialized to an “uncomputed” sentinel (e.g. `-1`).
-* In `dp(r,c)`, **first** check `memo[r][c]`; if it isn’t `-1`, return it immediately.
-* Otherwise compute `dp(r,c)` by applying the base cases or recurrence, store it in `memo[r][c]`, and return.
-
-This guarantees **each** distinct `(r,c)` is computed at most once. Every subsequent request for that cell’s answer is a constant-time lookup.
-
----
-
-### 5) Top-down flow
-
-1. Call `dp(0,0)`.
-2. If `(0,0)` is blocked, you immediately return 0. Otherwise you recurse:
-
-   * into `dp(1,0)` (downward)
-   * and into `dp(0,1)` (rightward)
-3. Each of those recurses similarly, hitting base cases at obstacles, out-of-bounds, or the goal.
-4. Whenever you compute a non-base result, you store it in `memo[r][c]`.
-5. As the recursion unwinds, memo hits cut off entire sub-trees, and your final return from `dp(0,0)` is the total number of valid paths.
-
----
-
-### 6) Complexity
-
-* **Time:** You have at most `m×n` states, each doing O(1) work once memoized → **O(m·n)**.
-* **Space:** The memo table is O(m·n), and the recursion stack is O(m+n) deep in the worst case.
-
----
-
-### Why this perspective helps
-
-* You never need to think about the order in which you fill rows or columns—you simply ask “how many from here?” and let recursion handle the dependencies.
-* Memoization transforms what would be an exponential tree of calls into a directed acyclic graph of at most `m·n` nodes.
-* It’s especially natural when a problem’s rule (“you can move only right or down”) gives a small, fixed set of next-states from each cell.
-
+* `dfs(2,2)=1` (goal)
+* `dfs(2,1)= dfs(2,2)+dfs(3,1)=1+0=1`
+* `dfs(2,0)= dfs(2,1)+dfs(3,0)=1+0=1`
+* `dfs(1,2)= dfs(1,3)+dfs(2,2)=0+1=1`
+* `dfs(1,1)= obstacle ⇒ 0`
+* `dfs(1,0)= dfs(1,1)+dfs(2,0)=0+1=1`
+* `dfs(0,2)= dfs(0,3)+dfs(1,2)=0+1=1`
+* `dfs(0,1)= dfs(0,2)+dfs(1,1)=1+0=1`
+* `dfs(0,0)= dfs(0,1)+dfs(1,0)=1+1=2` 
 */
-
 class Solution {
     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-        int m = obstacleGrid.length;
-        int n = obstacleGrid[0].length;
-        int[][] memo = new int[m][n];
+        int rows = obstacleGrid.length;
+        int cols = obstacleGrid[0].length;
 
-        for(int[] row : memo){
-            Arrays.fill(row, -1);
-        }
-       
-        return dp(obstacleGrid, memo, m, n, 0, 0);
+        Integer[][] memo = new Integer[rows][cols];
+
+        return dp(obstacleGrid, memo, rows, cols, 0, 0);
     }
 
-    public int dp(int[][] obstacleGrid, int[][] memo, int m, int n, int row, int col){
-        if(row > m-1 || col > n-1){
+    private int dp(int[][] obstacleGrid, Integer[][] memo, int rows, int cols, int i, int j){
+        if(i < 0 || i >= rows || j < 0 || j >= cols){
             return 0;
         }
-        if(obstacleGrid[row][col] == 1){
+        if(obstacleGrid[i][j] == 1){
             return 0;
         }
-        if(memo[row][col] != -1){
-            return memo[row][col];
+
+        if(i == rows - 1 && j == cols - 1){
+            return 1;
         }
 
-        if(row == m-1 && col == n-1 && obstacleGrid[row][col] != 1){
-            return 1; 
+        if(memo[i][j] != null){
+            return memo[i][j];
         }
 
-        memo[row][col] = dp(obstacleGrid, memo, m, n, row, col + 1) + dp(obstacleGrid, memo, m, n, row + 1, col);
-
-        return memo[row][col];
+        return memo[i][j] = dp(obstacleGrid, memo, rows, cols, i, j+1) + dp(obstacleGrid, memo, rows, cols, i+1, j);
     }
 }
 
-// Bottom Up DP
+
+
+
+// Method 2: 1-D Bottom-Up DP (O(n) Space)
 /*
-Step-by-Step Explanation
-DP State
-Define a 2D array dp of the same size as obstacleGrid, where
+# Idea (tabulation with 1D DP)
 
+We scan the grid row by row, keeping a 1D array `dp[j]` where:
 
-dp[i][j] = number of unique paths from start (0,0) to cell (i,j),
-           moving only down or right, without stepping on any obstacles.
-Initialization
+* `dp[j]` = number of ways to reach the cell in the **current row** at column `j`.
+* When we move across a row, `dp[j]` already holds “ways from **above**” (same column, previous row), and `dp[j-1]` holds “ways from the **left**” (already updated in this row).
+* If a cell is an obstacle, ways to it are `0` (we “block” the path).
 
-dp[0][0]
+**Transition for a free cell `(i, j)`**:
 
-If the start cell (0,0) is free (obstacleGrid[0][0] == 0), there is exactly 1 way to “start” there.
+```
+dp[j] = dp[j] (from above) + dp[j-1] (from left)
+```
 
-If it’s blocked, there are 0 ways, and the entire result will be 0.
+**Obstacle cell**:
 
-First Row and First Column
+```
+dp[j] = 0
+```
 
-First row (i = 0):
-You can only reach (0,j) from (0,j-1). If either (0,j) has an obstacle or (0,j-1) was unreachable (dp[0][j-1] == 0), then dp[0][j] = 0; otherwise
+We initialize the start `dp[0]` to `1` **only** if the start is not blocked.
 
-dp[0][j] = dp[0][j-1];
-First column (j = 0):
-Similarly, you can only come down from (i-1,0):
+## Why this is correct
 
-dp[i][0] = (obstacleGrid[i][0] == 0) ? dp[i-1][0] : 0;
-General Recurrence
-For each cell (i,j) with i≥1, j≥1:
+* We process left→right within each row:
 
-If it’s an obstacle (obstacleGrid[i][j] == 1), set dp[i][j] = 0—no paths go through here.
+  * `dp[j]` (before update) is the number of ways from **above**.
+  * `dp[j-1]` (already updated) is the number of ways from the **left** in the current row.
+* If a cell is an obstacle, we zero `dp[j]` so it won’t contribute to later cells in that row or below.
+* Space is `O(n)` for `n = number of columns`.
 
-Otherwise, you can arrive via two moves:
+**Time:** `O(m·n)`
+**Space:** `O(n)`
 
-From above (i-1,j) → dp[i-1][j] ways
+---
 
-From left (i,j-1) → dp[i][j-1] ways
+# Thorough example walkthrough
 
-Sum them:
+Grid:
 
-dp[i][j] = dp[i-1][j] + dp[i][j-1];
-Result
-After filling all cells, dp[m-1][n-1] contains the total number of obstacle-free paths from the top-left to the bottom-right.
+```
+[
+  [0, 0, 0],
+  [0, 1, 0],
+  [0, 0, 0]
+]
+```
 
-Complexity
-Time: We visit each of the m × n cells exactly once, doing O(1) work per cell → O(m·n).
+`0` = free, `1` = obstacle.
+Answer should be `2`.
 
-Space: We allocate an m × n DP table → O(m·n) extra space.
+Initialize:
 
-Optional Optimization to O(n) Space
-Because dp[i][j] depends only on the same row’s left neighbor and the previous row’s same column, you can collapse down to a single 1D array of length n. At each new row, you update:
+```
+dp = [1, 0, 0]   // start cell is free → dp[0]=1
+```
 
+### Row 0 (i = 0): [0, 0, 0]
 
-int[] dp = new int[n];
-dp[0] = (obstacleGrid[0][0] == 0) ? 1 : 0;
-for (int j = 1; j < n; j++) {
-    dp[j] = obstacleGrid[0][j] == 0 ? dp[j-1] : 0;
-}
+* j = 0, free:
 
-for (int i = 1; i < m; i++) {
-    // First column update
-    dp[0] = (obstacleGrid[i][0] == 0) ? dp[0] : 0;
-    for (int j = 1; j < n; j++) {
-        dp[j] = obstacleGrid[i][j] == 0
-                ? dp[j] + dp[j-1]    // dp[j] is “up”, dp[j-1] is “left”
-                : 0;
-    }
-}
-return dp[n-1];
+  * j==0 → only from above (which is dp[0] itself) → stays 1
+  * dp = [1, 0, 0]
 
-This still runs in O(m·n) time but uses only O(n) additional space.
+* j = 1, free:
+
+  * dp[1] += dp[0] → 0 + 1 = 1
+  * dp = [1, 1, 0]
+
+* j = 2, free:
+
+  * dp[2] += dp[1] → 0 + 1 = 1
+  * dp = [1, 1, 1]
+
+Interpretation after row 0: 1 way to each cell in the first row (only moving right).
+
+### Row 1 (i = 1): [0, 1, 0]
+
+* j = 0, free:
+
+  * first column → dp[0] stays as “from above”: 1
+  * dp = [1, 1, 1]
+
+* j = 1, **obstacle**:
+
+  * dp[1] = 0   // block paths through this cell
+  * dp = [1, 0, 1]
+
+* j = 2, free:
+
+  * dp[2] += dp[1] → 1 + 0 = 1
+  * dp = [1, 0, 1]
+
+Interpretation after row 1: there’s **no** path through the middle; only the upper route survives to column 2.
+
+### Row 2 (i = 2): [0, 0, 0]
+
+* j = 0, free:
+
+  * first column → dp[0] stays as “from above”: 1
+  * dp = [1, 0, 1]
+
+* j = 1, free:
+
+  * dp[1] += dp[0] → 0 + 1 = 1
+  * dp = [1, 1, 1]
+
+* j = 2, free:
+
+  * dp[2] += dp[1] → 1 + 1 = 2
+  * dp = [1, 1, 2]
+
+Final answer = `dp[last] = 2`.
+
+**Intuition:** There are exactly 2 valid routes that avoid the obstacle:
+
+* Right → Right → Down → Down
+* Right → Down → Down → Right
+
+---
+
+## Common edge cases
+
+* **Start blocked (`obstacleGrid[0][0] == 1`)** → return 0 (we handle via `dp[0]=0`).
+* **End blocked (`obstacleGrid[m-1][n-1] == 1`)** → result becomes 0 naturally.
+* **First row/column obstacles:** once `dp[j]` (or `dp[0]`) becomes 0 due to an obstacle, cells to its right in that row (or below in that column) can only be reached from the other direction, which the recurrence handles.
+
+That’s the full O(n)-space solution with the reasoning and a concrete trace.
+
 */
+
 // class Solution {
 //     public int uniquePathsWithObstacles(int[][] obstacleGrid) {
-//         int m = obstacleGrid.length;
-//         int n = obstacleGrid[0].length;
-//         // dp[i][j] = # of ways to reach cell (i,j) from (0,0)
-//         int[][] dp = new int[m][n];
-        
-//         // 1) Base case: starting cell
-//         // If there's no obstacle at (0,0), there's exactly 1 way to be there.
-//         dp[0][0] = (obstacleGrid[0][0] == 0) ? 1 : 0;
-        
-//         // 2) First row: you can only come from the left
-//         for (int j = 1; j < n; j++) {
-//             // If this cell is free and the cell to the left is reachable,
-//             // you inherit that many ways; otherwise 0.
-//             if (obstacleGrid[0][j] == 0 && dp[0][j - 1] > 0) {
-//                 dp[0][j] = dp[0][j - 1];
-//             } else {
-//                 dp[0][j] = 0;
-//             }
-//         }
-        
-//         // 3) First column: you can only come from above
-//         for (int i = 1; i < m; i++) {
-//             if (obstacleGrid[i][0] == 0 && dp[i - 1][0] > 0) {
-//                 dp[i][0] = dp[i - 1][0];
-//             } else {
-//                 dp[i][0] = 0;
-//             }
-//         }
-        
-//         // 4) Fill in the rest of the grid
-//         //    For each free cell, sum the ways from above and from the left.
-//         //    If there's an obstacle, leave dp[i][j] = 0.
-//         for (int i = 1; i < m; i++) {
-//             for (int j = 1; j < n; j++) {
-//                 if (obstacleGrid[i][j] == 0) {
-//                     dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
-//                 } else {
-//                     dp[i][j] = 0;
+//         int m = obstacleGrid.length, n = obstacleGrid[0].length;
+
+//         int[] dp = new int[n];
+//         // Start cell
+//         dp[0] = (obstacleGrid[0][0] == 1) ? 0 : 1;
+
+//         for (int i = 0; i < m; i++) {
+//             for (int j = 0; j < n; j++) {
+
+//                 if (obstacleGrid[i][j] == 1) {
+//                     // Blocked cell: no paths end here
+//                     dp[j] = 0;
+//                 } else if (j > 0) {
+//                     // Free cell: ways from above (dp[j]) + from left (dp[j-1])
+//                     dp[j] += dp[j - 1];
 //                 }
+//                 // Note: if j == 0 and cell is free, dp[0] already equals
+//                 // "ways from above"; there's no left neighbor in first column.
 //             }
 //         }
-        
-//         // 5) The bottom-right corner holds the total number of unique paths
-//         return dp[m - 1][n - 1];
+//         return dp[n - 1];
 //     }
 // }
