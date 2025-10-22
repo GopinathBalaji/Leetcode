@@ -1,255 +1,296 @@
-// Top Down DP (try after pair of indices)
+// Method 1: Expanding around center O(n²) time, O(n) space
 /*
-## Detailed Explanation
+## What “centers” mean
 
-1. **State definition**
-   We use a 2D memo table `memo[i][j]` storing whether `s[i..j]` is a palindrome.  The entry is initially `null` to indicate “not computed.”
+A palindrome mirrors around a center. There are two types of centers in a string `s` of length `n`:
 
-2. **Base cases**
+1. **Odd-length centers** at each index `i` (like `"aba"` centered on the middle `'b'`).
+   Initialize `left = i`, `right = i`.
 
-   * If `i >= j`, the substring is length 0 or 1, trivially a palindrome → return `true`.
-   * If `s.charAt(i) != s.charAt(j)`, the ends don’t match → return `false`.
+2. **Even-length centers** between `i` and `i+1` (like `"abba"` centered between the two `'b'`s).
+   Initialize `left = i`, `right = i+1`.
 
-3. **Recurrence**
-
-   ```java
-   isPal(i,j) = (s[i] == s[j]) && isPal(i+1, j-1)
-   ```
-
-   We only recurse one level deeper on the interior `(i+1, j-1)` once the end‐characters match.
-
-4. **Memoization**
-   Once `isPal(i,j)` is computed, we store it in `memo[i][j]`. Any subsequent call for the same `(i,j)` returns immediately in O(1).
-
-5. **Finding the longest**
-   We iterate all start/end pairs `(i,j)` with two nested loops. Whenever `isPal(i,j)` is `true`, we compare `j−i+1` to our current `bestLen`. If it’s larger, we update `bestLen` and record `bestStart = i`.
-
-6. **Result extraction**
-   After filling the DP via those calls, the longest palindromic substring is `s.substring(bestStart, bestStart + bestLen)`.
-
-7. **Complexity**
-
-   * **Time:** There are O(n²) possible `(i,j)` pairs; each `isPal` call is O(1) after memoization, so O(n²) overall.
-   * **Space:** The `memo` table is O(n²), and recursion depth is O(n) in the worst case.
+Total centers to try: `n` odd + `n-1` even = **`2n-1`**.
 
 ---
 
-## Example & Recursion Tree
+## Expanding from a center
 
-Let’s walk through `s = "babad"`. We’ll highlight how `isPal(0,2)` (“bab”) and `isPal(1,3)` (“aba”) get computed and memoized.
+For a chosen `(left, right)`:
+
+* While `left >= 0` and `right < n` **and** `s[left] == s[right]`:
+
+  * Expand outward: `left--`, `right++`.
+* When the loop stops, the palindrome is the **last valid range**: `(left+1 .. right-1)`.
+  Its **length** is `right - left - 1`, and **start** index is `left + 1`.
+
+Why this works: a palindrome is fully determined by its radius around the center. As soon as you hit a mismatch or boundary, you’ve maximized that center’s palindrome.
+
+---
+
+## Bookkeeping: tracking the best answer
+
+Keep two integers:
+
+* `bestStart` — start index of the longest palindrome seen so far
+* `bestLen` — its length
+
+After each expansion, compute `currLen = right - left - 1`.
+If `currLen > bestLen`, update:
+
+* `bestLen = currLen`
+* `bestStart = left + 1`
+
+(When lengths tie, you can keep the existing one; any longest is acceptable.)
+
+---
+
+## Step-by-step examples
+
+### Example 1: `"babad"`
+
+* Center `i=0` (odd): expand on `'b'` → `"b"` (len 1).
+* Center between `0` and `1` (even): `'b'` vs `'a'` mismatch → len 0.
+* `i=1` (odd): expand on `'a'`:
+
+  * `'a'` matches → try `'b'` (left) and `'b'` (right) → `"bab"` (len 3).
+  * Next step `'?'` vs `'a'` (out of bounds / mismatch) → stop. Record `"bab"`.
+* Between `1` and `2` (even): `'a'` vs `'b'` mismatch.
+* `i=2` (odd): expand on `'b'`:
+
+  * `'b'` matches → try `'a'` and `'a'` → `"aba"` (len 3).
+  * Next step out of bounds → stop. We now have `"bab"` and `"aba"` both length 3.
+* Remaining centers won’t beat 3, but you still check. Final longest is length 3 (either substring is fine).
+
+### Example 2: `"cbbd"`
+
+* `i=1` (odd): `'b'` → just `"b"`.
+* Between `1` and `2` (even): `'b'` vs `'b'` → expand to `"bb"` (len 2); next expand fails → record `"bb"`.
+* No other center yields longer → answer length is 2.
+
+---
+
+## Edge cases & gotchas
+
+* **Even centers are essential.** Forgetting them misses cases like `"bb"` and `"abba"`.
+* **Index math:** when expansion stops at `(left, right)`, the valid palindrome is `[left+1, right)` (half-open). Length = `right - left - 1`.
+* **Single-character strings** → longest is the string itself (length 1).
+* **All identical chars** (`"aaaaa"`) → the whole string is palindromic. Even centers will chain outwards correctly.
+* **Empty string** → length 0; handle upfront if needed.
+
+---
+
+## Complexity
+
+* You attempt `~2n` centers, and each expansion moves `left` and `right` at most `n` times across all centers.
+* **Time:** `O(n²)` worst case (e.g., `"aaaa…a"`).
+* **Space:** `O(1)` (just a few integers).
+
+---
+
+## Optional pruning (micro-optimization)
+
+If you already have `bestLen`, and for the current center the **maximum possible** palindrome (even if it extended to the edges) can’t exceed `bestLen`, you can skip expanding that center. (Good in practice, not required.)
+
+---
+
+## Result extraction (when you’re done)
+
+Once you’ve scanned all centers, your answer is the substring:
 
 ```
-Calls for checking isPal(0,2):
-isPal(0,2)
-├─ s[0] == s[2]?  'b' == 'b' → yes
-└─ call isPal(1,1)
-   └─ i>=j (1>=1) → return true
-└─ memo[0][2] = true
-
-Calls for checking isPal(1,3):
-isPal(1,3)
-├─ s[1] == s[3]?  'a' == 'a' → yes
-└─ call isPal(2,2)
-   └─ i>=j (2>=2) → return true
-└─ memo[1][3] = true
+s.substring(bestStart, bestStart + bestLen)
 ```
 
-Detailed tree including memo hits:
+### Why this fixes your issues
 
-```
-isPal(0,2)
-├─ (0,2) memo null
-├─ chars match → recurse isPal(1,1)
-│  └─ base i>=j → true
-└─ store memo[0][2]=true → return true
+* **No global temp state.** Each expansion is self-contained and returns its own result.
+* **Proper update rule.** You only update `bestStart/bestLen` when you actually find a longer palindrome.
+* **Correct length & start.** Computed from the final bounds after expansion (`right - left - 1`, `left + 1`).
+* **Even/odd handled uniformly.** `expand` safely handles out-of-bounds by immediately returning length 0 if needed.
 
-isPal(1,3)
-├─ (1,3) memo null
-├─ chars match → recurse isPal(2,2)
-│  └─ base i>=j → true
-└─ store memo[1][3]=true → return true
+---
 
-Later, if we call isPal(0,2) again:
-isPal(0,2)
-└─ memo[0][2] != null → return true (no recursion)
-```
+### Quick walkthrough (“babad”)
 
-Meanwhile, the outer loops will discover that both substrings of length 3 are palindromes, updating `bestLen` to 3 and `bestStart` to the first occurrence (index 0). The final returned substring is `"bab"`.
+* `i=0`:
 
+  * odd around `b` → “b” (start 0, len 1)
+  * even between `b|a` → “” (len 0)
+    Best so far: start 0, len 1
+* `i=1`:
+
+  * odd around `a` → expand to “bab” (start 0, len 3)
+  * even `a|b` → “”
+    Update: start 0, len 3
+* `i=2`:
+
+  * odd around `b` → “aba” (start 1, len 3) (ties ok)
+  * even `b|a` → “”
+    Keep len 3
+* `i=3,4`: no longer palindrome than 3.
+  Return substring with `(bestStart, bestLen)` → either “bab” or “aba”.
+
+If you want, I can show a micro-optimization to skip centers that cannot beat `bestLen`.
 */
 class Solution {
-    private String s;
-    // memo[i][j] == null   → not yet computed
-    // memo[i][j] == true   → s[i..j] is a palindrome
-    // memo[i][j] == false  → s[i..j] is not a palindrome
-    private Boolean[][] memo;
-    private int bestStart, bestLen;
-
     public String longestPalindrome(String s) {
-        this.s = s;
         int n = s.length();
-        memo = new Boolean[n][n];
-        bestStart = 0;
-        bestLen   = 0;
+        if (n < 2) return s;
 
-        // Try every substring s[i..j]
+        int bestStart = 0, bestLen = 1;
+
         for (int i = 0; i < n; i++) {
-            for (int j = i; j < n; j++) {
-                if (isPal(i, j)) {
-                    int length = j - i + 1;
-                    if (length > bestLen) {
-                        bestLen   = length;
-                        bestStart = i;
-                    }
-                }
+            // odd center at (i, i)
+            int[] odd = expand(s, i, i);
+            // even center at (i, i+1)
+            int[] even = expand(s, i, i + 1);
+
+            int[] better = (odd[1] >= even[1]) ? odd : even;
+            if (better[1] > bestLen) {
+                bestStart = better[0];
+                bestLen   = better[1];
             }
         }
-
         return s.substring(bestStart, bestStart + bestLen);
     }
 
-    private boolean isPal(int i, int j) {
-        // Base case: empty or single-char is palindrome
-        if (i >= j) {
-            return true;
+    // Expand while s[l] == s[r], then return {start, len} of the last valid window
+    private int[] expand(String s, int l, int r) {
+        int n = s.length();
+        while (l >= 0 && r < n && s.charAt(l) == s.charAt(r)) {
+            l--; r++;
         }
-        // Return cached result if available
-        if (memo[i][j] != null) {
-            return memo[i][j];
-        }
-        boolean res;
-        // Ends must match, and the interior must be a palindrome
-        if (s.charAt(i) != s.charAt(j)) {
-            res = false;
-        } else {
-            res = isPal(i + 1, j - 1);
-        }
-        memo[i][j] = res;
-        return res;
+        // Now (l, r) is invalid; the palindrome is (l+1 .. r-1)
+        int start = l + 1;
+        int len   = r - l - 1;
+        return new int[]{start, len};
     }
 }
 
-// Bottom Up DP approch
-/* 
-## Detailed Explanation
 
-1. **DP State**
-   We define a 2D boolean array `dp` of size `n×n` (where `n = s.length()`):
 
-   ```
-   dp[i][j] == true  ⇔  the substring s[i..j] is a palindrome
-   ```
+// Method 2: DP Using Tabulation
+/*
+## \U0001f9e9 Core idea
 
-2. **Initialization**
+We want to know whether each substring `s[l..r]` (inclusive) is a palindrome.
+Define a 2-D boolean DP table:
 
-   * **Length = 1**: every single character is a palindrome, so for all `i`:
+```
+dp[l][r] = true  if s[l..r] is palindrome
+         = false otherwise
+```
 
-     ```java
-     dp[i][i] = true;
-     ```
-   * **Length = 2**: check each adjacent pair; if they match, they form a palindrome of length 2:
-
-     ```java
-     if (s.charAt(i) == s.charAt(i+1)) {
-         dp[i][i+1] = true;
-     }
-     ```
-
-3. **General Recurrence**
-   For any substring `s[i..j]` with length ≥ 3, it’s a palindrome exactly when:
-
-   1. The end‐characters match: `s.charAt(i) == s.charAt(j)`, **and**
-   2. The interior substring `s[i+1..j−1]` is also a palindrome (`dp[i+1][j-1] == true`).
-
-   Thus for increasing lengths `len` from 3 up to `n`, we loop:
-
-   ```java
-   for (int len = 3; len <= n; len++) {
-       for (int i = 0; i + len - 1 < n; i++) {
-           int j = i + len - 1;
-           if (s.charAt(i) == s.charAt(j) && dp[i+1][j-1]) {
-               dp[i][j] = true;
-               // update best length/start if this is the longest so far
-           }
-       }
-   }
-   ```
-
-4. **Tracking the longest**
-
-   * We maintain `bestStart` and `bestLen`.
-   * Whenever we set `dp[i][j] = true`, we check if `(j − i + 1) > bestLen`; if so, we update `bestLen = j−i+1` and `bestStart = i`.
-
-5. **Result Extraction**
-   After the DP table is fully populated, the longest palindromic substring is simply
-
-   ```java
-   s.substring(bestStart, bestStart + bestLen);
-   ```
+Once we know which substrings are palindromes, we can keep track of the **longest** one.
 
 ---
 
-### Complexity
+## \U0001f9e0 Recurrence
 
-* **Time:**
+A substring `s[l..r]` is a palindrome if:
 
-  * We fill an `n×n` table.
-  * The outer loop over `len` runs O(n) times; the inner loop over valid starts `i` runs O(n) times; each step is O(1).
-  * Total: **O(n²)**.
+1. The two boundary characters match: `s[l] == s[r]`
+2. And **the inner substring** `s[l+1..r-1]` is also a palindrome (or the substring length ≤ 2).
 
-* **Space:**
+Formally:
 
-  * We use an `n×n` boolean table → **O(n²)** extra space.
-  * Plus O(1) for tracking `bestStart`, `bestLen`, loop indices, etc.
+```
+dp[l][r] = (s[l] == s[r]) && (r - l < 3 || dp[l+1][r-1])
+```
 
-This bottom‐up DP systematically builds up palindrome information for all substrings, ensuring that when you need to know if `s[i..j]` is a palindrome, its interior `s[i+1..j-1]` has already been determined.
+Why `r - l < 3`?
+Because any 1- or 2-char substring is automatically a palindrome if its ends match.
+
+---
+
+## \U0001f3d7️ Filling order
+
+We must compute `dp[l+1][r-1]` **before** using it, so we fill the table by **increasing substring length**.
+
+1. Start with length = 1 (single letters)
+2. Then length = 2
+3. Then length ≥ 3 …
+
+
+## \U0001f9ee Complexity
+
+* **Time:** O(n²) — we check every substring once.
+* **Space:** O(n²) for the boolean table.
+
+---
+
+## \U0001f9ed Walkthrough example: `"babad"`
+
+`n = 5`, indices 0-4: b a b a d
+Initialize `dp[i][i] = true` (all singles).
+
+We’ll show just the important states.
+
+| l | r | s[l..r] | s[l]==s[r]? | Inner      | dp[l][r] | Longest                |
+| - | - | ------- | ----------- | ---------- | -------- | ---------------------- |
+| 0 | 1 | "ba"    | ✗           | —          | F        | len1                   |
+| 1 | 2 | "ab"    | ✗           | —          | F        | len1                   |
+| 2 | 3 | "ba"    | ✗           | —          | F        | len1                   |
+| 3 | 4 | "ad"    | ✗           | —          | F        | len1                   |
+| 0 | 2 | "bab"   | ✓           | dp[1][1]=T | **T**    | update → start=0,len=3 |
+| 1 | 3 | "aba"   | ✓           | dp[2][2]=T | **T**    | tie len=3              |
+| 2 | 4 | "bad"   | ✗           | —          | F        | —                      |
+
+All longer windows (>3) fail.
+Final answer: substring(0, 3) = "bab" (or "aba", both valid).
+
+---
+
+## \U0001f4a1 Intuition check
+
+* Length-1 windows initialize palindromes.
+* Length-2 checks handle pairs like `"bb"`.
+* From length 3 onward, we “grow” palindromes outward.
+* Every cell `dp[l][r]` reuses the result of a smaller window, which is the hallmark of dynamic programming.
+
+---
+
+## \U0001f50d Key pitfalls avoided
+
+* Forgetting to seed length-1 substrings (all palindromes).
+* Accessing `dp[l+1][r-1]` before ensuring indices are valid (that’s why we fill by length).
+* Not handling even-length case separately (our `len==2` condition covers it).
 
 */
 // class Solution {
 //     public String longestPalindrome(String s) {
 //         int n = s.length();
-//         if (n < 2) {
-//             // Any single char or empty string is itself a palindrome
-//             return s;
-//         }
+//         if (n < 2) return s;
 
-//         // dp[i][j] will be true if s[i..j] is a palindrome
 //         boolean[][] dp = new boolean[n][n];
+//         int bestStart = 0, bestLen = 1;
 
-//         int bestStart = 0;
-//         int bestLen = 1;
+//         // 1. Base: all single characters
+//         for (int i = 0; i < n; i++) dp[i][i] = true;
 
-//         // 1) Base case: all substrings of length 1 are palindromes
-//         for (int i = 0; i < n; i++) {
-//             dp[i][i] = true;
-//         }
+//         // 2. Fill table by window length
+//         for (int len = 2; len <= n; len++) {
+//             for (int l = 0; l + len - 1 < n; l++) {
+//                 int r = l + len - 1;
 
-//         // 2) Consider substrings of length 2 explicitly
-//         for (int i = 0; i < n - 1; i++) {
-//             if (s.charAt(i) == s.charAt(i + 1)) {
-//                 dp[i][i + 1] = true;
-//                 bestStart = i;
-//                 bestLen = 2;
-//             }
-//         }
-
-//         // 3) Build up for substrings of length 3…n
-//         for (int len = 3; len <= n; len++) {
-//             // i = starting index, j = ending index = i + len - 1
-//             for (int i = 0; i + len - 1 < n; i++) {
-//                 int j = i + len - 1;
-//                 // A substring is palindrome if its ends match and its interior is a palindrome
-//                 if (s.charAt(i) == s.charAt(j) && dp[i + 1][j - 1]) {
-//                     dp[i][j] = true;
-//                     if (len > bestLen) {
-//                         bestLen = len;
-//                         bestStart = i;
+//                 if (s.charAt(l) == s.charAt(r)) {
+//                     if (len == 2 || dp[l + 1][r - 1]) {
+//                         dp[l][r] = true;
+//                         if (len > bestLen) {
+//                             bestStart = l;
+//                             bestLen = len;
+//                         }
 //                     }
 //                 }
 //             }
 //         }
 
-//         // 4) Extract the longest palindrome
 //         return s.substring(bestStart, bestStart + bestLen);
 //     }
 // }
+
+
+
+
+// Top-Down / Recursive solution is very inefficient even after memoization
