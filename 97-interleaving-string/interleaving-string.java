@@ -1,403 +1,220 @@
-// Top Down DP solution
+// Method 1: Top-Down DP Approach
 /*
-Below is a full walk-through of the **top-down DP** on the small example
+### What I was doing wrong:
 
-```
-s1 = "ab"
-s2 = "cd"
-s3 = "acbd"
-```
+1. **Out-of-bounds before checks.**
+   You call `s1.charAt(i)` / `s2.charAt(j)` without ensuring `i < m` / `j < n`. When one string is fully consumed, this throws.
 
-showing every call `dp(i,j)`, the value returned, where we store it in `memo`, and how (if it happened) a memo hit would short-circuit a deeper recursion.
+2. **Memo table too small (or mis-indexed).**
+   You created `memo = new Boolean[m][n]`, but your valid states include `(m, j)` and `(i, n)` (when one string is exhausted). You either need a `(m+1)×(n+1)` table, or guard accesses so you *never* index `memo[m][*]` or `memo[*][n]`.
 
-Recall our DP:
+3. **Overwriting instead of OR-ing.**
+   You do:
 
-```
-dp(i,j) = can s3[0…i+j−1] be formed by interleaving s1[0…i−1] and s2[0…j−1]?
-```
+   ```java
+   memo[i][j] = dp(i+1,j);   // if s1 matches
+   memo[i][j] = dp(i,j+1);   // if s2 matches
+   ```
 
-and
+   The second assignment erases the first; you need **logical OR** of both possibilities.
 
-```java
-if (memo[i][j] != null) 
-   return memo[i][j];
+4. **No “false” write when neither side matches.**
+   If neither branch matches, `memo[i][j]` stays `null`, and returning it can NPE due to auto-unboxing to `boolean`.
 
-char need = s3.charAt(i+j−1);
-boolean ok = false;
-if (i>0 && s1.charAt(i−1)==need)
-    ok = dp(i−1, j);
-if (!ok && j>0 && s2.charAt(j−1)==need)
-    ok = dp(i, j−1);
+5. **Return of `Boolean` slot directly.**
+   Returning `memo[i][j]` (a `Boolean`) relies on auto-unboxing; if it’s `null` you get an NPE. Always compute a local `boolean ans` and store it.
 
-memo[i][j] = ok;
-return ok;
-```
 
-We start with `dp(2,2)` since `s1.length()==2`, `s2.length()==2`.
+### Why this fixes it
 
-```
-                                           dp(2,2)?
-                                    need = s3[3] = 'd'
-            ┌─────────────────────────────────────────────────────┐
-            ↓                                                     │
- i>0? s1[1]='b' == 'd'? → no             j>0? s2[1]='d'=='d'? → yes
-            │                                                     │
-            └───────────────┐                                     │
-                            ↓                                     │
-                        dp(2,1)?                                  │
-                   need = s3[2] = 'b'
-            ┌────────────────────────────────────────┐
-            ↓                                         │
- i>0? s1[1]='b'=='b'? → yes     (we skip the s2 branch since ok=true)
-            │
-            ↓
-        dp(1,1)?  
-       need = s3[1] = 'c'
- ┌─────────────────────────────────┐
- ↓                                  │
-i>0? s1[0]='a'=='c'? → no   j>0? s2[0]='c'=='c'? → yes
-            │                                  │
-            └─────────────┐                    │
-                          ↓                    │
-                      dp(1,0)?                │
-                 need = s3[0] = 'a'
-            ┌─────────────────────────┐
-            ↓                          │
- i>0? s1[0]='a'=='a'? → yes  (skip s2 branch)
-            │
-            ↓
-        dp(0,0)?
-       (i=0,j=0 base case) → return true
-       memo[0][0] = true
-        ↑
-        │   memo[1][0] = true
-        │           memo[1][1] = true
-        │                   memo[2][1] = true
-        │                           memo[2][2] = true
-        └─────────────────────────────────────────────────
-```
+* Guards `i < m`, `j < n` before `charAt`.
+* Allows states `(m, j)` and `(i, n)` via `(m+1)×(n+1)` memo.
+* Combines branches with **OR**, not overwrite.
+* Always writes `true/false` to memo, so no `null` returns.
 
-### Annotated steps
+### Tiny sanity walkthrough
 
-1. **`dp(2,2)`**
+`s1="ab"`, `s2="cd"`, `s3="acbd"` → `dfs(0,0)`
 
-   * Next needed char = `s3[3] = 'd'`.
-   * **s1-branch**: `i>0` but `s1[1]='b'≠'d'` → skip.
-   * **s2-branch**: `s2[1]='d'==need` → recurse `dp(2,1)`.
-
-2. **`dp(2,1)`**
-
-   * Next needed = `s3[2] = 'b'`.
-   * **s1-branch**: `s1[1]='b'==need` → recurse `dp(1,1)`.
-   * Since that yields `true`, we don’t try the s2-branch.
-
-3. **`dp(1,1)`**
-
-   * Next needed = `s3[1] = 'c'`.
-   * **s1-branch**: `s1[0]='a'≠'c'` → skip.
-   * **s2-branch**: `s2[0]='c'==need` → recurse `dp(1,0)`.
-
-4. **`dp(1,0)`**
-
-   * Next needed = `s3[0] = 'a'`.
-   * **s1-branch**: `s1[0]='a'==need` → recurse `dp(0,0)`.
-
-5. **`dp(0,0)`**
-
-   * Base case `(i==0 && j==0)` returns **true**, and we store `memo[0][0]=true`.
-
-6. **Unwinding**
-
-   * `dp(1,0)` sees its recursive call was true → sets `memo[1][0]=true`, returns true.
-   * `dp(1,1)` sets `memo[1][1]=true`, returns true.
-   * `dp(2,1)` sets `memo[2][1]=true`, returns true.
-   * `dp(2,2)` sets `memo[2][2]=true`, returns true.
-
-7. **Memo hits**
-   In this particular example we never encounter the same `(i,j)` twice in the recursion, so there are no memo hits.  However, had we needed to explore both branches or revisit a state, at the top of `dp(i,j)` we’d immediately return the cached `memo[i][j]` in O(1) without diving deeper.
-
----
-
-### Final answer
-
-* `isInterleave("ab","cd","acbd")` → **true**, because `dp(2,2)` ends up `true`.
-* We built up every needed `dp(i,j)` exactly once (thanks to memo), in **O(len1×len2)** time and space.
-
+* Match `a` from `s1` → `dfs(1,0)`
+* Match `c` from `s2` → `dfs(1,1)`
+* Match `b` from `s1` → `dfs(2,1)`
+* Match `d` from `s2` → `dfs(2,2)` hits base case → `true`, which memo bubbles back up.
 */
 class Solution {
     public boolean isInterleave(String s1, String s2, String s3) {
-        if(s3.length() != s1.length() + s2.length()){
-            return false;
-        }
+        int m = s1.length(), n = s2.length();
+        if (m + n != s3.length()) return false;
 
-        Boolean[][] memo = new Boolean[s1.length() + 1][s2.length() + 1];
-        return dp(s1, s2, s3, memo, s1.length(), s2.length());
+        Boolean[][] memo = new Boolean[m + 1][n + 1];
+        return dfs(0, 0, s1, s2, s3, memo);
     }
 
-    public boolean dp(String s1, String s2, String s3, Boolean[][] memo, int s1Len, int s2Len){
-        
-        if(s1Len == 0 && s2Len == 0){
-            return true;
+    // dfs(i,j): can s1[i:] and s2[j:] form s3[i+j:] ?
+    private boolean dfs(int i, int j, String s1, String s2, String s3, Boolean[][] memo) {
+        int m = s1.length(), n = s2.length();
+        if (i == m && j == n) return true;
+
+        if (memo[i][j] != null) return memo[i][j];
+
+        boolean ans = false;
+        // take from s1
+        if (i < m && s1.charAt(i) == s3.charAt(i + j)) {
+            ans = dfs(i + 1, j, s1, s2, s3, memo);
         }
-        if(memo[s1Len][s2Len] != null){
-            return memo[s1Len][s2Len];
+        // take from s2 (only try if not already true)
+        if (!ans && j < n && s2.charAt(j) == s3.charAt(i + j)) {
+            ans = dfs(i, j + 1, s1, s2, s3, memo);
         }
-
-        boolean matchFromS1 = (s1Len > 0 && dp(s1, s2, s3, memo, s1Len - 1, s2Len) && s1.charAt(s1Len - 1) == s3.charAt(s1Len + s2Len - 1));
-        boolean matchFromS2 = (s2Len > 0 && dp(s1, s2, s3, memo, s1Len, s2Len - 1) && s2.charAt(s2Len - 1) == s3.charAt(s1Len + s2Len - 1));
-
-        memo[s1Len][s2Len] = matchFromS1 || matchFromS2;
-
-        return memo[s1Len][s2Len];
+        return memo[i][j] = ans;
     }
 }
 
-// Bottom Up DP
+
+
+
+
+// Method 2: Bottom-Up DP (O(m·n) time, O(m·n) space)
 /*
-## Detailed Explanation
+## Idea
 
-1. **State Definition**
-   We build a 2D boolean table `dp` of size `(m+1)×(n+1)`, where
+Let `dp[i][j]` be **true** iff the prefix `s3[0 .. i+j-1]` can be formed by interleaving `s1[0 .. i-1]` and `s2[0 .. j-1]`.
 
-   ```
-   dp[i][j] == true
-     ⇔ s3[0..i+j−1] is an interleaving of s1[0..i−1] and s2[0..j−1].
-   ```
+**Transition**
 
-   Here `i` characters have been taken from `s1`, and `j` from `s2`, composing the first `i+j` characters of `s3`.
+* If the last char of `s3` (at `i+j-1`) came from `s1`, then we must have
+  `dp[i-1][j] == true` **and** `s1[i-1] == s3[i+j-1]`.
+* Or it came from `s2`, then
+  `dp[i][j-1] == true` **and** `s2[j-1] == s3[i+j-1]`.
 
-2. **Length Check**
-   If `s3.length() != m + n`, it’s impossible to interleave exactly, so we immediately return `false`.
+## Walkthrough (classic true case)
 
-3. **Base Case `dp[0][0]`**
-   With zero characters from both `s1` and `s2`, you form the empty prefix of `s3` in exactly one way → `dp[0][0] = true`.
+`s1="aabcc" (m=5)`, `s2="dbbca" (n=5)`, `s3="aadbbcbcac"`
 
-4. **First Column `dp[i][0]`**
-   You’ve taken `i` characters from `s1` and none from `s2`.  You can only match `s3[0..i−1]` if all those `i` characters exactly equal `s1[0..i−1]` in order. Thus:
+* `dp[0][0]=true`
+* Seed first column with matches of `s1` against `s3`:
 
-   ```
-   dp[i][0] = dp[i−1][0]  &&  (s1[i−1] == s3[i−1])
-   ```
+  * `dp[1][0] = s1[0]=a == s3[0]=a → true`
+  * `dp[2][0] = s1[1]=a == s3[1]=a → true`
+  * `dp[3][0] = s1[2]=b == s3[2]=d → false` (so the rest of this column becomes false)
+* Seed first row with `s2` vs `s3`:
 
-5. **First Row `dp[0][j]`**
-   Symmetrically, taking `j` from `s2` and none from `s1`:
+  * `dp[0][1] = s2[0]=d == s3[0]=a → false`
+  * etc.
 
-   ```
-   dp[0][j] = dp[0][j−1]  &&  (s2[j−1] == s3[j−1])
-   ```
-
-6. **General Recurrence**
-   At `(i,j)` (both ≥1), the next character in `s3` is at index `i+j−1`. You can arrive there either by:
-
-   * **Taking from `s1`**: if the last taken char `s1[i−1]` matches `s3[i+j−1]`, and `dp[i−1][j]` was `true`; or
-   * **Taking from `s2`**: if `s2[j−1]` matches `s3[i+j−1]`, and `dp[i][j−1]` was `true`.
-
-   So:
-
-   ```java
-   dp[i][j] = (dp[i−1][j] && s1.charAt(i−1) == need)
-           || (dp[i][j−1] && s2.charAt(j−1) == need);
-   ```
-
-7. **Answer**
-   After filling the table row by row, column by column, the value at `dp[m][n]` tells you whether the entire `s3` can be formed by interleaving all of `s1` and `s2`.
-
----
-
-### Complexity
-
-* **Time:**  We fill an `(m+1)×(n+1)` table, doing O(1) work per cell → **O(m·n)**.
-* **Space:** We store O(m·n) booleans in the DP array → **O(m·n)** extra space.
-
-This bottom-up DP systematically builds all sub-results so that each decision—“did I pull the next char from `s1` or `s2`?”—is resolved in constant time using previously computed states.
-
-Let’s illustrate the bottom-up DP table filling on this concrete example:
-
-```
-s1 = "aab"
-s2 = "axy"
-s3 = "aaxaby"
-```
-
-Lengths:
-
-* m = s1.length() = 3
-* n = s2.length() = 3
-* s3.length() = 6 = m+n, so it’s possible.
-
-We build a (m+1)×(n+1) table `dp`, where
-
-```
-dp[i][j] = true  iff  s3[0..i+j-1] is an interleaving of s1[0..i-1] and s2[0..j-1].
-```
-
-### Step 1: Initialize the table
-
-| i\j   | 0    | 1 | 2 | 3 |
-| ----- | ---- | - | - | - |
-| **0** | true | ? | ? | ? |
-| **1** | ?    |   |   |   |
-| **2** | ?    |   |   |   |
-| **3** | ?    |   |   |   |
-
-* `dp[0][0] = true` (empty+empty→empty).
-
-### Step 2: Fill first row (i=0)
-
-We only use `s2` to match `s3`’s prefix:
-
-* j=1: need `s3[0]=='a'`, and `s2[0]=='a'`, and `dp[0][0]` was true → **true**
-* j=2: need `s3[1]=='a'`, but `s2[1]=='x'` → **false**
-* j=3: need `s3[2]=='x'`, but `s2[2]=='y'` → **false**
-
-| i\j   | 0    | 1        | 2         | 3         |
-| ----- | ---- | -------- | --------- | --------- |
-| **0** | true | **true** | **false** | **false** |
-| **1** | ?    |          |           |           |
-| **2** | ?    |          |           |           |
-| **3** | ?    |          |           |           |
-
-### Step 3: Fill first column (j=0)
-
-We only use `s1` to match `s3`’s prefix:
-
-* i=1: need `s3[0]=='a'`, `s1[0]=='a'`, `dp[0][0]==true` → **true**
-* i=2: need `s3[1]=='a'`, `s1[1]=='a'`, `dp[1][0]==true` → **true**
-* i=3: need `s3[2]=='x'`, but `s1[2]=='b'` → **false**
-
-| i\j   | 0     | 1    | 2     | 3     |
-| ----- | ----- | ---- | ----- | ----- |
-| **0** | true  | true | false | false |
-| **1** | true  |      |       |       |
-| **2** | true  |      |       |       |
-| **3** | false |      |       |       |
-
-### Step 4: Fill the rest
-
-Use the recurrence
-
-```
-dp[i][j] =  
-       (dp[i-1][j] && s1[i-1] == s3[i+j-1])  
-    || (dp[i][j-1] && s2[j-1] == s3[i+j-1])
-```
-
-* **i=1,j=1**: need `s3[1]=='a'`
-
-  * from s1? `dp[0][1]=true` && `s1[0]=='a'` → true
-  * from s2? `dp[1][0]=true` && `s2[0]=='a'` → true
-    → **dp\[1]\[1]=true**
-
-* **i=1,j=2**: need `s3[2]=='x'`
-
-  * from s1? `dp[0][2]=false` → no
-  * from s2? `dp[1][1]=true` && `s2[1]=='x'` → true
-    → **dp\[1]\[2]=true**
-
-* **i=1,j=3**: need `s3[3]=='a'`
-
-  * from s1? `dp[0][3]=false`
-  * from s2? `dp[1][2]=true` && `s2[2]=='y'` ≠ 'a'
-    → **dp\[1]\[3]=false**
-
-* **i=2,j=1**: need `s3[2]=='x'`
-
-  * from s1? `dp[1][1]=true` && `s1[1]=='a'` ≠ 'x'
-  * from s2? `dp[2][0]=true` && `s2[0]=='a'` ≠ 'x'
-    → **dp\[2]\[1]=false**
-
-* **i=2,j=2**: need `s3[3]=='a'`
-
-  * from s1? `dp[1][2]=true` && `s1[1]=='a'` → true
-  * (no need to check s2 branch since already true)
-    → **dp\[2]\[2]=true**
-
-* **i=2,j=3**: need `s3[4]=='b'`
-
-  * from s1? `dp[1][3]=false`
-  * from s2? `dp[2][2]=true` && `s2[2]=='y'` ≠ 'b'
-    → **dp\[2]\[3]=false**
-
-* **i=3,j=1**: need `s3[3]=='a'`
-
-  * from s1? `dp[2][1]=false`
-  * from s2? `dp[3][0]=false`
-    → **dp\[3]\[1]=false**
-
-* **i=3,j=2**: need `s3[4]=='b'`
-
-  * from s1? `dp[2][2]=true` && `s1[2]=='b'` → true
-    → **dp\[3]\[2]=true**
-
-* **i=3,j=3**: need `s3[5]=='y'`
-
-  * from s1? `dp[2][3]=false`
-  * from s2? `dp[3][2]=true` && `s2[2]=='y'` → true
-    → **dp\[3]\[3]=true**
-
-The final table:
-
-| i\j   | 0     | 1     | 2     | 3     |
-| ----- | ----- | ----- | ----- | ----- |
-| **0** | true  | true  | false | false |
-| **1** | true  | true  | true  | false |
-| **2** | true  | false | true  | false |
-| **3** | false | false | true  | true  |
-
-Because `dp[m][n] = dp[3][3] = true`, `"acbd"` **is** an interleaving of `"aab"` and `"axy"`.
-
----
-
-### Why this works
-
-* **dp\[i]\[j]** captures **all** ways to build the first `i+j` chars of `s3` from prefixes of `s1` and `s2`.
-* The **boundary rows/columns** handle the cases where you’ve taken exclusively from one string.
-* The **double-choice recurrence** at `(i,j)` exactly mirrors “did the last char come from `s1` or `s2`?”
-* Filling in increasing `i, j` order ensures every subproblem `(i−1,j)` and `(i,j−1)` is computed before it’s needed.
-* Final answer is whether the full lengths `(m,n)` succeed.
+Then fill the table by the recurrence. You’ll end at `dp[5][5] = true`.
+(Conversely, with `s3="aadbbbaccc"`, you’ll eventually get `dp[5][5] = false`.)
 
 */
-
 // class Solution {
 //     public boolean isInterleave(String s1, String s2, String s3) {
 //         int m = s1.length(), n = s2.length();
-//         // 1) Quick length check
-//         if (s3.length() != m + n) return false;
+//         if (m + n != s3.length()) return false;
 
-//         // 2) dp[i][j] = true if s3[0..i+j-1] can be formed by interleaving
-//         //    s1[0..i-1] and s2[0..j-1].
-//         boolean[][] dp = new boolean[m+1][n+1];
-
-//         // 3) Base case: empty s1 and s2 make empty s3
+//         boolean[][] dp = new boolean[m + 1][n + 1];
 //         dp[0][0] = true;
 
-//         // 4) First column: only use s1 to match prefix of s3
+//         // First column: only s1 contributes
 //         for (int i = 1; i <= m; i++) {
-//             dp[i][0] = dp[i-1][0]
-//                 && s1.charAt(i-1) == s3.charAt(i-1);
+//             dp[i][0] = dp[i - 1][0] && (s1.charAt(i - 1) == s3.charAt(i - 1));
 //         }
-
-//         // 5) First row: only use s2 to match prefix of s3
+//         // First row: only s2 contributes
 //         for (int j = 1; j <= n; j++) {
-//             dp[0][j] = dp[0][j-1]
-//                 && s2.charAt(j-1) == s3.charAt(j-1);
+//             dp[0][j] = dp[0][j - 1] && (s2.charAt(j - 1) == s3.charAt(j - 1));
 //         }
 
-//         // 6) Fill the rest: choose to take next char from s1 or s2
 //         for (int i = 1; i <= m; i++) {
 //             for (int j = 1; j <= n; j++) {
 //                 char need = s3.charAt(i + j - 1);
-//                 // Option A: last char came from s1
-//                 boolean fromS1 = dp[i-1][j]
-//                     && s1.charAt(i-1) == need;
-//                 // Option B: last char came from s2
-//                 boolean fromS2 = dp[i][j-1]
-//                     && s2.charAt(j-1) == need;
-//                 dp[i][j] = fromS1 || fromS2;
+//                 boolean from1 = dp[i - 1][j] && s1.charAt(i - 1) == need;
+//                 boolean from2 = dp[i][j - 1] && s2.charAt(j - 1) == need;
+//                 dp[i][j] = from1 || from2;
 //             }
 //         }
-
-//         // 7) The full lengths m,n tell us if full s3 is interleaving
 //         return dp[m][n];
+//     }
+// }
+
+
+
+
+
+// Method 3:  Rolling array optimization (O(m·n) time, O(n) space)
+/*
+# 2) Rolling array optimization (O(m·n) time, O(n) space)
+
+## Idea
+
+We only need the **previous row** to compute the current one, so compress the 2D table into a 1D array `dp[j]` representing `dp[i][j]` for the current `i`.
+
+* `dp[0]` along the way is the first column: only `s1` used.
+* For each row `i`, sweep `j` from 0..n:
+
+  * When `j==0`, update from `dp[0] && s1[i-1]==s3[i-1]`.
+  * Otherwise:
+
+    ```
+    dp[j] = (dp[j]   && s1[i-1] == s3[i+j-1])   // take from s1 (above)
+          || (dp[j-1] && s2[j-1] == s3[i+j-1]); // take from s2 (left)
+    ```
+
+## Walkthrough (same example)
+
+Initialize (`i=0` row):
+
+* `dp[0]=true`
+* Fill first row with s2 vs s3:
+  `dp[1]= (dp[0] && s2[0]==s3[0]) = (true && d==a)=false`,
+  `dp[2]= false & (b==a)=false`, … (eventually some may turn true when prefixes match).
+
+Iterate rows `i=1..m`:
+
+* Update `dp[0]` each row from s1 and s3 (first column).
+* For each `j`, recompute `dp[j]` from “above” (old `dp[j]`) or “left” (current `dp[j-1]`), comparing the needed `s3[i+j-1]` char appropriately.
+
+When done, `dp[n]` equals the answer (`true` for the classic `aadbbcbcac`, `false` for `aadbbbaccc`).
+
+---
+
+## Edge cases & pitfalls (both methods)
+
+* **Length check first**: if `m+n != s3.length()`, return false.
+* **Indexing**: watch the `-1` offsets (`i-1`,`j-1`,`i+j-1`).
+* **Initialization**: seed row/column correctly—these represent using only one string.
+* **Rolling array order**: sweep `j` left→right; we rely on `dp[j]` being from the **previous row** and `dp[j-1]` being the **current row’s left**.
+
+---
+
+## Complexity
+
+* Time: `O(m·n)`
+* Space: `O(m·n)` for the 2D table, `O(n)` for the rolling array.
+*/
+// class Solution {
+//     public boolean isInterleave(String s1, String s2, String s3) {
+//         int m = s1.length(), n = s2.length();
+//         if (m + n != s3.length()) return false;
+
+//         boolean[] dp = new boolean[n + 1];
+//         dp[0] = true; // empty + empty -> empty
+
+//         // Seed first row: only s2 used
+//         for (int j = 1; j <= n; j++) {
+//             dp[j] = dp[j - 1] && (s2.charAt(j - 1) == s3.charAt(j - 1));
+//         }
+
+//         // Process rows for s1
+//         for (int i = 1; i <= m; i++) {
+//             // First column: only s1 used
+//             dp[0] = dp[0] && (s1.charAt(i - 1) == s3.charAt(i - 1));
+
+//             for (int j = 1; j <= n; j++) {
+//                 char need = s3.charAt(i + j - 1);
+//                 boolean from1 = dp[j] && (s1.charAt(i - 1) == need);   // previous dp[j] was from row i-1
+//                 boolean from2 = dp[j - 1] && (s2.charAt(j - 1) == need); // dp[j-1] is current row, left cell
+//                 dp[j] = from1 || from2;
+//             }
+//         }
+//         return dp[n];
 //     }
 // }
