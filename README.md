@@ -385,6 +385,7 @@
 | [0684-redundant-connection](https://github.com/GopinathBalaji/Leetcode/tree/master/0684-redundant-connection) |
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
+| [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 ## Breadth-First Search
 |  |
 | ------- |
@@ -412,6 +413,7 @@
 | [0684-redundant-connection](https://github.com/GopinathBalaji/Leetcode/tree/master/0684-redundant-connection) |
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
+| [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 | [0945-snakes-and-ladders](https://github.com/GopinathBalaji/Leetcode/tree/master/0945-snakes-and-ladders) |
 | [1036-rotting-oranges](https://github.com/GopinathBalaji/Leetcode/tree/master/1036-rotting-oranges) |
 | [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
@@ -509,6 +511,7 @@
 | [0295-find-median-from-data-stream](https://github.com/GopinathBalaji/Leetcode/tree/master/0295-find-median-from-data-stream) |
 | [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
+| [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 ## Quickselect
 |  |
 | ------- |
@@ -607,10 +610,12 @@
 | [0210-course-schedule-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0210-course-schedule-ii) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0684-redundant-connection](https://github.com/GopinathBalaji/Leetcode/tree/master/0684-redundant-connection) |
+| [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 ## Shortest Path
 |  |
 | ------- |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
+| [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 ## Topological Sort
 |  |
 | ------- |
