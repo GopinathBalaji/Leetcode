@@ -378,6 +378,7 @@
 | [0226-invert-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0226-invert-binary-tree) |
 | [0230-kth-smallest-element-in-a-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0230-kth-smallest-element-in-a-bst) |
 | [0236-lowest-common-ancestor-of-a-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0236-lowest-common-ancestor-of-a-binary-tree) |
+| [0332-reconstruct-itinerary](https://github.com/GopinathBalaji/Leetcode/tree/master/0332-reconstruct-itinerary) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0417-pacific-atlantic-water-flow](https://github.com/GopinathBalaji/Leetcode/tree/master/0417-pacific-atlantic-water-flow) |
 | [0530-minimum-absolute-difference-in-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0530-minimum-absolute-difference-in-bst) |
@@ -608,6 +609,7 @@
 | [0133-clone-graph](https://github.com/GopinathBalaji/Leetcode/tree/master/0133-clone-graph) |
 | [0207-course-schedule](https://github.com/GopinathBalaji/Leetcode/tree/master/0207-course-schedule) |
 | [0210-course-schedule-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0210-course-schedule-ii) |
+| [0332-reconstruct-itinerary](https://github.com/GopinathBalaji/Leetcode/tree/master/0332-reconstruct-itinerary) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0684-redundant-connection](https://github.com/GopinathBalaji/Leetcode/tree/master/0684-redundant-connection) |
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
@@ -648,4 +650,8 @@
 |  |
 | ------- |
 | [0149-max-points-on-a-line](https://github.com/GopinathBalaji/Leetcode/tree/master/0149-max-points-on-a-line) |
+## Eulerian Circuit
+|  |
+| ------- |
+| [0332-reconstruct-itinerary](https://github.com/GopinathBalaji/Leetcode/tree/master/0332-reconstruct-itinerary) |
 <!---LeetCode Topics End-->
