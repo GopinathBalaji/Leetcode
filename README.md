@@ -84,6 +84,7 @@
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
 | [1036-rotting-oranges](https://github.com/GopinathBalaji/Leetcode/tree/master/1036-rotting-oranges) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
+| [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
 | [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
 | [2254-check-if-every-row-and-column-contains-all-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/2254-check-if-every-row-and-column-contains-all-numbers) |
@@ -576,6 +577,7 @@
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0684-redundant-connection](https://github.com/GopinathBalaji/Leetcode/tree/master/0684-redundant-connection) |
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
+| [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
 ## Simulation
 |  |
 | ------- |
@@ -613,6 +615,7 @@
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0684-redundant-connection](https://github.com/GopinathBalaji/Leetcode/tree/master/0684-redundant-connection) |
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
+| [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
 ## Shortest Path
 |  |
 | ------- |
@@ -654,4 +657,8 @@
 |  |
 | ------- |
 | [0332-reconstruct-itinerary](https://github.com/GopinathBalaji/Leetcode/tree/master/0332-reconstruct-itinerary) |
+## Minimum Spanning Tree
+|  |
+| ------- |
+| [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
 <!---LeetCode Topics End-->
