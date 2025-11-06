@@ -79,6 +79,7 @@
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
 | [0772-construct-quad-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0772-construct-quad-tree) |
+| [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [0945-snakes-and-ladders](https://github.com/GopinathBalaji/Leetcode/tree/master/0945-snakes-and-ladders) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
@@ -273,6 +274,7 @@
 | [0222-count-complete-tree-nodes](https://github.com/GopinathBalaji/Leetcode/tree/master/0222-count-complete-tree-nodes) |
 | [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
+| [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 ## Greedy
 |  |
 | ------- |
@@ -327,6 +329,7 @@
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
 | [0772-construct-quad-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0772-construct-quad-tree) |
+| [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [0945-snakes-and-ladders](https://github.com/GopinathBalaji/Leetcode/tree/master/0945-snakes-and-ladders) |
 | [1036-rotting-oranges](https://github.com/GopinathBalaji/Leetcode/tree/master/1036-rotting-oranges) |
 | [2254-check-if-every-row-and-column-contains-all-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/2254-check-if-every-row-and-column-contains-all-numbers) |
@@ -388,6 +391,7 @@
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
+| [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 ## Breadth-First Search
 |  |
 | ------- |
@@ -416,6 +420,7 @@
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
+| [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [0945-snakes-and-ladders](https://github.com/GopinathBalaji/Leetcode/tree/master/0945-snakes-and-ladders) |
 | [1036-rotting-oranges](https://github.com/GopinathBalaji/Leetcode/tree/master/1036-rotting-oranges) |
 | [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
@@ -514,6 +519,7 @@
 | [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
+| [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 ## Quickselect
 |  |
 | ------- |
@@ -577,6 +583,7 @@
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0684-redundant-connection](https://github.com/GopinathBalaji/Leetcode/tree/master/0684-redundant-connection) |
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
+| [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
 ## Simulation
 |  |
