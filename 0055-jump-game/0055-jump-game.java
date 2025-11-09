@@ -196,3 +196,34 @@ Small optimization: try farther jumps first; reaching the end earlier prunes wor
 //         return false;
 //     }
 // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
