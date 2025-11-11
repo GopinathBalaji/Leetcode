@@ -90,7 +90,6 @@ If you build the cumulative sum `S[k] = gain[0]+…+gain[k]`, the valid start is
 * Mixing 0-based vs 1-based indices when reporting the start.
 * Overflow is rarely an issue here, but if inputs are huge, consider using `long` for `total`/`tank`.
 
----
 
 # Complexity
 
