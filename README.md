@@ -86,6 +86,7 @@
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
 | [1036-rotting-oranges](https://github.com/GopinathBalaji/Leetcode/tree/master/1036-rotting-oranges) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
+| [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
 | [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
 | [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
@@ -130,6 +131,7 @@
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
+| [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
 ## Hash Table
 |  |
@@ -167,6 +169,7 @@
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
+| [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
 | [2254-check-if-every-row-and-column-contains-all-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/2254-check-if-every-row-and-column-contains-all-numbers) |
 ## Divide and Conquer
@@ -291,6 +294,7 @@
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
+| [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
 ## Sliding Window
 |  |
 | ------- |
