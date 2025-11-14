@@ -117,6 +117,7 @@
 | [0202-happy-number](https://github.com/GopinathBalaji/Leetcode/tree/master/0202-happy-number) |
 | [0295-find-median-from-data-stream](https://github.com/GopinathBalaji/Leetcode/tree/master/0295-find-median-from-data-stream) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
+| [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
 ## Sorting
 |  |
 | ------- |
@@ -167,6 +168,7 @@
 | [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 | [0433-minimum-genetic-mutation](https://github.com/GopinathBalaji/Leetcode/tree/master/0433-minimum-genetic-mutation) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
+| [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
@@ -233,6 +235,7 @@
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
 | [0433-minimum-genetic-mutation](https://github.com/GopinathBalaji/Leetcode/tree/master/0433-minimum-genetic-mutation) |
+| [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
@@ -294,6 +297,7 @@
 | [0135-candy](https://github.com/GopinathBalaji/Leetcode/tree/master/0135-candy) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
+| [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
 | [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
 | [2026-merge-triplets-to-form-target-triplet](https://github.com/GopinathBalaji/Leetcode/tree/master/2026-merge-triplets-to-form-target-triplet) |
