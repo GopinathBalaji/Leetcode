@@ -259,6 +259,7 @@
 | [0045-jump-game-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0045-jump-game-ii) |
 | [0053-maximum-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0053-maximum-subarray) |
 | [0055-jump-game](https://github.com/GopinathBalaji/Leetcode/tree/master/0055-jump-game) |
+| [0062-unique-paths](https://github.com/GopinathBalaji/Leetcode/tree/master/0062-unique-paths) |
 | [0063-unique-paths-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0063-unique-paths-ii) |
 | [0064-minimum-path-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0064-minimum-path-sum) |
 | [0070-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0070-climbing-stairs) |
@@ -580,6 +581,7 @@
 | [0013-roman-to-integer](https://github.com/GopinathBalaji/Leetcode/tree/master/0013-roman-to-integer) |
 | [0048-rotate-image](https://github.com/GopinathBalaji/Leetcode/tree/master/0048-rotate-image) |
 | [0050-powx-n](https://github.com/GopinathBalaji/Leetcode/tree/master/0050-powx-n) |
+| [0062-unique-paths](https://github.com/GopinathBalaji/Leetcode/tree/master/0062-unique-paths) |
 | [0066-plus-one](https://github.com/GopinathBalaji/Leetcode/tree/master/0066-plus-one) |
 | [0067-add-binary](https://github.com/GopinathBalaji/Leetcode/tree/master/0067-add-binary) |
 | [0069-sqrtx](https://github.com/GopinathBalaji/Leetcode/tree/master/0069-sqrtx) |
@@ -714,4 +716,8 @@
 |  |
 | ------- |
 | [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
+## Combinatorics
+|  |
+| ------- |
+| [0062-unique-paths](https://github.com/GopinathBalaji/Leetcode/tree/master/0062-unique-paths) |
 <!---LeetCode Topics End-->
