@@ -80,6 +80,7 @@
 | [0416-partition-equal-subset-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0416-partition-equal-subset-sum) |
 | [0417-pacific-atlantic-water-flow](https://github.com/GopinathBalaji/Leetcode/tree/master/0417-pacific-atlantic-water-flow) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
+| [0494-target-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0494-target-sum) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
@@ -282,6 +283,7 @@
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0416-partition-equal-subset-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0416-partition-equal-subset-sum) |
+| [0494-target-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0494-target-sum) |
 | [0647-palindromic-substrings](https://github.com/GopinathBalaji/Leetcode/tree/master/0647-palindromic-substrings) |
 | [0678-valid-parenthesis-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0678-valid-parenthesis-string) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
@@ -554,6 +556,7 @@
 | [0090-subsets-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0090-subsets-ii) |
 | [0131-palindrome-partitioning](https://github.com/GopinathBalaji/Leetcode/tree/master/0131-palindrome-partitioning) |
 | [0212-word-search-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0212-word-search-ii) |
+| [0494-target-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0494-target-sum) |
 ## Heap (Priority Queue)
 |  |
 | ------- |
