@@ -1,8 +1,11 @@
-// Method 1
-// First add all the intervals with no overlap. The find the new modified overlapped interval.
-// Finally add all the intervals with no overlap again.
-// The condition for the new modified overlapped interval should be all intervals that have
-// beginnings lesser than the new interval.
+// Method 1: Insertion using 3 seperate steps
+/*
+ First add all the intervals with no overlap. The find the new modified overlapped interval.
+Finally add all the intervals with no overlap again.
+The condition for the new modified overlapped interval should be all intervals that have
+beginnings lesser than the new interval.
+*/
+
 class Solution {
     public int[][] insert(int[][] intervals, int[] newInterval) {
         List<int[]> ans = new ArrayList<>();
