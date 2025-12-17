@@ -102,6 +102,7 @@
 | [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
 | [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
+| [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
 | [2026-merge-triplets-to-form-target-triplet](https://github.com/GopinathBalaji/Leetcode/tree/master/2026-merge-triplets-to-form-target-triplet) |
 | [2254-check-if-every-row-and-column-contains-all-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/2254-check-if-every-row-and-column-contains-all-numbers) |
 ## Two Pointers
@@ -149,6 +150,7 @@
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
 | [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
 | [1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period](https://github.com/GopinathBalaji/Leetcode/tree/master/1709-alert-using-same-key-card-three-or-more-times-in-a-one-hour-period) |
+| [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
 ## Hash Table
 |  |
 | ------- |
@@ -319,6 +321,7 @@
 | [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
+| [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
 ## Greedy
 |  |
 | ------- |
@@ -583,6 +586,7 @@
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [0803-cheapest-flights-within-k-stops](https://github.com/GopinathBalaji/Leetcode/tree/master/0803-cheapest-flights-within-k-stops) |
+| [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
 ## Quickselect
 |  |
 | ------- |
@@ -744,4 +748,8 @@
 |  |
 | ------- |
 | [0062-unique-paths](https://github.com/GopinathBalaji/Leetcode/tree/master/0062-unique-paths) |
+## Line Sweep
+|  |
+| ------- |
+| [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
 <!---LeetCode Topics End-->
