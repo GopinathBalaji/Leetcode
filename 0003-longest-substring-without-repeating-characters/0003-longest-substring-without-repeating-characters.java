@@ -11,7 +11,8 @@ class Solution {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             while (set.contains(c)) {
-                set.remove(s.charAt(j++));   // shrink until c is unique
+                set.remove(s.charAt(j));   // shrink until c is unique
+                j++;
             }
             set.add(c);                       // include c
             ans = Math.max(ans, i - j + 1);   // update best
@@ -19,6 +20,63 @@ class Solution {
         return ans;
     }
 }
+
+
+
+
+
+// Method 1.5: My Set-based solution (O(n^2) approach - NOT OPTIMAL)
+/*
+Your code is **correct** (it returns the right length), but it’s **not the intended efficient approach**.
+
+### What’s “wrong” (practically)
+
+* **Time complexity is O(n²)** in the worst case.
+
+  * You restart a new `HashSet` at every `i` and scan forward until you hit a repeat.
+  * For a string like `"abcdefg..."` (all unique), you’ll scan almost the whole suffix each time:
+
+    * work ≈ (n + (n-1) + (n-2) + …) = O(n²)
+
+This will usually still pass on small inputs, but it can be slow for long strings.
+
+### Minor notes
+
+* `maxLen = Math.max(maxLen, set.size())` is fine because the loop stops exactly when a repeat is found or end reached, so `set.size()` is the length of the current maximal unique run starting at `i`.
+* Space is fine: O(min(n, alphabet)) per iteration, but recreated each time.
+
+### What the optimal approach is
+
+Use a **sliding window** with:
+
+* a `HashSet` and two pointers, or
+* better: a `Map<Character, Integer>` (last seen index) to jump the left pointer
+
+That gives **O(n)** time.
+*/
+// class Solution {
+//     public int lengthOfLongestSubstring(String s) {
+//         int n = s.length();
+
+//         int maxLen = 0;
+
+//         for(int i=0; i<n; i++){
+//             int start = i;
+//             Set<Character> set = new HashSet<>();
+
+//             while(start < n && !set.contains(s.charAt(start))){
+//                 set.add(s.charAt(start));
+//                 start++;
+//             }
+
+//             maxLen = Math.max(maxLen, set.size());
+//         }
+
+//         return maxLen;        
+//     }
+// }
+
+
 
 
 
