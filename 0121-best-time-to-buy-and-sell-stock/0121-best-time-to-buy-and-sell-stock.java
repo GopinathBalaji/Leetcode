@@ -1,4 +1,4 @@
-// Bottom-UP Dynamic Programming (with O(1) state compression)
+// Method 1: Bottom-UP Dynamic Programming (with O(1) state compression)
 /*
 ## Why this works (quick intuition)
 
@@ -42,7 +42,7 @@ class Solution {
 
 
 
-// Top-Down Dynamic Programming
+// Method 2: Top-Down Dynamic Programming
 /*
 * `i`: day index (0…n-1)
 * `t`: how many **transactions (sells)** you still may perform (here `t ∈ {0,1}`)
@@ -190,7 +190,9 @@ Memoized maxima bubble up: best is **5** (buy at 1, sell at 6).
 // }
 
 
-// Same Top-Down Approach with better explanation
+
+
+// Method 2.5: Same Top-Down Approach with better explanation
 /*
 Got it — let’s make the **top-down recursive DP** for LeetCode 121 super simple.
 
