@@ -1,1 +1,1 @@
-<h2>valid-parentheses Notes</h2><hr>[ Time taken: 31 m 52 s ]
+<h2>valid-parentheses Notes</h2><hr>[ Time taken: 35 m 7 s ]
