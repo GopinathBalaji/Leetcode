@@ -32,6 +32,85 @@ class Solution {
 
 
 
+
+
+// Method 1.5: Similar to above without HashMap approach
+/*
+# WHAT WAS I DOING WRONG:
+
+### 1) It can throw a `NullPointerException`
+
+When you see a closing bracket, you do `stack.peek()` and compare it to `'('`, `'['`, `'{'`.
+
+But if the stack is empty (e.g., input starts with `")"` or `"]"` or `"}"`), then `stack.peek()` returns `null`, and Java will try to auto-unbox that `Character` to a `char` for the `!= '('` comparison → **NullPointerException**.
+
+Example:
+
+* `s = ")"`
+  `stack` is empty → `stack.peek()` is `null` → comparing to `'('` blows up.
+
+Fix: check `stack.isEmpty()` before peeking/popping.
+
+---
+
+### 2) It returns `true` even when there are unmatched opening brackets
+
+At the end you `return true;` no matter what.
+
+So inputs like:
+
+* `"("`
+* `"((("`
+* `"[("`
+
+…will all return `true` even though they’re invalid, because you never verify the stack is empty.
+
+Fix: `return stack.isEmpty();`
+*/
+// class Solution {
+//     public boolean isValid(String s) {
+//         int n = s.length();
+//         Deque<Character> stack = new ArrayDeque<>();
+
+//         for(int i=0; i<n; i++){
+//             char c = s.charAt(i);
+
+//             if(c == ')'){
+//                 if(stack.isEmpty() || stack.peek() != '('){
+//                     return false;
+//                 }
+
+//                 stack.pop();
+
+//             }else if(c == ']'){
+//                 if(stack.isEmpty() || stack.peek() != '['){
+//                     return false;
+//                 }
+
+//                 stack.pop();
+
+//             }else if(c == '}'){
+//                 if(stack.isEmpty() || stack.peek() != '{'){
+//                     return false;
+//                 }
+
+//                 stack.pop();
+
+//             }else{
+//                 stack.push(c);
+//             }            
+//         }
+
+//         return stack.isEmpty();
+//     }
+// }
+
+
+
+
+
+
+
 // Method 2: Using HashMap
 // class Solution {
 //     public boolean isValid(String s) {
