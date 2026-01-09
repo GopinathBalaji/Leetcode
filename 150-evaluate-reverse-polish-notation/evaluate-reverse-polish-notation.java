@@ -1,4 +1,4 @@
-// Use stack
+// Method 1: Using a stack
 /*
 Every number token is pushed as an Integer.
 On an operator, we pop the right operand first (b), then the left (a), and compute a op b. This is crucial for - and /.
@@ -78,3 +78,47 @@ class Solution {
         return st.pop();
     }
 }
+
+
+
+
+
+// Method 1.5: My approach (same as above but less clean)
+/*
+*/
+// class Solution {
+//     public int evalRPN(String[] tokens) {
+//         int n = tokens.length;
+//         Deque<String> stack = new ArrayDeque<>();
+
+//         for(int i=0; i<n; i++){
+//             if(tokens[i].equals("+") || tokens[i].equals("-") || tokens[i].equals("*") || tokens[i].equals("/")){
+//                 String op2 = stack.pop();
+//                 int operand2 = Integer.parseInt(op2);
+
+//                 String op1 = stack.pop();
+//                 int operand1 = Integer.parseInt(op1);
+
+//                 int ans;
+
+//                 if(tokens[i].equals("+")){
+//                     ans = operand1 + operand2;
+//                 }else if(tokens[i].equals("-")){
+//                     ans = operand1 - operand2;
+//                 }else if(tokens[i].equals("*")){
+//                     ans = operand1 * operand2;
+//                 }else{
+//                     ans = operand1 / operand2;
+//                 }
+
+
+//                 stack.push(Integer.toString(ans));
+//             }else{
+//                 stack.push(tokens[i]);
+//             }
+//         }
+
+
+//         return Integer.parseInt(stack.pop());
+//     }
+// }
