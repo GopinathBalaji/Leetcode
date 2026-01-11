@@ -93,6 +93,7 @@
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
+| [0739-daily-temperatures](https://github.com/GopinathBalaji/Leetcode/tree/master/0739-daily-temperatures) |
 | [0746-min-cost-climbing-stairs](https://github.com/GopinathBalaji/Leetcode/tree/master/0746-min-cost-climbing-stairs) |
 | [0772-construct-quad-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0772-construct-quad-tree) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
@@ -560,6 +561,7 @@
 | [0173-binary-search-tree-iterator](https://github.com/GopinathBalaji/Leetcode/tree/master/0173-binary-search-tree-iterator) |
 | [0224-basic-calculator](https://github.com/GopinathBalaji/Leetcode/tree/master/0224-basic-calculator) |
 | [0678-valid-parenthesis-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0678-valid-parenthesis-string) |
+| [0739-daily-temperatures](https://github.com/GopinathBalaji/Leetcode/tree/master/0739-daily-temperatures) |
 ## Design
 |  |
 | ------- |
@@ -754,6 +756,7 @@
 |  |
 | ------- |
 | [0042-trapping-rain-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0042-trapping-rain-water) |
+| [0739-daily-temperatures](https://github.com/GopinathBalaji/Leetcode/tree/master/0739-daily-temperatures) |
 ## Data Stream
 |  |
 | ------- |
