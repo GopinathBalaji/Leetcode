@@ -92,6 +92,7 @@
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
+| [0704-binary-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0704-binary-search) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
 | [0733-flood-fill](https://github.com/GopinathBalaji/Leetcode/tree/master/0733-flood-fill) |
 | [0739-daily-temperatures](https://github.com/GopinathBalaji/Leetcode/tree/master/0739-daily-temperatures) |
@@ -341,6 +342,7 @@
 | [0209-minimum-size-subarray-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0209-minimum-size-subarray-sum) |
 | [0222-count-complete-tree-nodes](https://github.com/GopinathBalaji/Leetcode/tree/master/0222-count-complete-tree-nodes) |
 | [0300-longest-increasing-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0300-longest-increasing-subsequence) |
+| [0704-binary-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0704-binary-search) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
