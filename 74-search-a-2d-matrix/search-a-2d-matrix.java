@@ -1,4 +1,4 @@
-// Method 1: Linear Search to find row + Binary Search Once (Using closed loop intervals)
+// Method 1: Linear Search to find row + Binary Search Once (Using closed loop intervals) (O(m * log(n)))
 /*
 What my attempt was doing wrong:
 
