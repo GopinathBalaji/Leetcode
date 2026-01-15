@@ -101,6 +101,7 @@
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [0853-car-fleet](https://github.com/GopinathBalaji/Leetcode/tree/master/0853-car-fleet) |
+| [0875-koko-eating-bananas](https://github.com/GopinathBalaji/Leetcode/tree/master/0875-koko-eating-bananas) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
 | [0945-snakes-and-ladders](https://github.com/GopinathBalaji/Leetcode/tree/master/0945-snakes-and-ladders) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
@@ -345,6 +346,7 @@
 | [0704-binary-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0704-binary-search) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
+| [0875-koko-eating-bananas](https://github.com/GopinathBalaji/Leetcode/tree/master/0875-koko-eating-bananas) |
 | [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
 ## Greedy
 |  |
