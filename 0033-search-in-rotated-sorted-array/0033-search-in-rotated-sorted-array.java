@@ -1,5 +1,7 @@
-// At every step first dentify sorted part, then see if which part target might lie in.
+// Method 1: Binary Search (using updates of half-open variant and bounds of closed variant) and checking with right value. 
 /*
+TLDR: At every step first dentify sorted part, then see if which part target might lie in.
+
 # Part 1 — Correct logic for LC33 (rotated, strictly increasing, no duplicates)
 
 **Goal:** Find index of `target` in a rotated sorted array with all distinct elements.
@@ -189,3 +191,200 @@ class Solution {
         return nums[l] == target ? l : -1;
     }
 }
+
+
+
+
+
+
+
+// Method 2: Binary Search (with closed-interval variant) and comparing with left value.
+/*
+*/
+// class Solution {
+//     public int search(int[] nums, int target) {
+//         int left = 0, right = nums.length - 1;
+
+//         while (left <= right) {
+//             int mid = left + (right - left) / 2;
+
+//             if (nums[mid] == target) return mid;
+
+//             // Left half is sorted
+//             if (nums[left] <= nums[mid]) {
+//                 if (nums[left] <= target && target < nums[mid]) {
+//                     right = mid - 1;
+//                 } else {
+//                     left = mid + 1;
+//                 }
+//             } 
+//             // Right half is sorted
+//             else {
+//                 if (nums[mid] < target && target <= nums[right]) {
+//                     left = mid + 1;
+//                 } else {
+//                     right = mid - 1;
+//                 }
+//             }
+//         }
+
+//         return -1;
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 3: Binary Search (with proper half-open variant) and comparing with left value.
+/*
+We’ll maintain the invariant:
+
+* Search space is **[l, r)** (left inclusive, right exclusive)
+* So `r` is **never** a valid index
+* Loop while `l < r`
+* On each step, we discard a whole half by setting `l = mid + 1` or `r = mid`
+
+---
+
+## Key idea
+
+At any `mid`, **one of the halves is sorted**:
+
+* Left half sorted if `nums[l] <= nums[mid]`  (that’s `[l..mid]` sorted)
+* Otherwise right half sorted (that’s `[mid..r-1]` sorted)
+
+Then we ask: **is target inside the sorted half’s value range?**
+
+* If yes, shrink into that half
+* If no, go to the other half
+
+
+### Why these comparisons look “asymmetric”
+
+* Left-sorted case checks `target < nums[mid]` (because we already know `target != nums[mid]`)
+* Right-sorted case checks `nums[mid] < target`
+* And in half-open form we use `nums[r-1]` as the right boundary value.
+
+---
+
+## Invariants (what always stays true)
+
+1. Candidate indices are always in **[l, r)**.
+2. We never lose the target:
+
+   * When we choose a half, we only do it if the target’s value range can still exist there.
+3. Each iteration strictly shrinks the interval:
+
+   * `r = mid` decreases `r`
+   * `l = mid + 1` increases `l`
+
+So it terminates in `O(log n)`.
+
+---
+
+## Thorough walkthrough (classic example)
+
+`nums = [4,5,6,7,0,1,2]`, `target = 0`
+
+Start: `l=0, r=7` → search in indices `[0,7)`
+
+### Iteration 1
+
+* `mid = 0 + (7-0)/2 = 3`
+* `nums[mid] = 7` (not target)
+* Check sorted half: `nums[l]=4 <= 7` → **left half [0..3] is sorted** (values 4,5,6,7)
+
+Is target in `[nums[l], nums[mid])` = `[4, 7)`?
+`0` is not.
+
+So go right half:
+
+* `l = mid + 1 = 4`
+  Now interval is `[4, 7)` (indices 4,5,6)
+
+### Iteration 2
+
+* `mid = 4 + (7-4)/2 = 5`
+* `nums[mid] = 1` (not target)
+* Check sorted half: `nums[l]=0 <= 1` → **left half [4..5] is sorted** (values 0,1)
+
+Is target in `[nums[l], nums[mid])` = `[0, 1)`?
+Yes, `0` is in it.
+
+So keep left part:
+
+* `r = mid = 5`
+  Now interval is `[4, 5)` (only index 4)
+
+### Iteration 3
+
+* `mid = 4 + (5-4)/2 = 4`
+* `nums[mid] = 0` → found!
+  Return `4`.
+
+---
+
+## Another walkthrough (target on left side)
+
+`nums = [4,5,6,7,0,1,2]`, `target = 5`
+
+Start `l=0, r=7`
+
+### Iteration 1
+
+`mid=3`, `nums[mid]=7`
+Left half sorted (`4 <= 7`)
+
+Is `5` in `[4, 7)`? yes → `r = 3`
+Interval `[0,3)`
+
+### Iteration 2
+
+`mid = 1`, `nums[mid]=5` → found, return `1`
+
+---
+
+## Common half-open pitfalls (that this avoids)
+
+* Using `right = nums.length - 1` but still treating it like half-open (mixing conventions)
+* Forgetting to use `nums[r-1]` when you need the right boundary value
+* Doing `r = mid - 1` in half-open (that’s for closed intervals)
+*/
+
+// class Solution {
+//     public int search(int[] nums, int target) {
+//         int l = 0;
+//         int r = nums.length; // half-open: [l, r)
+
+//         while (l < r) {
+//             int mid = l + (r - l) / 2;
+
+//             if (nums[mid] == target) return mid;
+
+//             // Left half [l..mid] is sorted
+//             if (nums[l] <= nums[mid]) {
+//                 // target in [nums[l], nums[mid])  -> go left
+//                 if (nums[l] <= target && target < nums[mid]) {
+//                     r = mid;          // keep [l, mid)
+//                 } else {
+//                     l = mid + 1;      // keep [mid+1, r)
+//                 }
+//             }
+//             // Right half [mid..r-1] is sorted
+//             else {
+//                 // target in (nums[mid], nums[r-1]] -> go right
+//                 if (nums[mid] < target && target <= nums[r - 1]) {
+//                     l = mid + 1;      // keep [mid+1, r)
+//                 } else {
+//                     r = mid;          // keep [l, mid)
+//                 }
+//             }
+//         }
+
+//         return -1;
+//     }
+// }
