@@ -372,7 +372,213 @@ class Solution {
 
 
 
-// Method 2: K-th element selection (divide-and-conquer / binary search on rank) O(log(m + n))
+
+
+// Method 2: Recursive Binary Search (O(log m + log n) = O(log(m⋅n)))
+/*
+Below is the **“simple recursive binary-search on both arrays”** approach. It finds the **k-th element (0-indexed) in the merged sorted order** by repeatedly discarding **half of one array’s current range**. The recursion depth is about `O(log m + log n) = O(log(m⋅n))`.
+
+---
+
+## What `solve(...)` is computing
+
+`solve(A, B, k, aStart, aEnd, bStart, bEnd)` returns the element that would be at **merged index `k` (0-based)** if you fully merged `A` and `B`.
+
+Important: `k` is the **global merged index**, not “k-th smallest (1-indexed)”.
+
+---
+
+## Key observation that drives the recursion
+
+Let:
+
+* `aIndex = (aStart + aEnd) / 2`, `aValue = A[aIndex]`
+* `bIndex = (bStart + bEnd) / 2`, `bValue = B[bIndex]`
+
+Think about how many elements are “to the left” of these midpoints in the *original index sense*:
+
+* There are `aIndex` elements in `A` with indices `< aIndex`
+* There are `bIndex` elements in `B` with indices `< bIndex`
+
+So the “combined midpoint rank” is guided by `aIndex + bIndex`:
+
+### Case 1: `aIndex + bIndex < k`  (k is in the “right side”)
+
+The merged index `k` is **to the right** of at least one midpoint, so we can discard a **left chunk** safely:
+
+* If `aValue <= bValue`, then everything in `A[aStart .. aIndex]` is `<= aValue <= bValue`, meaning those elements are “too early” to be at merged index `k`.
+  So discard that chunk by setting `aStart = aIndex + 1`.
+
+* Else (`aValue > bValue`), discard `B[bStart .. bIndex]` by setting `bStart = bIndex + 1`.
+
+### Case 2: `aIndex + bIndex >= k`  (k is in the “left side”)
+
+Now `k` is **not** strictly to the right of both mids, so we can discard a **right chunk** safely:
+
+* If `aValue > bValue`, then `A[aIndex .. aEnd]` is all `>= aValue > bValue`, so that right chunk of `A` can’t contain the k-th merged element (it’s too large).
+  Set `aEnd = aIndex - 1`.
+
+* Else (`aValue <= bValue`), discard `B[bIndex .. bEnd]` by setting `bEnd = bIndex - 1`.
+
+Each step removes about half of one remaining segment → `O(log m + log n)`.
+
+---
+
+## Base cases (why these returns are correct)
+
+* If `A`’s segment is empty (`aEnd < aStart`), then the answer must come from `B`.
+  The correct index in `B` is `k - aStart`.
+  (Intuition: `aStart` elements from `A` have been removed from the *left side*, so we “skip” them in the merged index.)
+
+* Similarly, if `B` is empty, return `A[k - bStart]`.
+
+## Thorough walkthrough (odd total)
+
+Let:
+
+* `A = [1, 3, 8, 9, 15]` (indices 0..4)
+* `B = [7, 11, 18, 19, 21, 25]` (indices 0..5)
+  Total `n = 11` → median index `k = n/2 = 5` (0-based).
+
+Call:
+`solve(A,B,k=5,aStart=0,aEnd=4,bStart=0,bEnd=5)`
+
+### Step 1
+
+* `aIndex=2 (A[2]=8)`, `bIndex=2 (B[2]=18)`
+* `aIndex+bIndex = 4 < 5` ⇒ k is on the **right side**
+* `8 <= 18` ⇒ discard `A[0..2]`
+
+  * new: `aStart=3,aEnd=4,bStart=0,bEnd=5`
+
+### Step 2
+
+* `aIndex=3 (A[3]=9)`, `bIndex=2 (B[2]=18)`
+* sum = `3+2=5 >= 5` ⇒ k is on the **left side**
+* `9 <= 18` ⇒ discard `B[2..5]`
+
+  * new: `aStart=3,aEnd=4,bStart=0,bEnd=1` (B now [7,11])
+
+### Step 3
+
+* `aIndex=3 (9)`, `bIndex=0 (7)`
+* sum = `3+0=3 < 5` ⇒ right side
+* `9 > 7` ⇒ discard `B[0..0]`
+
+  * new: `aStart=3,aEnd=4,bStart=1,bEnd=1` (B now [11])
+
+### Step 4
+
+* `aIndex=3 (9)`
+* `bIndex=1 (11)`
+* sum = `3+1=4 < 5` ⇒ right side
+* `9 <= 11` ⇒ discard `A[3..3]`
+
+  * new: `aStart=4,aEnd=4,bStart=1,bEnd=1` (A now [15])
+
+### Step 5
+
+* `aIndex=4 (15)`, `bIndex=1 (11)`
+* sum = `4+1=5 >= 5` ⇒ left side
+* `15 > 11` ⇒ discard `A[4..4]` (right chunk of A)
+
+  * new: `aStart=4,aEnd=3` (A empty), `bStart=1,bEnd=1`
+
+### Base case
+
+A is empty ⇒ return `B[k - aStart] = B[5 - 4] = B[1] = 11`
+
+So median = **11** ✅
+
+(And indeed the fully merged array is `[1,3,7,8,9,11,15,18,19,21,25]`, middle is 11.)
+
+---
+
+## Quick walkthrough (even total)
+
+`A = [1,2]`, `B = [3,4]`, total `n=4`
+Need indices `k=1` and `k=2`:
+
+* `solve(k=1)` returns `2`
+* `solve(k=2)` returns `3`
+  Median = `(2+3)/2 = 2.5` ✅
+
+---
+
+## Complexity
+
+Each recursion discards about half of **one** current range:
+
+* Depth ≈ `O(log m + log n)` = `O(log(m⋅n))`
+* You call it once (odd) or twice (even).
+*/
+// class Solution {
+//     public double findMedianSortedArrays(int[] A, int[] B) {
+//         int na = A.length, nb = B.length;
+//         int n = na + nb;
+
+//         if ((n & 1) == 1) {
+//             // odd length -> single middle (0-index)
+//             return solve(A, B, n / 2, 0, na - 1, 0, nb - 1);
+//         } else {
+//             // even length -> average of the two middles
+//             int rightMid = solve(A, B, n / 2,     0, na - 1, 0, nb - 1);
+//             int leftMid  = solve(A, B, n / 2 - 1, 0, na - 1, 0, nb - 1);
+//             return (leftMid + rightMid) / 2.0;
+//         }
+//     }
+
+//     // Returns the element at merged index k (0-based) from A[aStart..aEnd] and B[bStart..bEnd]
+//     private int solve(int[] A, int[] B, int k,
+//                       int aStart, int aEnd,
+//                       int bStart, int bEnd) {
+
+//         // If A segment empty, answer is in B at index (k - aStart)
+//         if (aEnd < aStart) {
+//             return B[k - aStart];
+//         }
+//         // If B segment empty, answer is in A at index (k - bStart)
+//         if (bEnd < bStart) {
+//             return A[k - bStart];
+//         }
+
+//         int aIndex = (aStart + aEnd) / 2;
+//         int bIndex = (bStart + bEnd) / 2;
+
+//         int aValue = A[aIndex];
+//         int bValue = B[bIndex];
+
+//         // If k is to the right of the combined mid-rank, discard a left chunk
+//         if (aIndex + bIndex < k) {
+//             if (aValue <= bValue) {
+//                 // discard A[aStart..aIndex]
+//                 return solve(A, B, k, aIndex + 1, aEnd, bStart, bEnd);
+//             } else {
+//                 // discard B[bStart..bIndex]
+//                 return solve(A, B, k, aStart, aEnd, bIndex + 1, bEnd);
+//             }
+//         }
+//         // Otherwise discard a right chunk (the larger side)
+//         else {
+//             if (aValue <= bValue) {
+//                 // discard B[bIndex..bEnd]
+//                 return solve(A, B, k, aStart, aEnd, bStart, bIndex - 1);
+//             } else {
+//                 // discard A[aIndex..aEnd]
+//                 return solve(A, B, k, aStart, aIndex - 1, bStart, bEnd);
+//             }
+//         }
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 3: K-th element selection (divide-and-conquer / binary search on rank) O(log(m + n))
 /*
 1. **K-th element selection (divide-and-conquer / binary search on rank)** — optimal `O(log(m+n))`
 
@@ -517,7 +723,7 @@ reduce k accordingly; repeat.
 
 
 
-// Method 3: Two-Pointer “Brute-Merge (Without Storing)”
+// Method 4: Two-Pointer “Brute-Merge (Without Storing)”
 /*
 2. **Two-pointer “brute-merge (without storing)”** — linear `O(m+n)` but simple and great for validation
 
@@ -612,4 +818,3 @@ stop when count hits the median index(es)
 //         return (val1 + val2) / 2.0;           // average for even
 //     }
 // }
-
