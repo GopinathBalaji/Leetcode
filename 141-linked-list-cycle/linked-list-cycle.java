@@ -10,7 +10,10 @@
  * }
  */
 
+
 // Method 1: O(n) time, O(n) space by using Set to check duplicates
+/*
+*/
 public class Solution {
     public boolean hasCycle(ListNode head) {
         if (head == null) return false;
@@ -25,6 +28,9 @@ public class Solution {
         return false; // hit null => no cycle
     }
 }
+
+
+
 
 
 
