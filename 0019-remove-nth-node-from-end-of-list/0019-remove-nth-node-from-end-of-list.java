@@ -1,4 +1,4 @@
-/**
+ /**
  * Definition for singly-linked list.
  * public class ListNode {
  *     int val;
@@ -76,6 +76,50 @@ class Solution {
 
 // Method 2: Two pass method using length of the linked list
 /*
+# WHAT WAS I DOING WRONG:
+
+Your counting logic is fine, but you handle the “remove the head” case incorrectly.
+
+### What goes wrong
+
+When `n == length` (you need to remove the **1st node from the start**, i.e., the head):
+
+* `count1 - n == 0`
+* The second loop condition `count2 < 0` is false immediately, so:
+
+  * `copyHead` is still `head`
+  * `prev` is still `null`
+* You then do:
+
+```java
+if (prev == null) {
+    return null;   // ❌ wrong
+}
+```
+
+But in this case you should return `head.next` (remove the head), not `null`.
+
+Example: `head = [1,2,3]`, `n = 3`
+
+* correct answer: `[2,3]`
+* your code returns `null`
+
+### Fix (minimal)
+
+Replace that block with:
+
+```java
+if (prev == null) {
+    return head.next;   // remove head
+}
+```
+
+### Also: handle `n` possibly invalid (optional)
+
+LeetCode guarantees valid `n`, so you don’t need extra checks, but in general you might guard `copyHead` being null before `copyHead.next`.
+
+###############################################
+
 ### Why this works
 
 * First pass gets the list length `len`.
