@@ -89,7 +89,69 @@ class Solution {
 
 
 
-// Method 2: Single pass, with extra space for hashmap
+
+// Method 2: My single-pass approach
+/*
+# WHY IS IT INEFFICIENT:
+You do up to 3 map lookups per pointer due to containsKey + get. Using computeIfAbsent reduces that.
+*/
+
+// class Solution {
+//     public Node copyRandomList(Node head) {
+
+//         Node copyHead = head;
+//         Map<Node, Node> map = new HashMap<>();
+
+//         while(copyHead != null){
+
+//             Node newNode;
+//             if(!map.containsKey(copyHead)){
+//                 newNode = new Node(copyHead.val);
+//                 map.put(copyHead, newNode);
+//             }else{
+//                 newNode = map.get(copyHead);
+//             }
+
+//             Node nextNode;
+//             if(copyHead.next == null){
+//                 nextNode = null;
+//             }else if(!map.containsKey(copyHead.next)){
+//                 nextNode = new Node(copyHead.next.val);
+//                 map.put(copyHead.next, nextNode);
+//             }else{
+//                 nextNode = map.get(copyHead.next);
+//             }
+
+//             newNode.next = nextNode;
+
+//             Node randomNode;
+//             if(copyHead.random == null){
+//                 randomNode = null;
+//             }else if(!map.containsKey(copyHead.random)){
+//                 randomNode = new Node(copyHead.random.val);
+//                 map.put(copyHead.random, randomNode);
+//             }else{
+//                 randomNode = map.get(copyHead.random);
+//             }
+
+//             newNode.random = randomNode;
+
+//             copyHead = copyHead.next;
+//         }
+
+//         return map.get(head);
+//     }
+// }
+
+
+
+
+
+
+
+
+
+// Method 2.5: Better Single pass, with extra space for hashmap
 /*
 ## Big picture (what the code is doing)
 
