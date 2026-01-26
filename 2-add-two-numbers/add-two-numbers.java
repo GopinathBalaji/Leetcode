@@ -9,7 +9,64 @@
  * }
  */
 
-// Method 1: My answer by iterating from the back
+
+// Method 1: My iterating from the back approach
+/*
+# WHAT WAS WRONG WITH MY APPROACH:
+
+Several things are wrong here (both correctness and constraints):
+
+### 1) Integer overflow (biggest issue)
+
+LeetCode #2 allows lists up to ~100 nodes. The number can be **way bigger than `int`** (or even `long`).
+So converting the whole list into `int num1/num2` will overflow quickly and give wrong answers.
+
+### 2) You’re not updating `res` correctly (infinite loop)
+
+Inside the result-building loop you wrote:
+
+```java
+res = res % 10;
+```
+
+That doesn’t remove the last digit — it keeps only the last digit.
+So if `res` is not 0, `res` becomes a single digit and then **never changes**, causing an infinite loop.
+
+It should be:
+
+```java
+res = res / 10;
+```
+
+### 3) You don’t handle the `res == 0` case
+
+If the sum is 0, your loop `while (res != 0)` never runs, and you return `dummy1.next` which is `null`.
+But the correct output should be a node `0`.
+
+### 4) Dummy pointers are weird (not a crash, but pointless)
+
+You do:
+
+```java
+ListNode dummy1 = new ListNode(0);
+ListNode dummy2 = new ListNode(0);
+dummy1 = dummy2;
+```
+
+This leaks the first dummy node and makes `dummy1` and `dummy2` point to the same dummy anyway. You only need one dummy and a tail pointer.
+
+---
+
+## What you should do instead (the intended approach)
+
+Don’t convert to numbers. Add digit-by-digit with carry:
+
+* `sum = l1.val + l2.val + carry`
+* new digit = `sum % 10`
+* carry = `sum / 10`
+
+This avoids overflow and matches the problem constraints.
+*/
 class Solution {
     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
     
@@ -78,6 +135,8 @@ class Solution {
 
 
 // Method 1.5: Same as my answer but more clean
+/*
+*/
 // class Solution {
 //     public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
 //         ListNode dummy = new ListNode(0), cur = dummy;
@@ -168,3 +227,16 @@ If you ever get the **forward-order** variant (LeetCode 445), recursion flips: y
 //         return node;
 //     }
 // }
+
+
+
+
+
+
+
+
+
+
+
+
+
