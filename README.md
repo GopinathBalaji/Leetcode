@@ -206,6 +206,7 @@
 | [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 | [0424-longest-repeating-character-replacement](https://github.com/GopinathBalaji/Leetcode/tree/master/0424-longest-repeating-character-replacement) |
 | [0433-minimum-genetic-mutation](https://github.com/GopinathBalaji/Leetcode/tree/master/0433-minimum-genetic-mutation) |
+| [0460-lfu-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0460-lfu-cache) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0567-permutation-in-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0567-permutation-in-string) |
 | [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
@@ -569,6 +570,7 @@
 | [0146-lru-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0146-lru-cache) |
 | [0148-sort-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0148-sort-list) |
 | [0206-reverse-linked-list](https://github.com/GopinathBalaji/Leetcode/tree/master/0206-reverse-linked-list) |
+| [0460-lfu-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0460-lfu-cache) |
 ## Stack
 |  |
 | ------- |
@@ -595,6 +597,7 @@
 | [0211-design-add-and-search-words-data-structure](https://github.com/GopinathBalaji/Leetcode/tree/master/0211-design-add-and-search-words-data-structure) |
 | [0295-find-median-from-data-stream](https://github.com/GopinathBalaji/Leetcode/tree/master/0295-find-median-from-data-stream) |
 | [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
+| [0460-lfu-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0460-lfu-cache) |
 | [0981-time-based-key-value-store](https://github.com/GopinathBalaji/Leetcode/tree/master/0981-time-based-key-value-store) |
 ## Binary Search Tree
 |  |
@@ -698,6 +701,7 @@
 |  |
 | ------- |
 | [0146-lru-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0146-lru-cache) |
+| [0460-lfu-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0460-lfu-cache) |
 ## Union Find
 |  |
 | ------- |
