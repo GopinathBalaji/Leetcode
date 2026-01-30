@@ -212,6 +212,7 @@
 | [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
+| [0895-maximum-frequency-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0895-maximum-frequency-stack) |
 | [0981-time-based-key-value-store](https://github.com/GopinathBalaji/Leetcode/tree/master/0981-time-based-key-value-store) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
 | [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
@@ -587,6 +588,7 @@
 | [0678-valid-parenthesis-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0678-valid-parenthesis-string) |
 | [0739-daily-temperatures](https://github.com/GopinathBalaji/Leetcode/tree/master/0739-daily-temperatures) |
 | [0853-car-fleet](https://github.com/GopinathBalaji/Leetcode/tree/master/0853-car-fleet) |
+| [0895-maximum-frequency-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0895-maximum-frequency-stack) |
 ## Design
 |  |
 | ------- |
@@ -598,6 +600,7 @@
 | [0295-find-median-from-data-stream](https://github.com/GopinathBalaji/Leetcode/tree/master/0295-find-median-from-data-stream) |
 | [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 | [0460-lfu-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0460-lfu-cache) |
+| [0895-maximum-frequency-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0895-maximum-frequency-stack) |
 | [0981-time-based-key-value-store](https://github.com/GopinathBalaji/Leetcode/tree/master/0981-time-based-key-value-store) |
 ## Binary Search Tree
 |  |
@@ -818,4 +821,8 @@
 |  |
 | ------- |
 | [0347-top-k-frequent-elements](https://github.com/GopinathBalaji/Leetcode/tree/master/0347-top-k-frequent-elements) |
+## Ordered Set
+|  |
+| ------- |
+| [0895-maximum-frequency-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0895-maximum-frequency-stack) |
 <!---LeetCode Topics End-->
