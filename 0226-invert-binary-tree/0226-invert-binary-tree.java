@@ -14,39 +14,46 @@
  * }
  */
 
-//  Simple BFS and swapping the children of each node
-// class Solution {
-//     public TreeNode invertTree(TreeNode root) {
-//         if(root == null){
-//             return root;
-//         }
-
-//         Queue<TreeNode> queue = new LinkedList<>();
-
-//         queue.offer(root);
-
-//         while(!queue.isEmpty()){
-//             TreeNode node = queue.poll();
-//             TreeNode temp = node.left;
-//             node.left = node.right;
-//             node.right = temp;
-            
-//             if(node.left != null){
-//                 queue.offer(node.left);
-//             }
-//             if(node.right != null){
-//                 queue.offer(node.right);
-//             }
-//         }
-
-//         return root;
-//     }
-// }
 
 
-// DFS Approach
+//  Method 1: Simple BFS and swapping the children of each node
 /*
-### \U0001f539 1. Key Idea of DFS Inversion
+*/
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if(root == null){
+            return root;
+        }
+
+        Queue<TreeNode> queue = new LinkedList<>();
+
+        queue.offer(root);
+
+        while(!queue.isEmpty()){
+            TreeNode node = queue.poll();
+            TreeNode temp = node.left;
+            node.left = node.right;
+            node.right = temp;
+            
+            if(node.left != null){
+                queue.offer(node.left);
+            }
+            if(node.right != null){
+                queue.offer(node.right);
+            }
+        }
+
+        return root;
+    }
+}
+
+
+
+
+
+// Method 2: Recursive DFS Approach
+/*
+### 1. Key Idea of DFS Inversion
 
 * DFS means you **go deep** into the tree before coming back.
 * At each node:
@@ -57,7 +64,7 @@
 
 ---
 
-### \U0001f539 2. Recursive DFS Steps
+### 2. Recursive DFS Steps
 
 1. **Base Case**:
 
@@ -76,7 +83,7 @@
 
 ---
 
-### \U0001f539 3. Intuitive Example
+### 3. Intuitive Example
 
 Original tree:
 
@@ -106,7 +113,7 @@ Final inverted tree:
 
 ---
 
-### \U0001f539 4. DFS Variations
+### 4. DFS Variations
 
 You can implement DFS in **three main ways**:
 
@@ -116,32 +123,70 @@ You can implement DFS in **three main ways**:
 
 ---
 
-### \U0001f539 5. Key Considerations
+### 5. Key Considerations
 
 * **Recursion Depth**: For very deep trees, recursive DFS can risk stack overflow.
 * **Iterative DFS** with a stack avoids this by simulating the call stack.
 * **Time Complexity**: O(n) — each node is visited once.
 * **Space Complexity**: O(h), where h = tree height (stack/recursion depth).
 */
-class Solution {
-    public TreeNode invertTree(TreeNode root) {
+// class Solution {
+//     public TreeNode invertTree(TreeNode root) {
         
-        dfs(root);
+//         dfs(root);
 
-        return root;
-    }
+//         return root;
+//     }
 
 
-    public void dfs(TreeNode root){
-        if(root == null){
-            return;
-        }
+//     public void dfs(TreeNode root){
+//         if(root == null){
+//             return;
+//         }
 
-        TreeNode node = root.left;
-        root.left = root.right;
-        root.right = node;
+//         TreeNode node = root.left;
+//         root.left = root.right;
+//         root.right = node;
 
-        dfs(root.left);
-        dfs(root.right);
-    }
-}
+//         dfs(root.left);
+//         dfs(root.right);
+//     }
+// }
+
+
+
+
+
+
+
+// Method 3: Iterative DFS Solution
+/*
+*/
+// class Solution {
+//     public TreeNode invertTree(TreeNode root) {
+//         if(root == null){
+//             return null;
+//         }
+
+//         Deque<TreeNode> stack = new ArrayDeque<>();
+//         stack.addLast(root);
+
+//         while(!stack.isEmpty()){
+//             TreeNode node = stack.pollLast();
+
+//             TreeNode temp = node.left;
+//             node.left = node.right;
+//             node.right = temp;
+
+//             if(node.left != null){
+//                 stack.addLast(node.left);
+//             }
+
+//             if(node.right != null){
+//                 stack.addLast(node.right);
+//             }
+//         }
+
+//         return root;
+//     }
+// }
