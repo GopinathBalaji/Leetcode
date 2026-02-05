@@ -12,6 +12,104 @@
 
 // Mehtod 1: Do k head insertions per iteration for reversal
 /*
+# HINTS
+
+Here are **high-signal hints** for **LeetCode 25: Reverse Nodes in k-Group** (no full code yet), aimed at the standard in-place O(1) extra space solution.
+
+---
+
+## Hint 1: Use a dummy node
+
+Create `dummy -> head`.
+This makes reversing the first group the same as reversing any later group (no special-case for head).
+
+Keep a pointer:
+
+* `groupPrev` = node **before** the current k-group (starts at `dummy`)
+
+---
+
+## Hint 2: Before reversing, verify you *have k nodes*
+
+From `groupPrev`, walk `k` steps to find `kth` node:
+
+* If you can’t reach `kth` (hit null early), you’re done: return `dummy.next`.
+
+This check prevents partial group reversal.
+
+---
+
+## Hint 3: Identify the boundaries you will reconnect
+
+Once you have `kth`:
+
+* `groupNext = kth.next` (node after the group)
+* The group to reverse is from `groupPrev.next` up to `kth` inclusive.
+
+After reversal:
+
+* `groupPrev.next` should point to `kth` (new head of this group)
+* The old head (which becomes tail) should point to `groupNext`
+
+---
+
+## Hint 4: Reverse pointers *within the group* using a standard loop
+
+Classic in-place reverse needs:
+
+* `prev`, `curr`, `tmp`
+
+But the trick here: initialize
+
+* `prev = groupNext`
+* `curr = groupPrev.next`
+
+Then reverse until `curr == groupNext` (or do k iterations).
+
+Why `prev = groupNext`?
+So when you reverse the last node in the group, its `next` will correctly point to `groupNext` automatically.
+
+---
+
+## Hint 5: Move `groupPrev` forward for the next iteration
+
+After reversing:
+
+* `newGroupTail` is the old group head (the node you started with)
+* Set `groupPrev = newGroupTail` to prepare for the next k-group.
+
+---
+
+## Hint 6: A mental picture helps
+
+Think of pointers like:
+
+```
+groupPrev -> [a -> b -> c -> ... -> kth] -> groupNext
+```
+
+After reversing the inside, you want:
+
+```
+groupPrev -> [kth -> ... -> c -> b -> a] -> groupNext
+```
+
+So you only need to fix **two external connections**:
+
+1. `groupPrev.next`
+2. `newTail.next`
+
+---
+
+## Hint 7: Common pitfalls
+
+* Forgetting to check there are k nodes (leads to reversing a partial group)
+* Losing `groupNext` before reversing
+* Updating `groupPrev` incorrectly (causes loops or skipping nodes)
+* Off-by-one in the reversal loop (reversing one node too far)
+
+##############################
+
 # WHAT WAS I DOING WRONG:
 
 Two main issues (one **logic / off-by-one**, one **missing reconnection**) make this incorrect.
