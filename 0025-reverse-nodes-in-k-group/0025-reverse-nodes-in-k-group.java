@@ -9,8 +9,64 @@
  * }
  */
 
+
 // Mehtod 1: Do k head insertions per iteration for reversal
 /*
+# WHAT WAS I DOING WRONG:
+
+Two main issues (one **logic / off-by-one**, one **missing reconnection**) make this incorrect.
+
+---
+
+## 1) Your `kth` finder is off by one (it lands on the (k+1)-th node)
+
+You start with `i = -1` and loop while `i < k`, incrementing `i` **before** moving `kth`:
+
+```java
+int i = -1;
+ListNode kth = groupPrev;
+while (kth != null && i < k) {
+    i++;
+    kth = kth.next;
+}
+```
+
+For example, if `k = 2`:
+
+* start: `i=-1`, `kth=groupPrev`
+* iter1: `i=0`, `kth=1st node`
+* iter2: `i=1`, `kth=2nd node`
+* iter3: `i=2`, `kth=3rd node`  ✅ loop stops here
+
+So `kth` ends up at the **3rd node**, not the 2nd.
+That means you reverse **k+1 nodes** (until `groupNext`) instead of k.
+
+**Fix:** move exactly `k` steps from `groupPrev`:
+
+```java
+ListNode kth = groupPrev;
+for (int i = 0; i < k && kth != null; i++) kth = kth.next;
+if (kth == null) break;
+```
+
+---
+
+## 2) You never reconnect the reversed group back to the previous part
+
+After the reversal loop:
+
+* `prev` is the **new head** of the reversed group
+* `newGroupTail` is the **old head** (now the tail)
+
+But you never do:
+
+```java
+groupPrev.next = prev;
+```
+
+So the list before the group still points to the **old head**, and your result is wrong (e.g., `dummy.next` never changes from the original head).
+
+#################################
 # Explanation:
 Detaching the moved node: curr.next = move.next; prevents cycles and keeps the rest of the list reachable.
 Exactly k-1 moves: Head-inserting k-1 nodes reverses a k-node block; doing k would overrun/NullPointer.
@@ -139,8 +195,11 @@ class Solution {
 
 
 
-// Method 2: Double Recursive version
+// Method 2: Single and Double Recursive version
 /*
+NOTE: For reversing a bath of k nodes, in the double-recursive solution "recursing and reversing from 
+tail" method is used
+
 Following solution is recursive in both senses:
 it processes the list group-by-group via recursion, and
 it reverses the first k nodes recursively as well (no loops needed).
@@ -167,7 +226,7 @@ Here’s a clean **recursive** solution for LeetCode 25 (Reverse Nodes in k-Grou
 
 ---
 
-## \U0001f9ed Example walkthrough (1→2→3→4→5→6→7, k=3)
+## 🧭 Example walkthrough (1→2→3→4→5→6→7, k=3)
 
 Goal: `3→2→1→6→5→4→7`
 
