@@ -14,7 +14,10 @@
  * }
  */
 
-//  Simple BFS method
+
+// Method 1: BFS
+/*
+*/
 class Solution {
     public boolean isSameTree(TreeNode p, TreeNode q) {
 
@@ -50,7 +53,11 @@ class Solution {
 }
 
 
-// DFS method 
+
+
+
+
+// Method 2: Recursive DFS 
 /*
 Recursive DFS Thought Process
 
@@ -66,7 +73,6 @@ Check left subtrees with DFS.
 Check right subtrees with DFS.
 Trees are the same only if both left and right subtrees are the same.
 */
-
 // class Solution {
 //     public boolean isSameTree(TreeNode p, TreeNode q) {
 //         if(p == null && q == null){
@@ -82,5 +88,55 @@ Trees are the same only if both left and right subtrees are the same.
 //         }
 
 //         return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+//     }
+// }
+
+
+
+
+
+
+
+// Method 3: Iterative DFS
+/*
+*/
+// class Solution {
+//     private static class Pair{
+//         TreeNode p;
+//         TreeNode q;
+//         Pair(TreeNode p, TreeNode q){
+//             this.p = p;
+//             this.q = q;
+//         }
+//     }
+
+//     public boolean isSameTree(TreeNode p, TreeNode q) {
+//         if(p == null && q == null){
+//             return true;
+//         }
+
+//         Deque<Pair> stack = new ArrayDeque<>();
+//         stack.push(new Pair(p, q));
+
+//         while(!stack.isEmpty()){
+//             Pair pair = stack.pop();
+//             TreeNode tree1 = pair.p;
+//             TreeNode tree2 = pair.q;
+
+//             if((tree1 == null && tree2 != null) || (tree1 != null && tree2 == null)){
+//                 return false;
+//             }
+//             if(tree1 != null && tree2 != null && tree1.val != tree2.val){
+//                 return false;
+//             }
+
+//             if(tree1 != null && tree2 != null){
+//                 stack.push(new Pair(tree1.left, tree2.left));
+//                 stack.push(new Pair(tree1.right, tree2.right));
+//             }
+            
+//         }
+
+//         return true;
 //     }
 // }
