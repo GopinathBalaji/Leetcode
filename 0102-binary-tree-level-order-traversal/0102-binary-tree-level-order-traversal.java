@@ -14,73 +14,91 @@
  * }
  */
 
-// Using BFS
-// class Solution {
-//     public List<List<Integer>> levelOrder(TreeNode root) {
-//         List<List<Integer>> ans = new ArrayList<>();
 
-//         if(root == null){
-//             return ans;
-//         }
-
-//         Queue<TreeNode> queue = new LinkedList<>();
-//         queue.offer(root);
-
-//         while(!queue.isEmpty()){
-//             int levelSize = queue.size();
-//             List<Integer> level = new ArrayList<>();
-
-//             for(int i=0; i<levelSize; i++){
-//                 TreeNode node = queue.poll();
-//                 level.add(node.val);
-
-//                 if(node.left != null){
-//                     queue.offer(node.left);
-//                 }
-//                 if(node.right != null){
-//                     queue.offer(node.right);
-//                 }
-//             }
-
-//             ans.add(level);
-//         }   
-
-//         return ans;
-//     }
-// }
-
-
-// Recursive DFS Solution
+// Method 1: Using BFS
+/*
+*/
 class Solution {
-
-    private List<List<Integer>> ans = new ArrayList<>();
-
     public List<List<Integer>> levelOrder(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+
         if(root == null){
             return ans;
         }
-        dfs(root, 0);
+
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.offer(root);
+
+        while(!queue.isEmpty()){
+            int levelSize = queue.size();
+            List<Integer> level = new ArrayList<>();
+
+            for(int i=0; i<levelSize; i++){
+                TreeNode node = queue.poll();
+                level.add(node.val);
+
+                if(node.left != null){
+                    queue.offer(node.left);
+                }
+                if(node.right != null){
+                    queue.offer(node.right);
+                }
+            }
+
+            ans.add(level);
+        }   
 
         return ans;
-    }
-
-    private void dfs(TreeNode node, int depth){
-        if(node == null){
-            return;
-        }
-
-        if(ans.size() == depth){
-            ans.add(new ArrayList<>());
-        }
-        ans.get(depth).add(node.val);
-
-        dfs(node.left, depth + 1);
-        dfs(node.right, depth + 1);
     }
 }
 
 
-// Iterative DFS Solution
+
+
+
+
+
+// Method 2: Recursive DFS Solution
+/*
+*/
+// class Solution {
+
+//     private List<List<Integer>> ans = new ArrayList<>();
+
+//     public List<List<Integer>> levelOrder(TreeNode root) {
+//         if(root == null){
+//             return ans;
+//         }
+//         dfs(root, 0);
+
+//         return ans;
+//     }
+
+//     private void dfs(TreeNode node, int depth){
+//         if(node == null){
+//             return;
+//         }
+
+//         if(ans.size() == depth){
+//             ans.add(new ArrayList<>());
+//         }
+//         ans.get(depth).add(node.val);
+
+//         dfs(node.left, depth + 1);
+//         dfs(node.right, depth + 1);
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 3: Iterative DFS Solution
+/*
+*/
 // class Solution {
 //     public List<List<Integer>> levelOrder(TreeNode root) {
 //         List<List<Integer>> ans = new ArrayList<>();
