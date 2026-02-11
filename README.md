@@ -461,6 +461,7 @@
 | [0572-subtree-of-another-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0572-subtree-of-another-tree) |
 | [0637-average-of-levels-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0637-average-of-levels-in-binary-tree) |
 | [0772-construct-quad-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0772-construct-quad-tree) |
+| [1448-count-good-nodes-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/1448-count-good-nodes-in-binary-tree) |
 ## Depth-First Search
 |  |
 | ------- |
@@ -500,6 +501,7 @@
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [0803-cheapest-flights-within-k-stops](https://github.com/GopinathBalaji/Leetcode/tree/master/0803-cheapest-flights-within-k-stops) |
+| [1448-count-good-nodes-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/1448-count-good-nodes-in-binary-tree) |
 ## Breadth-First Search
 |  |
 | ------- |
@@ -533,6 +535,7 @@
 | [0803-cheapest-flights-within-k-stops](https://github.com/GopinathBalaji/Leetcode/tree/master/0803-cheapest-flights-within-k-stops) |
 | [0945-snakes-and-ladders](https://github.com/GopinathBalaji/Leetcode/tree/master/0945-snakes-and-ladders) |
 | [1036-rotting-oranges](https://github.com/GopinathBalaji/Leetcode/tree/master/1036-rotting-oranges) |
+| [1448-count-good-nodes-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/1448-count-good-nodes-in-binary-tree) |
 | [1757-minimum-jumps-to-reach-home](https://github.com/GopinathBalaji/Leetcode/tree/master/1757-minimum-jumps-to-reach-home) |
 ## Binary Tree
 |  |
@@ -563,6 +566,7 @@
 | [0543-diameter-of-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0543-diameter-of-binary-tree) |
 | [0572-subtree-of-another-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0572-subtree-of-another-tree) |
 | [0637-average-of-levels-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0637-average-of-levels-in-binary-tree) |
+| [1448-count-good-nodes-in-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/1448-count-good-nodes-in-binary-tree) |
 ## Linked List
 |  |
 | ------- |
