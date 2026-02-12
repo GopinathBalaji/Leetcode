@@ -14,40 +14,58 @@
  * }
  */
 
-// Only doing an Inorder traversal and comparing immediate children 
-// (i.e node.left and node.right) values to its root is not enough. This is because 
-// it will miss violations deeper in the tree.
+
+// Method 1: Recursive DFS
 /*
-Only comparing immediate children is not enough.
-A BST requires that all nodes in the left subtree are less than the current node, and all nodes in the right subtree are greater. Your code only checks leftNode.val and rightNode.val (immediate children), so it will miss violations deeper in the tree.
+# WHERE WAS I GOING WRONG:
 
-Returning nodes is unnecessary.
-What you really need to propagate are bounds (minimum and maximum allowed values) down the recursion.
+This approach is **wrong** for BST validation because it only checks the **immediate children** against `root`, not the **entire subtree constraints**.
 
-Correct and Improved Solution
-We fix this by passing min and max constraints at each recursion step.
+A valid BST requires:
 
-Why this works:
-Each recursive call narrows the allowed range:
-Left child must be < node.val.
-Right child must be > node.val.
-We use long for min and max to avoid overflow if node values are at the integer limits.
+* **All** values in the left subtree `< root.val`
+* **All** values in the right subtree `> root.val`
 
-Why do we return true as base case?
-A null node means we’ve reached beyond a leaf.
-An empty tree (or empty subtree) is by definition valid, because there are no nodes that can break the BST rule.
-So returning true as the base case simply says: “There’s nothing here to invalidate the BST.”
+Your code only enforces:
 
+* `root.left.val < root.val`
+* `root.right.val > root.val`
+  …and recursively enforces that each subtree is “locally” valid, but that still misses violations that occur deeper.
 
-Key ideas to keep in mind:
+### Counterexample (your code returns true, but it’s not a BST)
 
-* Each node must be **strictly** between `(min, max)`.
-* Left subtree narrows the **upper bound** to `node.val`.
-* Right subtree raises the **lower bound** to `node.val`.
-* `null` ⇒ “empty subtree” ⇒ **valid** (`true`).
-* The `&&` is **short-circuiting**: if the left returns `false`, Java won’t even call the right side.
+```
+    5
+   / \
+  1   7
+     /
+    4
+```
+
+This is invalid because `4` is in the **right subtree of 5** but `4 < 5`.
+
+What your code checks:
+
+* At `5`: left child `1 < 5` ok, right child `7 > 5` ok
+* At `7`: left child `4 < 7` ok
+  So it incorrectly returns `true`.
 
 ---
+
+## How to fix it (correct idea)
+
+You must carry **bounds** down the recursion:
+
+* Left subtree must be in `(min, root.val)`
+* Right subtree must be in `(root.val, max)`
+####################################################
+
+You must carry bounds down the recursion:
+Left subtree must be in (min, root.val)
+Right subtree must be in (root.val, max)
+
+Why long?
+To avoid overflow when the tree contains Integer.MIN_VALUE or Integer.MAX_VALUE.
 
 # Example 1 — **Valid BST**
 
@@ -149,31 +167,221 @@ This example shows why just checking immediate children isn’t enough; the prob
 # Tiny edge-case notes
 
 * **Duplicates are not allowed** in a strict BST for this problem. That’s why we use `<= min` and `>= max` as violations.
-* We use **`long`** for bounds so we can set `min = Long.MIN_VALUE` and `max = Long.MAX_VALUE` safely, even if node values are `Integer.MIN_VALUE` or `Integer.MAX_VALUE`. This avoids overflow/edge issues.
 */
 class Solution {
     public boolean isValidBST(TreeNode root) {
-        return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);
-    }
-
-    private boolean dfs(TreeNode node, long min, long max) {
-        if (node == null) {
+        if(root == null){
             return true;
         }
 
-        // Node value must be strictly between min and max
-        if (node.val <= min || node.val >= max) {
+        return dfs(root, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    private boolean dfs(TreeNode node, long lo, long hi){
+        if(node == null){
+            return true;
+        }
+
+        if(node.val <= lo || node.val >= hi){
             return false;
         }
 
-        // Left subtree: values must be < node.val
-        // Right subtree: values must be > node.val
-        return dfs(node.left, min, node.val) && dfs(node.right, node.val, max);
+        return dfs(node.left, lo, node.val) && dfs(node.right, node.val, hi);
     }
 }
 
 
-// Method 2: The BST inorder property can be used if we maintain previous node value
+
+
+
+
+// Method 2: Iterative DFS version
+/*
+You have two good iterative DFS styles:
+
+1. **Stack with bounds (most direct DFS)**
+2. **Inorder traversal with “prev” (also DFS, but uses BST inorder property)**
+
+Since you asked for iterative DFS, I’ll give the **stack + bounds** version first (it mirrors the correct recursive solution).
+
+---
+
+## Iterative DFS with bounds (stack of frames)
+
+### Core idea
+
+For every node, maintain the valid range `(low, high)` it must fall into:
+
+* All nodes in the left subtree must be `< current.val`
+* All nodes in the right subtree must be `> current.val`
+* And also must respect ancestors’ constraints.
+
+So when you push children:
+
+* left child range becomes `(low, node.val)`
+* right child range becomes `(node.val, high)`
+
+Use `long` bounds to avoid overflow with `Integer.MIN_VALUE/MAX_VALUE`.
+
+
+## Detailed explanation
+
+Each stack entry is a “promise”:
+
+> “This node must be strictly between `low` and `high`.”
+
+When you pop:
+
+1. Verify the node satisfies that promise.
+2. Create new promises for its children using updated bounds.
+
+Why strict (`<` / `>` not `<=` / `>=`)?
+
+* BST definition in LeetCode 98 requires **strictly** increasing inorder, i.e., no duplicates allowed in either subtree.
+
+---
+
+## Thorough example walkthrough
+
+### Example 1: the classic invalid case you mentioned
+
+`root = [5,1,4,null,null,3,6]`:
+
+```
+      5
+     / \
+    1   4
+       / \
+      3   6
+```
+
+Initialize:
+
+* stack = `[(node=5, low=-∞, high=+∞)]`
+
+I’ll write `(-∞, +∞)` as `(MIN, MAX)`.
+
+---
+
+#### Step 1: pop (5, MIN, MAX)
+
+Check: `MIN < 5 < MAX` ✅
+
+Push children with updated bounds:
+
+* right child 4 must be in `(5, MAX)` → push `(4, 5, MAX)`
+* left child 1 must be in `(MIN, 5)` → push `(1, MIN, 5)`
+
+stack (top first): `[(1, MIN, 5), (4, 5, MAX)]`
+
+---
+
+#### Step 2: pop (1, MIN, 5)
+
+Check: `MIN < 1 < 5` ✅
+No children → push nothing
+
+stack: `[(4, 5, MAX)]`
+
+---
+
+#### Step 3: pop (4, 5, MAX)
+
+Check: must satisfy `5 < 4 < MAX` ❌ (4 is not > 5)
+
+Return `false`.
+
+✅ Correct result: **invalid BST**
+
+Notice how this catches the violation even though 4 is “locally” fine relative to its own children—because its **bound comes from ancestor 5**.
+
+---
+
+### Example 2: invalid case your original code misses
+
+```
+    5
+   / \
+  1   7
+     /
+    4
+```
+
+Start:
+
+* push `(5, MIN, MAX)`
+
+Pop 5: ok
+Push:
+
+* `(7, 5, MAX)`
+* `(1, MIN, 5)`
+
+Pop 1: ok
+Pop 7 with bounds `(5, MAX)`: ok
+Push left child 4 with bounds `(5, 7)`  ← key
+
+Pop 4:
+
+* must satisfy `5 < 4 < 7` ❌
+  Return `false`.
+
+This is exactly the “global” constraint your child-only approach can’t enforce.
+
+---
+
+## Complexity
+
+* **Time:** `O(n)` each node pushed/popped once
+* **Space:** `O(h)` average / `O(n)` worst-case for skewed tree (stack frames)
+*/
+// class Solution {
+//     private static class Frame {
+//         TreeNode node;
+//         long low, high; // node.val must be strictly between (low, high)
+//         Frame(TreeNode node, long low, long high) {
+//             this.node = node;
+//             this.low = low;
+//             this.high = high;
+//         }
+//     }
+
+//     public boolean isValidBST(TreeNode root) {
+//         if (root == null) return true;
+
+//         Deque<Frame> stack = new ArrayDeque<>();
+//         stack.push(new Frame(root, Long.MIN_VALUE, Long.MAX_VALUE));
+
+//         while (!stack.isEmpty()) {
+//             Frame f = stack.pop();
+//             TreeNode node = f.node;
+
+//             if (node.val <= f.low || node.val >= f.high) {
+//                 return false;
+//             }
+
+//             // Right subtree: (node.val, f.high)
+//             if (node.right != null) {
+//                 stack.push(new Frame(node.right, node.val, f.high));
+//             }
+
+//             // Left subtree: (f.low, node.val)
+//             if (node.left != null) {
+//                 stack.push(new Frame(node.left, f.low, node.val));
+//             }
+//         }
+
+//         return true;
+//     }
+// }
+
+
+
+
+
+
+
+// Method 3: The BST inorder property can be used if we maintain previous node value
 // Since the inorder traversal of BST gives sorted values we can check if current
 // value is greater than the previous value.
 /*
@@ -212,5 +420,179 @@ Both are O(n) time and O(h) space (h = tree height).
 //         prev = node;
 
 //         return inorder(node.right);
+//     }
+// }
+
+
+
+
+
+
+
+// Method 4: Iterative version of the above inorder approach
+/*
+### Key BST fact
+
+If a binary tree is a valid BST (with **strict** ordering), then an **inorder traversal** (Left → Node → Right) visits values in a **strictly increasing** sequence.
+
+So the whole algorithm is:
+
+* Do inorder traversal iteratively with a stack.
+* Keep `prev` = the value of the previously visited node.
+* If you ever see `current.val <= prev`, it’s **not** a BST.
+
+### Why `Long prev`?
+
+* `cur.val` is `int`, but using `Long` avoids any awkwardness with initializing to `Integer.MIN_VALUE`.
+* Using `null` cleanly represents “no previous node yet”.
+
+### Why `<=`?
+
+BST requires **strictly increasing** inorder values:
+
+* duplicates are invalid → `cur.val == prev` must return false.
+
+---
+
+## Thorough walkthrough 1: invalid example `[5,1,4,null,null,3,6]`
+
+Tree:
+
+```
+      5
+     / \
+    1   4
+       / \
+      3   6
+```
+
+We’ll track:
+
+* `cur`
+* `stack` (top on left)
+* `prev`
+* visited order
+
+### Start
+
+* `cur = 5`
+* `stack = []`
+* `prev = null`
+
+### Step A: go left as far as possible
+
+Push 5, go left → push 1, go left → null
+
+* `stack = [1, 5]`
+* `cur = null`
+
+### Step B: pop/visit
+
+Pop 1:
+
+* `prev = null` so no comparison
+* set `prev = 1`
+* move to `cur = 1.right` (null)
+
+Visited so far: `1`
+
+### Step C: cur null, pop/visit again
+
+Pop 5:
+
+* compare: `5 <= prev(1)`? no
+* set `prev = 5`
+* move to `cur = 5.right` (node 4)
+
+Visited so far: `1, 5`
+
+### Step D: go left from 4
+
+Push 4, go left → push 3, go left → null
+
+* `stack = [3, 4]`
+* `cur = null`
+* `prev = 5`
+
+### Step E: pop/visit
+
+Pop 3:
+
+* compare: `3 <= prev(5)`? **YES** → return **false**
+
+✅ Correct: it’s not a BST, because inorder should be increasing, but we got `..., 5, 3, ...`.
+
+---
+
+## Thorough walkthrough 2: valid BST example
+
+Tree:
+
+```
+      5
+     / \
+    1   7
+       / \
+      6   8
+```
+
+Inorder should be: `1, 5, 6, 7, 8` (strictly increasing)
+
+Process (high level):
+
+* Visit 1 → prev=1
+* Visit 5 → 5 > 1 ok, prev=5
+* Visit 6 → 6 > 5 ok, prev=6
+* Visit 7 → 7 > 6 ok, prev=7
+* Visit 8 → 8 > 7 ok, prev=8
+  Finish → true
+
+---
+
+## Why this works (intuition)
+
+Inorder traversal visits:
+
+* everything in left subtree (all must be smaller)
+* then the node
+* then everything in right subtree (all must be larger)
+
+So if at any point the sequence stops increasing, some node ended up on the wrong side of an ancestor boundary → not a BST.
+
+---
+
+## Common pitfalls
+
+* Using `<` instead of `<=` would incorrectly allow duplicates.
+* Forgetting the “go-left loop” (`while (cur != null)`) breaks traversal.
+* Using a sentinel int for `prev` can fail at min int; `Long prev = null` avoids it.
+*/
+// class Solution {
+//     public boolean isValidBST(TreeNode root) {
+//         Deque<TreeNode> stack = new ArrayDeque<>();
+//         TreeNode cur = root;
+
+//         Long prev = null; // previous inorder value (use Long to avoid edge issues)
+
+//         while (cur != null || !stack.isEmpty()) {
+//             // 1) Go as left as possible
+//             while (cur != null) {
+//                 stack.push(cur);
+//                 cur = cur.left;
+//             }
+
+//             // 2) Visit node
+//             cur = stack.pop();
+
+//             if (prev != null && cur.val <= prev) {
+//                 return false;
+//             }
+//             prev = (long) cur.val;
+
+//             // 3) Go right
+//             cur = cur.right;
+//         }
+
+//         return true;
 //     }
 // }
