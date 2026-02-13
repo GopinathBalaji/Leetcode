@@ -14,109 +14,77 @@
  * }
  */
 
-// My solution using recursive Inorder traversal since it is sorted
-// class Solution {
-    
-//     int smallest = 0;
-//     int value = 0;
 
-//     public int kthSmallest(TreeNode root, int k) {
-//         recursiveDfs(root, k);
-//         return value;
-//     }
-
-//     private void recursiveDfs(TreeNode node, int k){
-//         if(node == null){
-//             return;
-//         }
-
-//         recursiveDfs(node.left, k);
-//         if(smallest != k){
-//             value = node.val;
-//             smallest++;
-//         }else if(smallest == k){
-//             return;
-//         }
-//         recursiveDfs(node.right, k);
-//     }
-// }
-
-
-
-// ChatGPT polished version of my code, that only recurses till
-// we find the Kth smallest and not after that
+// Method 1: Recursive DFS Inorder approach 
 /*
-### Polished version (recursive DFS with short-circuit)
-
-### Key refinements
-
-* Use `count` as a direct counter instead of `smallest`.
-* As soon as `count == k`, record the result and **stop recursion**.
-* Avoid unnecessary traversal of the right subtree once we already found the k-th element.
-
-This way, the traversal only goes as far as needed. Time complexity remains **O(h + k)**, but in practice, it’s a bit faster since recursion doesn’t continue uselessly.
+Inorder because in BST it gives the nodes in a sorted way.
 */
 class Solution {
 
-    private int count = 0;
-    private int result = 0;
-
+    int ans = 0;
+    int count = 0;
     public int kthSmallest(TreeNode root, int k) {
-        inorder(root, k);
-        return result;
+        dfs(root, k);
+        return ans;
     }
 
-    private void inorder(TreeNode node, int k) {
-        if (node == null) return;
+    private void dfs(TreeNode root, int k){
+        if(root == null){
+            return;
+        }
 
-        inorder(node.left, k);
+        dfs(root.left, k);
 
         count++;
-        if (count == k) {
-            result = node.val;
-            return;  // stop once we find it
+        if(k == count){
+            ans = root.val;
+            return;
         }
 
-        // Only keep going if not found
-        if (count < k) {
-            inorder(node.right, k);
-        }
+        dfs(root.right, k);
     }
 }
 
 
-// Iterative stack version
+
+
+
+// Method 2: Iterative DFS Inorder traversal
+/*
+*/
 // class Solution {
 //     public int kthSmallest(TreeNode root, int k) {
-//         int smallest = 0;
-//         int value = 0;
+//         Deque<TreeNode> stack = new ArrayDeque<>();
+//         TreeNode curr = root;
+//         int count = 0;
 
-//         Stack<TreeNode> stack = new Stack<>();
-//         TreeNode current = root;
+//         while(curr != null || !stack.isEmpty()){
 
-//         while(current != null || !stack.isEmpty()){
-//             while(current != null){
-//                 stack.push(current);
-//                 current = current.left;
+//             while(curr != null){
+//                 stack.push(curr);
+//                 curr = curr.left;
 //             }
 
-//             current = stack.pop();
-//             smallest++;
-//             if(smallest == k){
-//                 value = current.val;
-//                 return value;
+//             curr = stack.pop();
+//             count += 1;
+//             if(count == k){
+//                 return curr.val;
 //             }
 
-//             current = current.right;
-//         }
+//             curr = curr.right;
+//         }   
 
-//         return value;
+//         return 0;     
 //     }
 // }
 
 
 
-// Answer to follow up: using Augmented BST with subtree sizes/order statistics: 
+
+
+
+
+// Method 3: Answer to follow up - using Augmented BST with subtree sizes/order statistics: 
 /*
 ### Why a **min-heap** (priority queue) is *not* a good choice here
 
