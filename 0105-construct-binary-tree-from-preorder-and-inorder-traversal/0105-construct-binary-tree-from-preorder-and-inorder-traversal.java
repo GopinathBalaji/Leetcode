@@ -14,9 +14,36 @@
  * }
  */
 
-//  Use Preorder to get the root for every iteration.
-//  Use Inorder to find the left and right children.
+// Method 1: Divide and Conquer approach using HashMap
 /*
+Use Preorder to get the root for every iteration.
+Use Inorder to find the left and right children.
+
+**Key observation**
+
+* **Preorder** visits: `root, left..., right...`
+* **Inorder** visits: `left..., root, right...`
+  So the **first element of preorder is always the root** of the (sub)tree.
+
+---
+
+## Hint set 1: Recursive “slice by inorder index”
+
+1. Build a **hash map** from value → index in `inorder` for O(1) splits.
+2. Keep a pointer `preIdx` into `preorder` (starting at 0).
+3. Write a function that builds a subtree given an inorder range `[L..R]`:
+
+   * If `L > R`, return `null`.
+   * Take `rootVal = preorder[preIdx++]`.
+   * Find `mid = inorderIndex[rootVal]`.
+   * Build left subtree from `[L .. mid-1]`.
+   * Build right subtree from `[mid+1 .. R]`.
+4. Return the root.
+
+**Why left then right?** Because preorder after the root lists **all left subtree nodes first**.
+
+###############################
+
 preorder = [3, 9, 20, 15, 7]
 inorder  = [9, 3, 15, 20, 7]
 ```
@@ -186,7 +213,7 @@ Tree now:
 
 ---
 
-## **\U0001f539 Key Takeaways from the Walkthrough**
+## Key Takeaways from the Walkthrough**
 
 1. **Preorder drives root creation**, while **inorder determines boundaries** of subtrees.
 2. `preIndex` increments **once per node**.
@@ -195,31 +222,221 @@ Tree now:
 5. HashMap lookup makes finding the root index **O(1)**.
 */
 class Solution {
-    private int preIndex = 0;
-    private HashMap<Integer, Integer> inorderMap = new HashMap<>();
+    private int preIdx = 0;
 
     public TreeNode buildTree(int[] preorder, int[] inorder) {
+        
+        Map<Integer, Integer> inorderIndex = new HashMap<>();
         for(int i=0; i<inorder.length; i++){
-            inorderMap.put(inorder[i], i);
+            inorderIndex.put(inorder[i], i);
         }
 
-        return build(preorder, 0, inorder.length-1);
+        return makeTree(preorder, inorderIndex, 0, inorder.length-1);
     }
 
-    private TreeNode build(int[] preorder, int inStart, int inEnd){
-        if(inStart > inEnd){
+    private TreeNode makeTree(int[] preorder, Map<Integer, Integer> inorderIndex, int l, int r){
+        if(l > r){
             return null;
         }
 
-        int rootVal = preorder[preIndex];
-        preIndex++;
+        int rootVal = preorder[preIdx++];
+        int midIdx = inorderIndex.get(rootVal);
+
         TreeNode root = new TreeNode(rootVal);
-
-        int rootIndex = inorderMap.get(rootVal);
-
-        root.left = build(preorder, inStart, rootIndex - 1);
-        root.right = build(preorder, rootIndex + 1, inEnd);
+        root.left = makeTree(preorder, inorderIndex, l, midIdx - 1);
+        root.right = makeTree(preorder, inorderIndex, midIdx + 1, r);
 
         return root;
     }
 }
+
+
+
+
+
+
+
+// Method 2: Iterative stack approach
+/*
+## Core idea behind the iterative method
+
+* **Preorder** gives nodes in the order we *create* them: `root, left..., right...`
+* **Inorder** tells us when we’ve finished a node’s **left subtree** and should start attaching **right** children.
+
+### Key invariant
+
+We maintain:
+
+* a **stack** of nodes whose subtrees we’re still building
+* an `inIdx` pointer into `inorder` that tracks the “next inorder node we should close”
+
+When the stack top equals `inorder[inIdx]`, it means:
+
+* we’ve finished building that node’s left side,
+* so we should pop it (and possibly more), and attach the next preorder node as the **right** child of the last popped node.
+
+If it does **not** equal, the next preorder node must be the **left** child of the stack top.
+
+
+## Thorough example walkthrough
+
+### Example
+
+`preorder = [3, 9, 20, 15, 7]`
+`inorder  = [9, 3, 15, 20, 7]`
+
+We will build:
+
+```
+      3
+     / \
+    9  20
+       / \
+      15  7
+```
+
+### Initialization
+
+* `root = 3`
+* `stack = [3]` (top on left)
+* `inIdx = 0` → `inorder[inIdx] = 9`
+
+---
+
+### preIdx = 1, val = 9
+
+* `stack.peek() = 3`
+* Compare `3` vs `inorder[inIdx]=9`
+
+  * `3 != 9` → still building left chain
+* Attach `9` as `3.left`
+* Push `9`
+
+State:
+
+* Tree: `3.left = 9`
+* `stack = [9, 3]`
+* `inIdx = 0` (still 9)
+
+---
+
+### preIdx = 2, val = 20
+
+* `stack.peek() = 9`
+* Compare `9` vs `inorder[inIdx]=9`
+
+  * `9 == 9` → means left subtree of 9 is done, time to “close” nodes
+
+Pop while matches inorder:
+
+1. pop `9`, `inIdx=1` → `inorder[1]=3`
+2. now stack.peek() is `3`, and `3 == inorder[1]`
+
+   * pop `3`, `inIdx=2` → `inorder[2]=15`
+     Stop because stack is empty now.
+
+The **last popped node** is `3`.
+Attach `20` as `3.right`. Push `20`.
+
+State:
+
+* Tree: `3.right = 20`
+* `stack = [20]`
+* `inIdx = 2` (points to 15)
+
+---
+
+### preIdx = 3, val = 15
+
+* `stack.peek() = 20`
+* Compare `20` vs `inorder[inIdx]=15`
+
+  * `20 != 15` → still going left under 20
+* Attach `15` as `20.left`, push 15.
+
+State:
+
+* Tree: `20.left = 15`
+* `stack = [15, 20]`
+* `inIdx = 2` (still 15)
+
+---
+
+### preIdx = 4, val = 7
+
+* `stack.peek() = 15`
+* Compare `15` vs `inorder[inIdx]=15`
+
+  * match → pop/close
+
+Pop while matches inorder:
+
+1. pop `15`, `inIdx=3` → `inorder[3]=20`
+2. now stack.peek() is `20`, and `20 == inorder[3]`
+
+   * pop `20`, `inIdx=4` → `inorder[4]=7`
+     Stop (stack empty).
+
+Last popped node is `20`.
+Attach `7` as `20.right`. Push `7`.
+
+State:
+
+* Tree: `20.right = 7`
+* `stack = [7]`
+* `inIdx = 4`
+
+Done (processed all preorder values).
+
+✅ Final tree matches expected.
+
+---
+
+## Why this always works
+
+* Preorder gives the next node we must create.
+* The stack represents the path of ancestors we’re currently “inside”.
+* Inorder pointer tells us when we’ve finished a node’s left subtree (and possibly the node itself), so we can attach a right child next.
+
+---
+
+## Complexity
+
+* **Time:** `O(n)` each node pushed/popped at most once
+* **Space:** `O(h)` stack height (worst-case `O(n)` for skewed tree)
+*/
+
+// class Solution {
+//     public TreeNode buildTree(int[] preorder, int[] inorder) {
+//         if (preorder == null || preorder.length == 0) return null;
+
+//         TreeNode root = new TreeNode(preorder[0]);
+//         Deque<TreeNode> stack = new ArrayDeque<>();
+//         stack.push(root);
+
+//         int inIdx = 0; // pointer in inorder
+
+//         // Process remaining preorder nodes
+//         for (int preIdx = 1; preIdx < preorder.length; preIdx++) {
+//             int val = preorder[preIdx];
+//             TreeNode node = stack.peek();
+
+//             // If top of stack hasn't matched inorder[inIdx], we are still going left
+//             if (node.val != inorder[inIdx]) {
+//                 node.left = new TreeNode(val);
+//                 stack.push(node.left);
+//             } else {
+//                 // Otherwise, pop until we find a node whose value != inorder[inIdx]
+//                 while (!stack.isEmpty() && stack.peek().val == inorder[inIdx]) {
+//                     node = stack.pop();
+//                     inIdx++;
+//                 }
+//                 // The new val becomes the right child of the last popped node
+//                 node.right = new TreeNode(val);
+//                 stack.push(node.right);
+//             }
+//         }
+
+//         return root;
+//     }
+// }
