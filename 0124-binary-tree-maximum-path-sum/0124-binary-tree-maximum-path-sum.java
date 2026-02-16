@@ -17,6 +17,60 @@
 
 // Method 1: DFS + Dynamic Programming
 /*
+# WHAT WAS I DOING WRONG:
+
+Your approach is fundamentally incorrect for LeetCode 124 because it’s modeling the problem like a “take/skip + sum of subtrees” DP, but **a max path is not “sum of entire subtrees”**, and the recursion for this problem needs to return a *different quantity* than the global answer.
+
+Here’s what’s wrong, precisely:
+
+### 1) You’re summing whole subtrees (`maxPathSum(left) + maxPathSum(right)`)
+
+`maxPathSum(node)` is supposed to mean “best path anywhere in this subtree” (global), not “best downward contribution from this node”. Adding `maxPathSum(left)` and `maxPathSum(right)` makes no sense because those two best paths can be in completely unrelated parts and **cannot be combined into one simple path**.
+
+A **path** must be continuous and cannot “teleport” between two independent best paths.
+
+### 2) You use a single `total` shared across the entire recursion
+
+`total` is global state that gets overwritten while exploring different branches. That mixes results from unrelated subtrees.
+
+### 3) The “skip” case is meaningless here
+
+`skip = 0 + total + left + right` still includes left and right and still uses `total`. It doesn’t represent any valid decision about paths.
+
+### 4) You recurse multiple times on the same child
+
+You call `maxPathSum(root.left)` and `maxPathSum(root.right)` twice each (in both `take` and `skip`). That makes it exponential-ish and also interacts badly with your global `total`.
+
+### 5) You never handle negatives correctly
+
+In this problem, if a child contributes a negative sum, you should typically treat it as **0 contribution** for extending a path upward. Your formula always adds children results, which can reduce the sum incorrectly.
+
+### 6) Your base/global initialization is wrong
+
+If the tree contains all negative values, the answer should be the **largest (least negative) node value**, not 0. Your `total` starts at 0, which can incorrectly force result ≥ 0.
+
+---
+
+## What the correct approach must do (conceptually)
+
+You need two quantities:
+
+1. **`gain(node)`**: the maximum sum of a path that **starts at `node` and goes downward** to one side (left or right). This is what you return to the parent.
+
+   * `gain = node.val + max(0, gain(left), gain(right))`
+
+2. A **global best** that allows a path to “turn” at `node` and take **both sides**:
+
+   * candidate = `node.val + max(0, gain(left)) + max(0, gain(right))`
+   * update global answer with this candidate
+
+That’s the core difference:
+
+* **Return value** = best one-branch extension upward
+* **Global answer** = best “through-node” path anywhere
+
+##########################################################
+
 Postorder DFS while keeping track of 2 different values:
 Path sum starting from this node and going down → what you can “return” to the parent for its path.
 Path sum passing through this node → possibly including both left and right child paths plus this node’s value.
