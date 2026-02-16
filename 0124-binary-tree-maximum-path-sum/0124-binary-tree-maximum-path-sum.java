@@ -15,10 +15,12 @@
  */
 
 
-// Postorder DFS while keeping track of 2 different values:
-// Path sum starting from this node and going down → what you can “return” to the parent for its path.
-// Path sum passing through this node → possibly including both left and right child paths plus this node’s value.
+// Method 1: DFS + Dynamic Programming
 /*
+Postorder DFS while keeping track of 2 different values:
+Path sum starting from this node and going down → what you can “return” to the parent for its path.
+Path sum passing through this node → possibly including both left and right child paths plus this node’s value.
+
 The idea of **tracking two variables** here comes from separating:
 
 1. **What you can give to your parent** (the *return value*).
@@ -162,13 +164,17 @@ If you notice, the key is:
 * `downPath` = node’s value + best single branch below it.
 * **globalMax** gets updated with `node.val + left + right` because that’s the best possible path that passes through this node.
 */
-
 class Solution {
-    private int globalMax;
+    
+    int globalMax = Integer.MIN_VALUE;
 
     public int maxPathSum(TreeNode root) {
-        globalMax = Integer.MIN_VALUE;
+        if(root == null){
+            return 0;
+        }
+
         dfs(root);
+
         return globalMax;
     }
 
