@@ -280,6 +280,7 @@
 | [0224-basic-calculator](https://github.com/GopinathBalaji/Leetcode/tree/master/0224-basic-calculator) |
 | [0242-valid-anagram](https://github.com/GopinathBalaji/Leetcode/tree/master/0242-valid-anagram) |
 | [0290-word-pattern](https://github.com/GopinathBalaji/Leetcode/tree/master/0290-word-pattern) |
+| [0297-serialize-and-deserialize-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0297-serialize-and-deserialize-binary-tree) |
 | [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
 | [0392-is-subsequence](https://github.com/GopinathBalaji/Leetcode/tree/master/0392-is-subsequence) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
@@ -456,6 +457,7 @@
 | [0230-kth-smallest-element-in-a-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0230-kth-smallest-element-in-a-bst) |
 | [0235-lowest-common-ancestor-of-a-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0235-lowest-common-ancestor-of-a-binary-search-tree) |
 | [0236-lowest-common-ancestor-of-a-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0236-lowest-common-ancestor-of-a-binary-tree) |
+| [0297-serialize-and-deserialize-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0297-serialize-and-deserialize-binary-tree) |
 | [0530-minimum-absolute-difference-in-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0530-minimum-absolute-difference-in-bst) |
 | [0543-diameter-of-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0543-diameter-of-binary-tree) |
 | [0572-subtree-of-another-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0572-subtree-of-another-tree) |
@@ -487,6 +489,7 @@
 | [0230-kth-smallest-element-in-a-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0230-kth-smallest-element-in-a-bst) |
 | [0235-lowest-common-ancestor-of-a-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0235-lowest-common-ancestor-of-a-binary-search-tree) |
 | [0236-lowest-common-ancestor-of-a-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0236-lowest-common-ancestor-of-a-binary-tree) |
+| [0297-serialize-and-deserialize-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0297-serialize-and-deserialize-binary-tree) |
 | [0329-longest-increasing-path-in-a-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0329-longest-increasing-path-in-a-matrix) |
 | [0332-reconstruct-itinerary](https://github.com/GopinathBalaji/Leetcode/tree/master/0332-reconstruct-itinerary) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
@@ -520,6 +523,7 @@
 | [0207-course-schedule](https://github.com/GopinathBalaji/Leetcode/tree/master/0207-course-schedule) |
 | [0210-course-schedule-ii](https://github.com/GopinathBalaji/Leetcode/tree/master/0210-course-schedule-ii) |
 | [0226-invert-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0226-invert-binary-tree) |
+| [0297-serialize-and-deserialize-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0297-serialize-and-deserialize-binary-tree) |
 | [0322-coin-change](https://github.com/GopinathBalaji/Leetcode/tree/master/0322-coin-change) |
 | [0329-longest-increasing-path-in-a-matrix](https://github.com/GopinathBalaji/Leetcode/tree/master/0329-longest-increasing-path-in-a-matrix) |
 | [0399-evaluate-division](https://github.com/GopinathBalaji/Leetcode/tree/master/0399-evaluate-division) |
@@ -562,6 +566,7 @@
 | [0230-kth-smallest-element-in-a-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0230-kth-smallest-element-in-a-bst) |
 | [0235-lowest-common-ancestor-of-a-binary-search-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0235-lowest-common-ancestor-of-a-binary-search-tree) |
 | [0236-lowest-common-ancestor-of-a-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0236-lowest-common-ancestor-of-a-binary-tree) |
+| [0297-serialize-and-deserialize-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0297-serialize-and-deserialize-binary-tree) |
 | [0530-minimum-absolute-difference-in-bst](https://github.com/GopinathBalaji/Leetcode/tree/master/0530-minimum-absolute-difference-in-bst) |
 | [0543-diameter-of-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0543-diameter-of-binary-tree) |
 | [0572-subtree-of-another-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0572-subtree-of-another-tree) |
@@ -614,6 +619,7 @@
 | [0208-implement-trie-prefix-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0208-implement-trie-prefix-tree) |
 | [0211-design-add-and-search-words-data-structure](https://github.com/GopinathBalaji/Leetcode/tree/master/0211-design-add-and-search-words-data-structure) |
 | [0295-find-median-from-data-stream](https://github.com/GopinathBalaji/Leetcode/tree/master/0295-find-median-from-data-stream) |
+| [0297-serialize-and-deserialize-binary-tree](https://github.com/GopinathBalaji/Leetcode/tree/master/0297-serialize-and-deserialize-binary-tree) |
 | [0380-insert-delete-getrandom-o1](https://github.com/GopinathBalaji/Leetcode/tree/master/0380-insert-delete-getrandom-o1) |
 | [0460-lfu-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0460-lfu-cache) |
 | [0895-maximum-frequency-stack](https://github.com/GopinathBalaji/Leetcode/tree/master/0895-maximum-frequency-stack) |
