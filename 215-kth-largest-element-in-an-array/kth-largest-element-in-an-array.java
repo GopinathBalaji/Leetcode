@@ -1,5 +1,6 @@
 // Method 1: Max Heap O(n)
-
+/*
+*/
 class Solution {
     public int findKthLargest(int[] nums, int k) {
         PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
@@ -19,7 +20,11 @@ class Solution {
 
 
 
-// Method 2: Quick Select
+
+
+
+
+// Method 2: Quick Select (Uses the same Divide and Conquer Quicksort algorithm)
 /*
 ## What Quickselect does (in one sentence)
 
@@ -199,69 +204,59 @@ If you want, I can also show:
 * A **recursive** variant (same logic, fewer loops).
 * A **stable selection** approach (not in-place, `O(n)` extra space).
 * A **median-of-medians** pivot chooser for worst-case linear time.
-
 */
 
-// public class QuickSelect {
+// class Solution {
+//     public int findKthLargest(int[] nums, int k) {
+//         int n = nums.length;
+//         int target = n - k;
+//         quickselect(nums, target, 0, n - 1);
 
-//     private static final Random RNG = new Random();
-
-//     // Returns the k-th smallest element (1-indexed). Throws if k is out of range.
-//     public static int kthSmallest(int[] a, int k) {
-//         if (k < 1 || k > a.length) throw new IllegalArgumentException("k out of range");
-//         return quickSelect(a, 0, a.length - 1, k - 1); // convert to 0-indexed order statistic
+//         return nums[n - k];
 //     }
 
-//     // Convenience: k-th largest (1-indexed)
-//     public static int kthLargest(int[] a, int k) {
-//         if (k < 1 || k > a.length) throw new IllegalArgumentException("k out of range");
-//         int idx = a.length - k; // k-th largest == (n-k)-th smallest (0-indexed)
-//         return quickSelect(a, 0, a.length - 1, idx);
-//     }
-
-//     // Iterative Quickselect using Lomuto partition and randomized pivot
-//     private static int quickSelect(int[] a, int left, int right, int targetIdx) {
-//         int lo = left, hi = right;
-//         while (lo <= hi) {
-//             int p = randomizedPartition(a, lo, hi); // partition, returns final pivot index
-//             if (p == targetIdx) return a[p];
-//             if (p < targetIdx) {
-//                 lo = p + 1;          // search right side
-//             } else {
-//                 hi = p - 1;          // search left side
-//             }
+//     private void quickselect(int[] arr, int target, int low, int high){
+//         if(low >= high){
+//             return;
 //         }
-//         // Should never happen when inputs are valid
-//         throw new IllegalStateException("Quickselect failed");
+
+//         int pivotIndex = partition(arr, low, high);
+
+//         if(pivotIndex == target){
+//             return;
+//         }else if(pivotIndex < target){
+//             quickselect(arr, target, pivotIndex + 1, high);
+//         }else{
+//             quickselect(arr, target, low, pivotIndex - 1);
+//         }
 //     }
 
-//     // Lomuto partition with random pivot: partitions a[lo..hi] around pivot, returns pivot's final index
-//     private static int randomizedPartition(int[] a, int lo, int hi) {
-//         int pivotIdx = lo + RNG.nextInt(hi - lo + 1);
-//         swap(a, pivotIdx, hi);                  // move pivot to end
-//         int pivot = a[hi];
+//     private static int partition(int[] arr, int low, int high){
+//         int pivot = arr[high];
+//         int i = low - 1;
 
-//         int i = lo;                             // place for next <= pivot
-//         for (int j = lo; j < hi; j++) {
-//             if (a[j] <= pivot) {                // <= yields a stable-ish behavior for duplicates
-//                 swap(a, i, j);
+//         for(int j = low; j < high; j++){
+//             if(arr[j] <= pivot){
 //                 i++;
+//                 swap(arr, i, j);
 //             }
 //         }
-//         swap(a, i, hi);                         // put pivot in its final spot
-//         return i;
+
+//         swap(arr, i+1, high);
+//         return i + 1;
 //     }
 
-//     private static void swap(int[] a, int i, int j) {
-//         if (i != j) { int tmp = a[i]; a[i] = a[j]; a[j] = tmp; }
-//     }
-
-//     // Example usage
-//     public static void main(String[] args) {
-//         int[] arr = {9, 1, 5, 3, 7, 2, 8, 6, 4};
-//         System.out.println(kthSmallest(arr.clone(), 1)); // 1
-//         System.out.println(kthSmallest(arr.clone(), 5)); // 5 (median here)
-//         System.out.println(kthLargest(arr.clone(), 1));  // 9
-//         System.out.println(kthLargest(arr.clone(), 3));  // 7
+//     private static void swap(int[] arr, int a, int b){
+//         if(a == b){
+//             return;
+//         }
+//         int tmp = arr[a];
+//         arr[a] = arr[b];
+//         arr[b] = tmp;
 //     }
 // }
+
+
+
+
+
