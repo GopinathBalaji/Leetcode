@@ -109,6 +109,7 @@
 | [0945-snakes-and-ladders](https://github.com/GopinathBalaji/Leetcode/tree/master/0945-snakes-and-ladders) |
 | [0954-maximum-sum-circular-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0954-maximum-sum-circular-subarray) |
 | [1036-rotting-oranges](https://github.com/GopinathBalaji/Leetcode/tree/master/1036-rotting-oranges) |
+| [1046-last-stone-weight](https://github.com/GopinathBalaji/Leetcode/tree/master/1046-last-stone-weight) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
 | [1422-divide-array-in-sets-of-k-consecutive-numbers](https://github.com/GopinathBalaji/Leetcode/tree/master/1422-divide-array-in-sets-of-k-consecutive-numbers) |
 | [1706-min-cost-to-connect-all-points](https://github.com/GopinathBalaji/Leetcode/tree/master/1706-min-cost-to-connect-all-points) |
@@ -671,6 +672,7 @@
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
 | [0803-cheapest-flights-within-k-stops](https://github.com/GopinathBalaji/Leetcode/tree/master/0803-cheapest-flights-within-k-stops) |
+| [1046-last-stone-weight](https://github.com/GopinathBalaji/Leetcode/tree/master/1046-last-stone-weight) |
 | [1851-minimum-interval-to-include-each-query](https://github.com/GopinathBalaji/Leetcode/tree/master/1851-minimum-interval-to-include-each-query) |
 ## Quickselect
 |  |
