@@ -1,4 +1,4 @@
-// Method 1: Max Heap O(n)
+// Method 1: Max Heap approach (O(n) space)
 /*
 */
 class Solution {
@@ -24,7 +24,41 @@ class Solution {
 
 
 
-// Method 2: Quick Select (Uses the same Divide and Conquer Quicksort algorithm)
+
+// Method 2: More optimized heap approach (uses minHeap (O(k) space))
+/*
+Mechanism:
+
+Add every number.
+If heap size exceeds k, remove the smallest (poll()).
+That removed element cannot be in the top k anymore.
+After processing all numbers, the heap contains exactly the k largest elements in the whole array → the smallest of them is the kth largest.
+*/
+// class Solution {
+//     public int findKthLargest(int[] nums, int k) {
+//         PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+
+//         for(int num: nums){
+//             minHeap.add(num);
+
+//             if(minHeap.size() > k){
+//                 minHeap.poll();
+//             }
+//         }
+
+//         return minHeap.poll();
+//     }
+// }
+
+
+
+
+
+
+
+
+
+// Method 3: Quick Select (Uses the same Divide and Conquer Quicksort algorithm)
 /*
 ## What Quickselect does (in one sentence)
 
