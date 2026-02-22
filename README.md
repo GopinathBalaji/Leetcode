@@ -94,6 +94,7 @@
 | [0494-target-sum](https://github.com/GopinathBalaji/Leetcode/tree/master/0494-target-sum) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
+| [0621-task-scheduler](https://github.com/GopinathBalaji/Leetcode/tree/master/0621-task-scheduler) |
 | [0695-max-area-of-island](https://github.com/GopinathBalaji/Leetcode/tree/master/0695-max-area-of-island) |
 | [0704-binary-search](https://github.com/GopinathBalaji/Leetcode/tree/master/0704-binary-search) |
 | [0718-maximum-length-of-repeated-subarray](https://github.com/GopinathBalaji/Leetcode/tree/master/0718-maximum-length-of-repeated-subarray) |
@@ -167,6 +168,7 @@
 | [0435-non-overlapping-intervals](https://github.com/GopinathBalaji/Leetcode/tree/master/0435-non-overlapping-intervals) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
+| [0621-task-scheduler](https://github.com/GopinathBalaji/Leetcode/tree/master/0621-task-scheduler) |
 | [0853-car-fleet](https://github.com/GopinathBalaji/Leetcode/tree/master/0853-car-fleet) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
 | [0973-k-closest-points-to-origin](https://github.com/GopinathBalaji/Leetcode/tree/master/0973-k-closest-points-to-origin) |
@@ -212,6 +214,7 @@
 | [0460-lfu-cache](https://github.com/GopinathBalaji/Leetcode/tree/master/0460-lfu-cache) |
 | [0525-contiguous-array](https://github.com/GopinathBalaji/Leetcode/tree/master/0525-contiguous-array) |
 | [0567-permutation-in-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0567-permutation-in-string) |
+| [0621-task-scheduler](https://github.com/GopinathBalaji/Leetcode/tree/master/0621-task-scheduler) |
 | [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
@@ -245,6 +248,7 @@
 | [0169-majority-element](https://github.com/GopinathBalaji/Leetcode/tree/master/0169-majority-element) |
 | [0347-top-k-frequent-elements](https://github.com/GopinathBalaji/Leetcode/tree/master/0347-top-k-frequent-elements) |
 | [0383-ransom-note](https://github.com/GopinathBalaji/Leetcode/tree/master/0383-ransom-note) |
+| [0621-task-scheduler](https://github.com/GopinathBalaji/Leetcode/tree/master/0621-task-scheduler) |
 | [0829-subdomain-visit-count](https://github.com/GopinathBalaji/Leetcode/tree/master/0829-subdomain-visit-count) |
 | [1112-find-words-that-can-be-formed-by-characters](https://github.com/GopinathBalaji/Leetcode/tree/master/1112-find-words-that-can-be-formed-by-characters) |
 ## String
@@ -378,6 +382,7 @@
 | [0435-non-overlapping-intervals](https://github.com/GopinathBalaji/Leetcode/tree/master/0435-non-overlapping-intervals) |
 | [0452-minimum-number-of-arrows-to-burst-balloons](https://github.com/GopinathBalaji/Leetcode/tree/master/0452-minimum-number-of-arrows-to-burst-balloons) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
+| [0621-task-scheduler](https://github.com/GopinathBalaji/Leetcode/tree/master/0621-task-scheduler) |
 | [0678-valid-parenthesis-string](https://github.com/GopinathBalaji/Leetcode/tree/master/0678-valid-parenthesis-string) |
 | [0768-partition-labels](https://github.com/GopinathBalaji/Leetcode/tree/master/0768-partition-labels) |
 | [0876-hand-of-straights](https://github.com/GopinathBalaji/Leetcode/tree/master/0876-hand-of-straights) |
@@ -671,6 +676,7 @@
 | [0347-top-k-frequent-elements](https://github.com/GopinathBalaji/Leetcode/tree/master/0347-top-k-frequent-elements) |
 | [0373-find-k-pairs-with-smallest-sums](https://github.com/GopinathBalaji/Leetcode/tree/master/0373-find-k-pairs-with-smallest-sums) |
 | [0502-ipo](https://github.com/GopinathBalaji/Leetcode/tree/master/0502-ipo) |
+| [0621-task-scheduler](https://github.com/GopinathBalaji/Leetcode/tree/master/0621-task-scheduler) |
 | [0703-kth-largest-element-in-a-stream](https://github.com/GopinathBalaji/Leetcode/tree/master/0703-kth-largest-element-in-a-stream) |
 | [0744-network-delay-time](https://github.com/GopinathBalaji/Leetcode/tree/master/0744-network-delay-time) |
 | [0794-swim-in-rising-water](https://github.com/GopinathBalaji/Leetcode/tree/master/0794-swim-in-rising-water) |
