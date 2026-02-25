@@ -1,4 +1,451 @@
-// Method 1: Using Array based Trie (specifically only for lower case inputs)
+// Method 1: Using HashMap based Trie (generic Trie)
+/*
+Notes:
+Flexible alphabet: since children are in a Map, you’re not limited to 'a'..'z'. Any char works (e.g., uppercase, digits, punctuation).
+Deletion logic: On the way back up the recursion, a node is removed from its parent iff its subtree no longer represents any word (isWord == false) and it has no children—so shared prefixes stay intact.
+Edge cases: If you want to allow empty strings, calling insert("") will set root.isWord = true; search("") will then return true. If you don’t want to allow them, guard in insert/delete.
+
+Here are **progressive hints** to build a Trie for **LeetCode 208** using the **HashMap children** approach (instead of fixed array `[26]`).
+
+---
+
+## Hint 1: What a Trie node should store
+
+Each node represents a prefix. A node needs **two things**:
+
+1. `children` → mapping from character to next node
+   (`HashMap<Character, TrieNode>`)
+2. `isEnd` → whether a word ends at this node
+
+Think:
+
+* path = prefix
+* `isEnd = true` means a full inserted word ends here
+
+---
+
+## Hint 2: Create a separate `TrieNode` class
+
+Don’t try to store everything in the Trie class directly.
+
+You usually want:
+
+* `TrieNode root`
+* `TrieNode` has:
+
+  * `Map<Character, TrieNode> children`
+  * `boolean isEnd`
+
+Root is an **empty starting node** (does not store a char necessarily).
+
+---
+
+## Hint 3: `insert(word)` = walk/create nodes
+
+For each character `c` in the word:
+
+* if current node does **not** have child `c`, create it
+* move to that child
+
+After the loop ends:
+
+* mark current node `isEnd = true`
+
+Key HashMap methods that help:
+
+* `containsKey`
+* `get`
+* `put`
+* or cleaner: `computeIfAbsent`
+
+---
+
+## Hint 4: `search(word)` = walk only, no creation
+
+For each character `c`:
+
+* if child `c` does not exist → return `false`
+* otherwise move to it
+
+After all chars are processed:
+
+* return `current.isEnd` (not just true because prefix may exist without full word)
+
+Example:
+
+* inserted `"apple"`
+* `search("app")` should be `false` unless `"app"` was inserted too
+
+---
+
+## Hint 5: `startsWith(prefix)` is almost same as `search`
+
+Same traversal as `search`, but after consuming all prefix chars:
+
+* return `true` (you do **not** care about `isEnd`)
+
+So:
+
+* `search` checks path + `isEnd`
+* `startsWith` checks path only
+
+---
+
+## Hint 6: HashMap approach vs array[26]
+
+Why HashMap works:
+
+* flexible (works for any character set)
+* memory-efficient if sparse children
+
+Tradeoff:
+
+* array is faster for lowercase English letters only
+* HashMap is cleaner/general
+
+---
+
+## Hint 7: Common bug to avoid
+
+Do **not** mark `isEnd = true` on every node while inserting.
+Only mark it at the **last character** node.
+
+Otherwise `search("app")` would incorrectly return true after inserting `"apple"`.
+
+---
+
+## Hint 8: Mental walkthrough (quick)
+
+Insert `"cat"`:
+
+* root -> 'c' -> 'a' -> 't'
+* mark node('t').isEnd = true
+
+Insert `"car"`:
+
+* root -> 'c' (already exists)
+* -> 'a' (already exists)
+* create 'r'
+* mark node('r').isEnd = true
+
+Now:
+
+* `search("ca")` → false (`isEnd` at 'a' is false)
+* `startsWith("ca")` → true
+* `search("cat")` → true
+
+---
+
+## Hint 9: Nice Java method to simplify insert
+
+Inside insert, instead of:
+
+* if not exists create
+* then get
+
+use:
+
+* `curr = curr.children.computeIfAbsent(c, k -> new TrieNode());`
+
+This makes insertion very short.
+
+---
+
+## Hint 10: Skeleton shape (without full solution)
+
+You can aim for this structure:
+
+* `class TrieNode { Map<Character, TrieNode> children; boolean isEnd; }`
+* `class Trie { TrieNode root; ... }`
+* methods:
+
+  * `insert(String word)`
+  * `search(String word)`
+  * `startsWith(String prefix)`
+
+#################### Approach for delete method #####################
+
+## Core idea
+
+Deleting a word has **2 phases**:
+
+1. **Unmark the end of word** (`isEnd = false`) at the last node.
+2. **Prune nodes backward** only if they are no longer needed:
+
+   * node has **no children**
+   * and `isEnd == false` (not ending another word)
+
+That’s why recursion is a very natural fit.
+
+---
+
+## Cases your delete must handle
+
+Suppose trie contains: `"cat"`, `"car"`, `"care"`
+
+### Case 1: Delete a word that doesn’t exist (`"cab"`)
+
+* Do nothing
+* return `false`
+
+### Case 2: Delete a word that is a prefix of another (`"car"` when `"care"` exists)
+
+* Unmark `isEnd` at `"r"`
+* **Do not delete nodes**, because `"care"` still needs them
+
+### Case 3: Delete a word that has another word as prefix (`"care"` when `"car"` exists)
+
+* Remove only the unique suffix (`'e'`)
+* Keep `"car"` intact
+
+### Case 4: Delete a standalone branch (`"cat"` when nothing else uses `'t'`)
+
+* Remove nodes back up until a shared node is reached
+
+---
+
+# Recommended recursive design (HashMap-based Trie)
+
+Use a helper that returns:
+
+> **Should this node be pruned from its parent?** (`true/false`)
+
+### Why this works
+
+When you return from deeper recursion, the parent can decide whether to remove that child from `children`.
+
+
+# Thorough walkthrough (step by step)
+
+Let’s insert:
+
+* `"cat"`
+* `"car"`
+* `"care"`
+
+Trie structure (conceptually):
+
+* root
+
+  * `'c'`
+
+    * `'a'`
+
+      * `'t'` (`isEnd=true`)   // "cat"
+      * `'r'` (`isEnd=true`)   // "car"
+
+        * `'e'` (`isEnd=true`) // "care"
+
+---
+
+## Example 1: delete("care")
+
+### Call flow
+
+`deleteHelper(root, "care", 0)`
+
+* idx=0, ch='c' → recurse into node `'c'`
+* idx=1, ch='a' → recurse into node `'a'`
+* idx=2, ch='r' → recurse into node `'r'`
+* idx=3, ch='e' → recurse into node `'e'`
+* idx=4 == word.length()
+
+### At node `'e'` (end of word)
+
+* set `isEnd = false`
+* `'e'` has no children → return `true` (prune me)
+
+### Back to node `'r'`
+
+* child `'e'` should be deleted → remove `'e'`
+* now `'r'` still has:
+
+  * `isEnd = true` (because `"car"` still exists)
+* so `'r'` **cannot** be pruned → return `false`
+
+### Back to `'a'`, `'c'`, root
+
+* no further deletions
+
+✅ Result:
+
+* `"care"` deleted
+* `"car"` and `"cat"` remain
+
+---
+
+## Example 2: delete("car") after deleting "care"
+
+Current branch:
+
+* `'r'` is end of `"car"`, and has no children now
+
+### At node `'r'`
+
+* set `isEnd = false`
+* no children → return `true`
+
+### Back to `'a'`
+
+* remove child `'r'`
+* `'a'` still has child `'t'` (for `"cat"`) → cannot prune
+
+✅ Result:
+
+* `"car"` deleted
+* `"cat"` remains
+
+---
+
+## Example 3: delete("cat")
+
+Now `"cat"` is the only remaining word in that branch.
+
+### At `'t'`
+
+* unmark end, no children → return `true`
+
+### Back to `'a'`
+
+* remove `'t'`
+* `'a'` has no children and `isEnd=false` → return `true`
+
+### Back to `'c'`
+
+* remove `'a'`
+* `'c'` has no children and `isEnd=false` → return `true`
+
+### Back to root
+
+* remove `'c'`
+* root remains (we never delete root object)
+
+✅ Trie becomes empty
+
+---
+
+# Why recursion is easier than iterative delete
+
+With iterative traversal, you need to store the path (stack of parent nodes + chars) and then walk backward to prune. Recursion naturally gives you that backward path.
+
+---
+
+# Optional improvement (single-pass delete without calling `search`)
+
+Right now `delete()` does:
+
+* `search(word)` (O(L))
+* `deleteHelper(...)` (O(L))
+
+So total is still O(L), just ~2 passes.
+
+If you want a cleaner one-pass version, the helper can return more info (like “word existed?” + “prune?”), but that adds complexity. For interviews, the `search` + recursive delete approach is perfectly fine and easy to explain.
+
+---
+
+If you want, I can also show:
+
+* a **one-pass delete** version (without calling `search` first), or
+* the **array[26] Trie delete** version so you can compare both styles.
+*/
+class Trie {
+
+    private class TrieNode{
+        Map<Character, TrieNode> children = new HashMap<>();
+        boolean isEnd = false;
+    }
+
+    private final TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+    
+    public void insert(String word) {
+        TrieNode node = root;
+
+        for(char c: word.toCharArray()){
+            if(!node.children.containsKey(c)){
+                node.children.put(c, new TrieNode());
+            }
+
+            node = node.children.get(c);
+        }
+
+        node.isEnd = true;
+    }
+    
+    public boolean search(String word) {
+        TrieNode node = root;
+
+        for(char c: word.toCharArray()){
+            if(!node.children.containsKey(c)){
+                return false;
+            }
+            node = node.children.get(c);
+        }
+
+        return node.isEnd;
+    }
+    
+    public boolean startsWith(String prefix) {
+        TrieNode node = root;
+
+        for(char c: prefix.toCharArray()){
+            if(!node.children.containsKey(c)){
+                return false;
+            }
+
+            node = node.children.get(c);
+        }
+
+        return true;
+    }
+
+    // Returns true if deletion actually happened, false if word not present
+    public boolean delete(String word) {
+        if (!search(word)) return false;   // simplest way to handle "not found"
+        deleteHelper(root, word, 0);
+        return true;
+    }
+
+    // Returns true if this node should be pruned from its parent
+    private boolean deleteHelper(TrieNode node, String word, int idx) {
+        // Reached end of the word
+        if (idx == word.length()) {
+            node.isEnd = false; // unmark word end
+
+            // If no children, this node is useless now and can be pruned
+            return node.children.isEmpty();
+        }
+
+        char ch = word.charAt(idx);
+        TrieNode child = node.children.get(ch);
+
+        // Because we already checked search(word), child should exist.
+        // Still safe to guard:
+        // if (child == null) return false;
+
+        boolean shouldDeleteChild = deleteHelper(child, word, idx + 1);
+
+        if (shouldDeleteChild) {
+            node.children.remove(ch);
+        }
+
+        // Current node can be pruned only if:
+        // 1) it is not the end of another word, and
+        // 2) it has no remaining children
+        // (root will never be removed because caller ignores this return)
+        return !node.isEnd && node.children.isEmpty();
+    }
+}
+
+
+
+
+
+
+// Method 2: Using Array based Trie (specifically only for lower case inputs)
 /*
 # Option A design (lowercase ‘a’..‘z’)
 
@@ -337,108 +784,107 @@ root
 
 This mental model will let you reason through any deletion scenario without surprises.
 */
+// class Trie {
 
-class Trie {
-    private static class TrieNode {
-        TrieNode[] child = new TrieNode[26];
-        boolean isWord = false;
-    }
+//     private class TrieNode {
+//         TrieNode[] children = new TrieNode[26]; // for 'a' to 'z'
+//         boolean isEnd = false;
+//     }
 
-    private final TrieNode root = new TrieNode();
+//     private final TrieNode root;
 
-    /** Inserts a word into the trie. */
-    public void insert(String word) {
-        if (word == null) return;
-        TrieNode cur = root;
-        for (int i = 0; i < word.length(); i++) {
-            char ch = word.charAt(i);
-            int idx = ch - 'a';                // assumes 'a'..'z'
-            if (idx < 0 || idx >= 26) {
-                throw new IllegalArgumentException("Only lowercase a-z supported");
-            }
-            if (cur.child[idx] == null) {
-                cur.child[idx] = new TrieNode();
-            }
-            cur = cur.child[idx];
-        }
-        cur.isWord = true;
-    }
+//     public Trie() {
+//         root = new TrieNode();
+//     }
 
-    /** Returns true if the exact word exists in the trie. */
-    public boolean search(String word) {
-        TrieNode node = traverse(word);
-        return node != null && node.isWord;
-    }
+//     public void insert(String word) {
+//         TrieNode node = root;
 
-    /** Returns true if there is any word in the trie that starts with the given prefix. */
-    public boolean startsWith(String prefix) {
-        return traverse(prefix) != null;
-    }
+//         for (char c : word.toCharArray()) {
+//             int idx = c - 'a';
+//             if (node.children[idx] == null) {
+//                 node.children[idx] = new TrieNode();
+//             }
+//             node = node.children[idx];
+//         }
 
-    /**
-     * Deletes a word from the trie.
-     * Returns true if the word existed and was removed; false if it didn't exist.
-     */
-    public boolean delete(String word) {
-        if (word == null) return false;
-        return delete(root, word, 0);
-    }
+//         node.isEnd = true;
+//     }
 
-    // ---- helpers ----
+//     public boolean search(String word) {
+//         TrieNode node = root;
 
-    // Walks the trie following s; returns the node at the end, or null if path breaks.
-    private TrieNode traverse(String s) {
-        if (s == null) return null;
-        TrieNode cur = root;
-        for (int i = 0; i < s.length(); i++) {
-            int idx = s.charAt(i) - 'a';
-            if (idx < 0 || idx >= 26) return null;
-            cur = cur.child[idx];
-            if (cur == null) return null;
-        }
-        return cur;
-    }
+//         for (char c : word.toCharArray()) {
+//             int idx = c - 'a';
+//             if (node.children[idx] == null) {
+//                 return false;
+//             }
+//             node = node.children[idx];
+//         }
 
-    /**
-     * Recursive delete:
-     * - returns true if the current node should be pruned (no children & not a word),
-     *   so the parent can null out its pointer.
-     * - returns false otherwise.
-     */
-    private boolean delete(TrieNode node, String word, int i) {
-        if (node == null) return false;  // path broken -> word not present
+//         return node.isEnd;
+//     }
 
-        if (i == word.length()) {
-            // At terminal node for 'word'
-            if (!node.isWord) return false; // word not present
-            node.isWord = false;            // unmark the word end
-            return !hasChildren(node);      // prune if no children
-        }
+//     public boolean startsWith(String prefix) {
+//         TrieNode node = root;
 
-        int idx = word.charAt(i) - 'a';
-        if (idx < 0 || idx >= 26 || node.child[idx] == null) {
-            return false;                   // word not present
-        }
+//         for (char c : prefix.toCharArray()) {
+//             int idx = c - 'a';
+//             if (node.children[idx] == null) {
+//                 return false;
+//             }
+//             node = node.children[idx];
+//         }
 
-        boolean shouldDeleteChild = delete(node.child[idx], word, i + 1);
+//         return true;
+//     }
 
-        if (shouldDeleteChild) {
-            node.child[idx] = null;         // detach prunable child
-        }
+//     // Returns true if deletion actually happened, false if word not present
+//     public boolean delete(String word) {
+//         if (!search(word)) return false;   // simplest way to handle "not found"
+//         deleteHelper(root, word, 0);
+//         return true;
+//     }
 
-        // Decide if *this* node should be pruned
-        return !node.isWord && !hasAnyChild(node);
-    }
+//     // Returns true if this node should be pruned from its parent
+//     private boolean deleteHelper(TrieNode node, String word, int pos) {
+//         // Reached end of the word
+//         if (pos == word.length()) {
+//             node.isEnd = false; // unmark word end
 
-    private boolean hasChildren(TrieNode node) {
-        return hasAnyChild(node);
-    }
+//             // If no children, this node is useless now and can be pruned
+//             return hasNoChildren(node);
+//         }
 
-    private boolean hasAnyChild(TrieNode node) {
-        for (TrieNode ch : node.child) if (ch != null) return true;
-        return false;
-    }
-}
+//         int idx = word.charAt(pos) - 'a';
+//         TrieNode child = node.children[idx];
+
+//         // Since search(word) was checked, child should exist.
+//         // Still safe to guard if you want:
+//         // if (child == null) return false;
+
+//         boolean shouldDeleteChild = deleteHelper(child, word, pos + 1);
+
+//         if (shouldDeleteChild) {
+//             node.children[idx] = null;
+//         }
+
+//         // Current node can be pruned only if:
+//         // 1) it is not the end of another word, and
+//         // 2) it has no remaining children
+//         return !node.isEnd && hasNoChildren(node);
+//     }
+
+//     private boolean hasNoChildren(TrieNode node) {
+//         for (TrieNode child : node.children) {
+//             if (child != null) return false;
+//         }
+//         return true;
+//     }
+// }
+
+
+
 
 
 /**
@@ -448,97 +894,3 @@ class Trie {
  * boolean param_2 = obj.search(word);
  * boolean param_3 = obj.startsWith(prefix);
  */
-
-
-
-
-//  Method 2: Map based Trie (for any type of characters, not just lowercase)
-/*
-Notes:
-Flexible alphabet: since children are in a Map, you’re not limited to 'a'..'z'. Any char works (e.g., uppercase, digits, punctuation).
-Deletion logic: On the way back up the recursion, a node is removed from its parent iff its subtree no longer represents any word (isWord == false) and it has no children—so shared prefixes stay intact.
-Edge cases: If you want to allow empty strings, calling insert("") will set root.isWord = true; search("") will then return true. If you don’t want to allow them, guard in insert/delete.
-*/
-
-// public class Trie {
-//     private static class TrieNode {
-//         Map<Character, TrieNode> children = new HashMap<>();
-//         boolean isWord = false;
-//     }
-
-//     private final TrieNode root = new TrieNode();
-
-//     /** Inserts a word into the trie. */
-//     public void insert(String word) {
-//         if (word == null) return;
-//         TrieNode cur = root;
-//         for (int i = 0; i < word.length(); i++) {
-//             char ch = word.charAt(i);
-//             cur = cur.children.computeIfAbsent(ch, k -> new TrieNode());
-//         }
-//         cur.isWord = true; // mark terminal
-//     }
-
-//     /** Returns true iff the exact word exists in the trie. */
-//     public boolean search(String word) {
-//         TrieNode node = traverse(word);
-//         return node != null && node.isWord;
-//     }
-
-//     /** Returns true iff any word in the trie starts with the given prefix. */
-//     public boolean startsWith(String prefix) {
-//         return traverse(prefix) != null;
-//     }
-
-//     /**
-//      * Deletes a word from the trie.
-//      * @return true if the word existed and was removed; false if it didn't exist.
-//      */
-//     public boolean delete(String word) {
-//         if (word == null) return false;
-//         return delete(root, word, 0);
-//     }
-
-//     // ---------- Helpers ----------
-
-//     // Follow the path of s; return node at the end or null if path breaks.
-//     private TrieNode traverse(String s) {
-//         if (s == null) return null;
-//         TrieNode cur = root;
-//         for (int i = 0; i < s.length(); i++) {
-//             char ch = s.charAt(i);
-//             cur = cur.children.get(ch);
-//             if (cur == null) return null;
-//         }
-//         return cur;
-//     }
-
-//     /**
-//      * Recursive delete with pruning.
-//      * Returns true to the parent if the current node became prunable:
-//      *   (no children AND not an end-of-word).
-//      */
-//     private boolean delete(TrieNode node, String word, int i) {
-//         if (node == null) return false; // path broken → word not present
-
-//         if (i == word.length()) {
-//             if (!node.isWord) return false; // word not present
-//             node.isWord = false;            // unmark terminal
-//             return node.children.isEmpty(); // prune if now childless
-//         }
-
-//         char ch = word.charAt(i);
-//         TrieNode child = node.children.get(ch);
-//         if (child == null) return false;    // word not present
-
-//         boolean childPrunable = delete(child, word, i + 1);
-
-//         if (childPrunable) {
-//             node.children.remove(ch);       // physically prune child
-//         }
-
-//         // Current node is prunable only if it's not a word end and has no children now.
-//         return !node.isWord && node.children.isEmpty();
-//     }
-// }
-
