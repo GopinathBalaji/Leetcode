@@ -27,75 +27,262 @@ Assume you added: `bad`, `dad`, `mad`.
   * `'b'` ok → `'.'` → branch over children of `'b'` node → continue one more `'.'` similarly; match if any 3-letter word under `b` exists.
 */
 
+// class WordDictionary {
+
+//     static class TrieNode{
+//         Map<Character, TrieNode> children = new HashMap<>();
+//         boolean isWord = false;
+//     }
+
+//     public WordDictionary() {}
+    
+    
+//     private final TrieNode root = new TrieNode();
+
+    
+//     public void addWord(String word) {
+//         if(word == null){
+//             return;
+//         }
+
+//         TrieNode cur = root;
+//         for(int i=0; i<word.length(); i++){
+//             char ch = word.charAt(i);
+//             cur = cur.children.computeIfAbsent(ch, k -> new TrieNode());
+//         }
+
+//         cur.isWord = true;
+//     }
+    
+//     public boolean search(String word) {
+//         if(word == null){
+//             return false;
+//         }
+
+//         return dfs(root, word, 0);
+//     }
+
+
+//     private boolean dfs(TrieNode node, String word, int idx){
+//         if(idx == word.length()){
+//             return node.isWord;
+//         }
+
+//         char ch = word.charAt(idx);
+
+//         if(ch == '.'){
+//             for(TrieNode child: node.children.values()){
+//                 if(dfs(child, word, idx + 1)){
+//                     return true;
+//                 }
+//             }
+
+//             return false;
+//         }else{
+//             TrieNode child = node.children.get(ch);
+//             if(child == null){
+//                 return false;
+//             }
+
+//             return dfs(child, word, idx + 1);
+//         }
+
+//     }
+// }
+
+
+
+
+
+
+
+
+
+// Method 1.5: Similar approach using Arrays instead of HashMapf for Trie
+/*
+# WHAT WAS I DOING WRONG:
+
+There are **multiple issues** in this DFS approach (some logic bugs, some index bugs, and some Java syntax/type errors).
+
+## What’s wrong
+
+### 1) Base case checks the wrong node
+
+```java
+if (idx == word.length()) {
+    return root.isEnd;
+}
+```
+
+This should be:
+
+* `return node.isEnd;`
+
+Why: at the end of recursion, you need to know whether the **current node** marks a complete word, not whether the trie root does.
+
+---
+
+### 2) Wrong child used in normal character case (`ind + 1`)
+
+```java
+exists = dfs(word, idx + 1, node.children[ind + 1]);
+```
+
+This should be:
+
+* `node.children[ind]`
+
+Using `ind + 1` skips the correct child and can cause:
+
+* wrong answers
+* `ArrayIndexOutOfBoundsException` when `ch == 'z'` (`25 + 1 = 26`)
+
+---
+
+### 3) `'.'` case computes an invalid index and then uses it
+
+You do:
+
+```java
+int ind = ch - 'a';
+```
+
+If `ch == '.'`, then `ind` is negative (not in `0..25`).
+
+So any use of `ind` in the wildcard branch is invalid.
+
+---
+
+### 4) This loop is invalid Java
+
+```java
+for (TrieNode n: node.children[ind]) {
+```
+
+`node.children[ind]` is a **single `TrieNode`**, not an array/collection.
+
+You want to iterate over **all 26 children**:
+
+```java
+for (TrieNode child : node.children) { ... }
+```
+
+---
+
+### 5) Wrong recursive call in wildcard branch
+
+```java
+exists = dfs(word, idx + 1, n.children[ind + 1]);
+```
+
+If `n` is already one candidate child for `.`, you should recurse on `n` itself, not `n.children[...]`.
+
+Correct idea:
+
+* `dfs(word, idx + 1, n)`
+
+Also, `ind` is meaningless in the `'.'` branch.
+
+---
+
+### 6) `exists` may be uninitialized (compile-time error)
+
+You declared:
+
+```java
+boolean exists;
+```
+
+But in the `'.'` branch, if no child is non-null, `exists` is never assigned before:
+
+```java
+return exists;
+```
+
+Also inside the loop:
+
+```java
+if (exists) return true;
+```
+
+can be reached when `exists` has not been assigned (if `n == null`).
+
+This is a Java definite-assignment issue.
+
+---
+
+
+## Summary of your main mistakes
+
+* `root.isEnd` instead of `node.isEnd`
+* `ind + 1` (off-by-one)
+* treating `.` like a normal letter index
+* iterating a single node instead of the children array
+* recursing into `n.children[...]` instead of `n`
+* uninitialized `exists`
+###################################################
+*/
 class WordDictionary {
 
-    static class TrieNode{
-        Map<Character, TrieNode> children = new HashMap<>();
-        boolean isWord = false;
+    class TrieNode{
+        TrieNode[] children = new TrieNode[26];
+        boolean isEnd = false;
     }
 
-    public WordDictionary() {}
-    
-    
-    private final TrieNode root = new TrieNode();
+    private final TrieNode root;
 
+    public WordDictionary() {
+        root = new TrieNode();
+    }
     
     public void addWord(String word) {
-        if(word == null){
-            return;
+        TrieNode node = root;
+
+        for(char c: word.toCharArray()){
+            int idx = c - 'a';
+
+            if(node.children[idx] == null){
+                node.children[idx] = new TrieNode();
+            }
+
+            node = node.children[idx];
         }
 
-        TrieNode cur = root;
-        for(int i=0; i<word.length(); i++){
-            char ch = word.charAt(i);
-            cur = cur.children.computeIfAbsent(ch, k -> new TrieNode());
-        }
-
-        cur.isWord = true;
+        node.isEnd = true;
     }
     
     public boolean search(String word) {
-        if(word == null){
-            return false;
-        }
-
-        return dfs(root, word, 0);
+        return dfs(word, 0, root);
     }
 
-
-    private boolean dfs(TrieNode node, String word, int idx){
+    private boolean dfs(String word, int idx, TrieNode node){
         if(idx == word.length()){
-            return node.isWord;
+            return node.isEnd;
         }
 
         char ch = word.charAt(idx);
-
-        if(ch == '.'){
-            for(TrieNode child: node.children.values()){
-                if(dfs(child, word, idx + 1)){
+        
+        if(ch != '.'){
+            int ind = ch - 'a';
+            if(node.children[ind] != null){
+                return dfs(word, idx + 1, node.children[ind]);
+            }
+        }else{
+            for(TrieNode child: node.children){
+                if(child != null && dfs(word, idx + 1, child)){
                     return true;
                 }
             }
-
-            return false;
-        }else{
-            TrieNode child = node.children.get(ch);
-            if(child == null){
-                return false;
-            }
-
-            return dfs(child, word, idx + 1);
         }
 
+        return false;
     }
 }
 
-/**
- * Your WordDictionary object will be instantiated and called as such:
- * WordDictionary obj = new WordDictionary();
- * obj.addWord(word);
- * boolean param_2 = obj.search(word);
- */
+
+
+
+
 
 
 
@@ -306,3 +493,16 @@ That’s it—simple, iterative, and ready for a whiteboard.
 //         @Override public int hashCode() { return System.identityHashCode(node) * 31 + idx; }
 //     }
 // }
+
+
+
+
+
+
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * boolean param_2 = obj.search(word);
+ */
