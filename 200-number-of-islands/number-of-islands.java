@@ -1,49 +1,217 @@
-// Method 1: Recursive DFS with mutating the original grid to mark visisted
+// Method 1: Disjoint Set Union (DSU) / Union Find by rank (Finding the number of connected components in a graph)
 /*
-Idea: Scan all cells. When you hit an unvisited '1', that’s a new island. Run DFS from it to mark the whole island visited.
-Steps:
+######################## WHAT WAS I DOING WRONG ##########################
+There were **3 major bugs** (and 1 edge-case issue).
 
-count = 0
-For each cell (r,c):
-    If grid[r][c] == '1' and not visited:
-    count++
-    DFS from (r,c):
-        Mark visited (or set to '0')
-        Recurse/stack to its 4 neighbors that are in-bounds and '1'
-Return count.
+---
 
-Complexity: O(mn) time, O(mn) worst-case space (visited + recursion/stack).
-When to avoid recursion: If the grid can be very large (risk of stack overflow), use an explicit stack instead.
+## 1) `find()` returns the wrong value (this is the biggest bug)
+
+### Your code
+
+```java
+public int find(int x){
+    if(x != parent[x]){
+        parent[x] = find(parent[x]);
+    }
+
+    return x;
+}
+```
+
+### Problem
+
+After path compression, you are returning `x`, not the **root**.
+
+So `union()` gets wrong roots and behaves incorrectly.
+
+### Fix
+
+```java
+public int find(int x){
+    if (x != parent[x]) {
+        parent[x] = find(parent[x]);
+    }
+    return parent[x];
+}
+```
+
+---
+
+## 2) DSU size is wrong (`numLands` vs grid index mapping)
+
+You create:
+
+```java
+DSU dsu = new DSU(numLands);
+```
+
+But your IDs are computed like:
+
+```java
+int id = i * grid[0].length + j;
+```
+
+That ID ranges from `0` to `rows*cols - 1`, **not** `0` to `numLands - 1`.
+
+### Why this breaks
+
+If grid is 4x5, max ID can be `19`, but if there are only 7 land cells, your DSU size is 7 → **out of bounds**.
+
+### Fix options
+
+#### Option A (easiest)
+
+Create DSU for all cells:
+
+```java
+int rows = grid.length, cols = grid[0].length;
+DSU dsu = new DSU(rows * cols);
+dsu.count = numLands; // set count to number of land cells only
+```
+
+#### Option B
+
+Keep `DSU(numLands)` but then you must build a **mapping from land cells to compact IDs** (`0..numLands-1`).
+
+For LeetCode 200, **Option A is much simpler**.
+
+---
+
+## 3) Bug in vertical neighbor index (`i+1 * cols + j`)
+
+### Your code
+
+```java
+int b = i+1 * grid[0].length + j;
+```
+
+Because `*` has higher precedence than `+`, this is interpreted as:
+
+```java
+i + (1 * cols) + j
+```
+
+which is wrong.
+
+### Fix
+
+```java
+int b = (i + 1) * grid[0].length + j;
+```
+
+---
+
+## 4) Edge case: empty grid
+
+If `grid.length == 0`, then `grid[0]` will crash.
+
+### Fix
+
+Add at top:
+
+```java
+if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
+```
+
+---
+
+# Summary of what’s wrong
+
+* ✅ Rank union logic is okay
+* ❌ `find()` returns `x` instead of root
+* ❌ DSU size does not match your 2D→1D indexing
+* ❌ Vertical neighbor ID has precedence bug
+* ⚠️ Missing empty-grid check
+#################################
 */
 class Solution {
-    public int numIslands(char[][] grid) {
-        int rows = grid.length;
-        int cols = grid[0].length;
-        int count = 0;
 
-        for(int i=0; i<rows; i++){
-            for(int j=0; j<cols; j++){
+    class DSU{
+        int[] parent;
+        int[] rank;
+        int count;
+
+        DSU(int n){
+            count = n;
+            parent = new int[n];
+            rank = new int[n];
+
+            for(int i=0; i<n; i++){
+                parent[i] = i;
+            }
+        }
+
+        public int find(int x){
+            if(x != parent[x]){
+                parent[x] = find(parent[x]);
+            }
+
+            return parent[x];
+        }
+
+        public boolean union(int a, int b){
+            int ra = find(a);
+            int rb = find(b);
+
+            if(ra == rb){
+                return false;
+            }
+
+            if(rank[ra] < rank[rb]){
+                parent[ra] = rb;
+            }else if(rank[ra] > rank[rb]){
+                parent[rb] = ra;
+            }else{
+                parent[rb] = ra;
+                rank[ra]++;
+            }
+            
+            count--;
+            return true;
+        }
+    }
+
+    public int numIslands(char[][] grid) {
+        if(grid == null || grid.length == 0 || grid[0].length == 0){
+            return 0;
+        }
+
+        int numLands = 0;
+
+        for(int i=0; i<grid.length; i++){
+            for(int j=0; j<grid[0].length; j++){
                 if(grid[i][j] == '1'){
-                    count++;
-                    dfs(grid, rows, cols, i, j);
+                    numLands++;
                 }
             }
         }
 
-        return count;
-    }
+        DSU dsu = new DSU(grid.length * grid[0].length);
+        dsu.count = numLands;
 
-    private void dfs(char[][] grid, int rows, int cols, int i, int j){
-        if(i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] != '1'){
-            return;
+        for(int i=0; i<grid.length; i++){
+            for(int j=0; j<grid[0].length; j++){
+                if(grid[i][j] == '1'){
+
+                    if(j+1 < grid[0].length && grid[i][j+1] == '1'){
+                        int a = i * grid[0].length + j;
+                        int b = i * grid[0].length + (j+1);
+
+                        dsu.union(a, b);
+                    }
+
+                    if(i+1 < grid.length && grid[i+1][j] == '1'){
+                        int a = i * grid[0].length + j;
+                        int b = (i+1) * grid[0].length + j;
+
+                        dsu.union(a, b);
+                    }
+                }
+            }
         }
 
-        grid[i][j] = '0';
-
-        dfs(grid, rows, cols, i, j+1);
-        dfs(grid, rows, cols, i+1, j);
-        dfs(grid, rows, cols, i, j-1);
-        dfs(grid, rows, cols, i-1, j);
+        return dsu.count;
     }
 }
 
@@ -51,93 +219,10 @@ class Solution {
 
 
 
-// Method 2: Iterative DFS approach
-// class Solution {
-//     public int numIslands(char[][] grid) {
-//         if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
-
-//         int rows = grid.length, cols = grid[0].length;
-//         int islands = 0;
-//         int[][] DIRS = {{1,0},{-1,0},{0,1},{0,-1}};
-
-//         for (int r = 0; r < rows; r++) {
-//             for (int c = 0; c < cols; c++) {
-//                 if (grid[r][c] == '1') {
-//                     islands++;
-//                     // iterative DFS: use a stack
-//                     Deque<int[]> st = new ArrayDeque<>();
-//                     st.push(new int[]{r, c});
-//                     grid[r][c] = '0'; // mark visited on push
-
-//                     while (!st.isEmpty()) {
-//                         int[] cell = st.pop();
-//                         int i = cell[0], j = cell[1];
-
-//                         for (int[] d : DIRS) {
-//                             int ni = i + d[0], nj = j + d[1];
-//                             if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && grid[ni][nj] == '1') {
-//                                 grid[ni][nj] = '0';          // mark visited when discovered
-//                                 st.push(new int[]{ni, nj});  // push neighbor
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         return islands;
-//     }
-// }
 
 
 
-
-
-
-// Method 3: BFS Approach
-// class Solution {
-//     public int numIslands(char[][] grid) {
-//         if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
-
-//         int rows = grid.length, cols = grid[0].length;
-//         int islands = 0;
-
-//         // 4-direction moves
-//         int[][] DIRS = {{1,0},{-1,0},{0,1},{0,-1}};
-
-//         for (int r = 0; r < rows; r++) {
-//             for (int c = 0; c < cols; c++) {
-//                 if (grid[r][c] == '1') {
-//                     islands++;
-//                     // BFS from this land cell and sink the whole island
-//                     Queue<int[]> q = new ArrayDeque<>();
-//                     q.offer(new int[]{r, c});
-//                     grid[r][c] = '0'; // mark visited immediately when enqueued
-
-//                     while (!q.isEmpty()) {
-//                         int[] cell = q.poll();
-//                         int i = cell[0], j = cell[1];
-
-//                         for (int[] d : DIRS) {
-//                             int ni = i + d[0], nj = j + d[1];
-//                             if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && grid[ni][nj] == '1') {
-//                                 grid[ni][nj] = '0';      // mark visited as soon as discovered
-//                                 q.offer(new int[]{ni, nj});
-//                             }
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         return islands;
-//     }
-// }
-
-
-
-
-
-
-// Method 4: Disjoint Set Union (DSU) / Union Find
+// Method 1.5: Similar Disjoint Set Union (DSU) / Union Find approach as above but using size instead of rank
 /*
 Absolutely—let’s build a rock-solid understanding of **Disjoint Set Union (DSU)**, also known as **Union–Find**, and then use it to solve **LeetCode 200: Number of Islands** with full code and a step-by-step walkthrough.
 
@@ -381,3 +466,150 @@ Mastering DSU lets you recognize and solve a wide class of connectivity problems
 //         return dsu.count;
 //     }
 // }
+
+
+
+
+
+
+
+
+
+// Method 2: Recursive DFS with mutating the original grid to mark visisted
+/*
+Idea: Scan all cells. When you hit an unvisited '1', that’s a new island. Run DFS from it to mark the whole island visited.
+Steps:
+
+count = 0
+For each cell (r,c):
+    If grid[r][c] == '1' and not visited:
+    count++
+    DFS from (r,c):
+        Mark visited (or set to '0')
+        Recurse/stack to its 4 neighbors that are in-bounds and '1'
+Return count.
+
+Complexity: O(mn) time, O(mn) worst-case space (visited + recursion/stack).
+When to avoid recursion: If the grid can be very large (risk of stack overflow), use an explicit stack instead.
+*/
+// class Solution {
+//     public int numIslands(char[][] grid) {
+//         int rows = grid.length;
+//         int cols = grid[0].length;
+//         int count = 0;
+
+//         for(int i=0; i<rows; i++){
+//             for(int j=0; j<cols; j++){
+//                 if(grid[i][j] == '1'){
+//                     count++;
+//                     dfs(grid, rows, cols, i, j);
+//                 }
+//             }
+//         }
+
+//         return count;
+//     }
+
+//     private void dfs(char[][] grid, int rows, int cols, int i, int j){
+//         if(i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] != '1'){
+//             return;
+//         }
+
+//         grid[i][j] = '0';
+
+//         dfs(grid, rows, cols, i, j+1);
+//         dfs(grid, rows, cols, i+1, j);
+//         dfs(grid, rows, cols, i, j-1);
+//         dfs(grid, rows, cols, i-1, j);
+//     }
+// }
+
+
+
+
+
+// Method 3: Iterative DFS approach
+/*
+*/
+// class Solution {
+//     public int numIslands(char[][] grid) {
+//         if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
+
+//         int rows = grid.length, cols = grid[0].length;
+//         int islands = 0;
+//         int[][] DIRS = {{1,0},{-1,0},{0,1},{0,-1}};
+
+//         for (int r = 0; r < rows; r++) {
+//             for (int c = 0; c < cols; c++) {
+//                 if (grid[r][c] == '1') {
+//                     islands++;
+//                     // iterative DFS: use a stack
+//                     Deque<int[]> st = new ArrayDeque<>();
+//                     st.push(new int[]{r, c});
+//                     grid[r][c] = '0'; // mark visited on push
+
+//                     while (!st.isEmpty()) {
+//                         int[] cell = st.pop();
+//                         int i = cell[0], j = cell[1];
+
+//                         for (int[] d : DIRS) {
+//                             int ni = i + d[0], nj = j + d[1];
+//                             if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && grid[ni][nj] == '1') {
+//                                 grid[ni][nj] = '0';          // mark visited when discovered
+//                                 st.push(new int[]{ni, nj});  // push neighbor
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         return islands;
+//     }
+// }
+
+
+
+
+
+
+// Method 4: BFS Approach
+/*
+*/
+// class Solution {
+//     public int numIslands(char[][] grid) {
+//         if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
+
+//         int rows = grid.length, cols = grid[0].length;
+//         int islands = 0;
+
+//         // 4-direction moves
+//         int[][] DIRS = {{1,0},{-1,0},{0,1},{0,-1}};
+
+//         for (int r = 0; r < rows; r++) {
+//             for (int c = 0; c < cols; c++) {
+//                 if (grid[r][c] == '1') {
+//                     islands++;
+//                     // BFS from this land cell and sink the whole island
+//                     Queue<int[]> q = new ArrayDeque<>();
+//                     q.offer(new int[]{r, c});
+//                     grid[r][c] = '0'; // mark visited immediately when enqueued
+
+//                     while (!q.isEmpty()) {
+//                         int[] cell = q.poll();
+//                         int i = cell[0], j = cell[1];
+
+//                         for (int[] d : DIRS) {
+//                             int ni = i + d[0], nj = j + d[1];
+//                             if (ni >= 0 && ni < rows && nj >= 0 && nj < cols && grid[ni][nj] == '1') {
+//                                 grid[ni][nj] = '0';      // mark visited as soon as discovered
+//                                 q.offer(new int[]{ni, nj});
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         return islands;
+//     }
+// }
+
