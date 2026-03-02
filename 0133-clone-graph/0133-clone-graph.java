@@ -19,57 +19,277 @@ class Node {
 */
 
 
-// Method 1: My iterative DFS appraoch
+// Method 1: My Recursive DFS Approach
+/*
+################# WHAT WAS I DOING WRONG #################
+Your approach is **close**, but the main issue is:
+
+## The clone you create is a **shallow copy**, not a real graph clone
+
+This line is the problem:
+
+```java
+Node copyNode = new Node(node.val, node.neighbors);
+```
+
+You are assigning the **original node’s neighbors list** to the cloned node.
+
+So `copyNode.neighbors` still contains references to the **original graph nodes**, not cloned nodes.
+
+That means the returned graph is a mix of:
+
+* cloned nodes (from `map`)
+* original nodes (inside neighbor lists)
+
+---
+
+## What your DFS currently does
+
+Your DFS only:
+
+* visits nodes
+* creates clone nodes
+* stores them in the map
+
+But it does **not** actually connect cloned neighbors to cloned nodes.
+
+In other words, you are cloning the **nodes**, but not cloning the **edges** correctly.
+
+---
+
+## Why this breaks (simple cycle example)
+
+Suppose original graph is:
+
+* `1 -> 2`
+* `2 -> 1`
+
+Your code creates:
+
+* clone(1) with neighbors list pointing to original `[2]`
+* clone(2) with neighbors list pointing to original `[1]`
+
+So the cloned graph still points back into the original graph.
+
+---
+
+## Correct idea
+
+For each original node:
+
+1. Create clone node with same value
+2. Store it in map immediately
+3. For every original neighbor:
+
+   * recursively clone that neighbor
+   * add the **cloned neighbor** to `clone.neighbors`
+
+---
+
+## Another small note
+
+You don’t actually need both `visited` and `map`.
+
+The `map` already tells you if a node is processed / created:
+
+* if `map.containsKey(node)`, return `map.get(node)`
+
+So `map` alone is enough.
+
+---
+
+# What to change conceptually
+
+Instead of this:
+
+* `new Node(node.val, node.neighbors)` ❌
+
+Do this:
+
+* create clone with empty neighbor list ✅
+* recursively clone neighbors and append cloned neighbors ✅
+
+---
+
+## Correct DFS pattern (core idea)
+
+```java
+private Node dfs(Node node, Map<Node, Node> map) {
+    if (map.containsKey(node)) return map.get(node);
+
+    Node clone = new Node(node.val);
+    map.put(node, clone);
+
+    for (Node nei : node.neighbors) {
+        clone.neighbors.add(dfs(nei, map));
+    }
+
+    return clone;
+}
+```
+
+Then in `cloneGraph`:
+
+```java
+if (node == null) return null;
+Map<Node, Node> map = new HashMap<>();
+return dfs(node, map);
+```
+
+---
+
+## Summary of what’s wrong in your code
+
+* `copyNode.neighbors` points to original neighbors (shallow copy) ❌
+* You never populate cloned neighbor links using `map` ❌
+* `visited` is redundant if using `map` (not a correctness bug, just unnecessary) ⚠️
+##########################################################
+*/
 class Solution {
     public Node cloneGraph(Node node) {
-        if(node == null){
-            return node;
+        if (node == null) {
+            return null;
         }
 
+        Set<Node> visited = new HashSet<>();
         HashMap<Node, Node> map = new HashMap<>();
 
-        HashSet<Node> visited = new HashSet<>();
-        Deque<Node> stack = new ArrayDeque<>();
-        stack.addFirst(node);
-
-        while(!stack.isEmpty()){
-            Node oldNode = stack.pop();
-            if(visited.contains(oldNode)){
-                continue;
-            }
-
-            visited.add(oldNode);
-
-            Node newNode;
-            if(!map.containsKey(oldNode)){
-                newNode = new Node(oldNode.val);
-                map.put(oldNode, newNode);
-            }else{
-                newNode = map.get(oldNode);
-            }
-
-            for(Node n : oldNode.neighbors){
-                stack.addFirst(n);
-
-                Node newNeighbor;
-                if(map.containsKey(n)){
-                    newNeighbor = map.get(n);
-                    newNode.neighbors.add(newNeighbor);
-                }else{
-                    newNeighbor = new Node(n.val);
-                    map.put(n, newNeighbor);
-                    newNode.neighbors.add(newNeighbor);
-                }
-            }
-        }
+        dfs(node, map, visited);
 
         return map.get(node);
+    }
+
+    private void dfs(Node node, HashMap<Node, Node> map, Set<Node> visited) {
+        // Base cases
+        if (node == null) {
+            return;
+        }
+        if (visited.contains(node)) {
+            return;
+        }
+
+        visited.add(node);
+
+        // Create clone with empty neighbors list (NOT node.neighbors)
+        Node copyNode = new Node(node.val, new ArrayList<>());
+        map.put(node, copyNode);
+
+        for (Node connectedNode : node.neighbors) {
+            // First ensure neighbor is cloned
+            dfs(connectedNode, map, visited);
+            
+            // Then connect cloned current node -> cloned neighbor
+            copyNode.neighbors.add(map.get(connectedNode));
+        }
     }
 }
 
 
 
-// Method 1.5: Better Iterative DFS approach (O(V+E))
+
+
+
+// Method 1.5: Better Recursive DFS approach
+/*
+The key is to use a HashMap<Node, Node> to memoize already-cloned nodes so you (1) avoid infinite recursion on cycles, and (2) reuse clones when neighbors point back.
+
+Idea:
+If node == null → return null.
+If we’ve already cloned node, return the clone from the map.
+ Otherwise:
+Create a clone with the same value.
+Put it in the map before cloning neighbors (prevents infinite loops).
+Recursively clone each neighbor and append to the clone’s neighbor list.
+*/
+
+// class Solution {
+//     private Map<Node, Node> map = new HashMap<>();
+
+//     public Node cloneGraph(Node node) {
+//         if (node == null) return null;
+//         return dfs(node);
+//     }
+
+//     private Node dfs(Node u) {
+//         // already cloned? return it
+//         if (map.containsKey(u)) return map.get(u);
+
+//         // create clone and memoize immediately
+//         Node copy = new Node(u.val);
+//         map.put(u, copy);
+
+//         // clone all neighbors recursively
+//         for (Node v : u.neighbors) {
+//             copy.neighbors.add(dfs(v));
+//         }
+//         return copy;
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 2: My iterative DFS appraoch
+/*
+*/
+// class Solution {
+//     public Node cloneGraph(Node node) {
+//         if(node == null){
+//             return node;
+//         }
+
+//         HashMap<Node, Node> map = new HashMap<>();
+
+//         HashSet<Node> visited = new HashSet<>();
+//         Deque<Node> stack = new ArrayDeque<>();
+//         stack.addFirst(node);
+
+//         while(!stack.isEmpty()){
+//             Node oldNode = stack.pop();
+//             if(visited.contains(oldNode)){
+//                 continue;
+//             }
+
+//             visited.add(oldNode);
+
+//             Node newNode;
+//             if(!map.containsKey(oldNode)){
+//                 newNode = new Node(oldNode.val);
+//                 map.put(oldNode, newNode);
+//             }else{
+//                 newNode = map.get(oldNode);
+//             }
+
+//             for(Node n : oldNode.neighbors){
+//                 stack.addFirst(n);
+
+//                 Node newNeighbor;
+//                 if(map.containsKey(n)){
+//                     newNeighbor = map.get(n);
+//                     newNode.neighbors.add(newNeighbor);
+//                 }else{
+//                     newNeighbor = new Node(n.val);
+//                     map.put(n, newNeighbor);
+//                     newNode.neighbors.add(newNeighbor);
+//                 }
+//             }
+//         }
+
+//         return map.get(node);
+//     }
+// }
+
+
+
+
+
+
+
+// Method 2.5: Better Iterative DFS approach (O(V+E))
 /*
 Why this is robust:
 No visited set needed: the map tells us if we’ve seen a node.
@@ -109,7 +329,11 @@ Edges added exactly once per original adjacency: For each (u,v) in original, we 
 
 
 
-// Method 2: BFS approach  (O(V+E))
+
+
+
+
+// Method 3: BFS approach  (O(V+E))
 // class Solution {
 //     public Node cloneGraph(Node node) {
 //         if (node == null) return null;
@@ -133,45 +357,5 @@ Edges added exactly once per original adjacency: For each (u,v) in original, we 
 //             }
 //         }
 //         return map.get(node);
-//     }
-// }
-
-
-
-
-// Method 3: Recursive DFS approach
-/*
-The key is to use a HashMap<Node, Node> to memoize already-cloned nodes so you (1) avoid infinite recursion on cycles, and (2) reuse clones when neighbors point back.
-
-Idea:
-If node == null → return null.
-If we’ve already cloned node, return the clone from the map.
- Otherwise:
-Create a clone with the same value.
-Put it in the map before cloning neighbors (prevents infinite loops).
-Recursively clone each neighbor and append to the clone’s neighbor list.
-*/
-
-// class Solution {
-//     private Map<Node, Node> map = new HashMap<>();
-
-//     public Node cloneGraph(Node node) {
-//         if (node == null) return null;
-//         return dfs(node);
-//     }
-
-//     private Node dfs(Node u) {
-//         // already cloned? return it
-//         if (map.containsKey(u)) return map.get(u);
-
-//         // create clone and memoize immediately
-//         Node copy = new Node(u.val);
-//         map.put(u, copy);
-
-//         // clone all neighbors recursively
-//         for (Node v : u.neighbors) {
-//             copy.neighbors.add(dfs(v));
-//         }
-//         return copy;
 //     }
 // }
