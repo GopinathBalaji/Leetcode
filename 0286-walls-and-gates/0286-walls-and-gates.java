@@ -1,6 +1,4 @@
-// Answer to the LeetCode question Walls And Gates / Neetcode question Islands and Treasure
-
-// Graph BFS once
+// Method 1: Optimal Approach - Graph BFS once (Multisource BFS by starting from all the goals which are the treasures)
 /*
 # Where I was going wrong:
 Great question. Your code is close in spirit (you're using BFS), but there are several fundamental problems that cause it to give wrong answers and/or blow up in complexity. I'll walk you through:
@@ -406,3 +404,144 @@ class Solution {
         }
     }
 }
+
+
+
+
+
+
+
+// Method 1.5: My inefficient single source BFS approach starting from each land
+/*
+############### WHAT WAS I DOING WRONG ######################
+# What is wrong in your code
+
+## 1) No `visited` set in BFS (this can cause infinite looping)
+
+In your `bfs(grid, i, j)` method, you keep adding neighbors to the queue, but you never mark cells as visited.
+
+That means the BFS can go back and forth forever in cycles.
+
+### Example (very simple)
+
+Suppose the grid has no treasure/gate (`0`) reachable, and two empty cells connected:
+
+```text
+INF INF
+```
+
+Start BFS from left cell:
+
+* visit left → add right
+* visit right → add left
+* visit left → add right
+* ...
+
+This never ends because nothing prevents revisiting.
+
+### In your code, the cycle happens because:
+
+You only skip:
+
+* out of bounds
+* walls (`-1`)
+
+But you **do not skip already-seen cells**.
+
+---
+
+## 2) BFS from every `INF` cell is too slow (can TLE)
+
+You do:
+
+```java
+for every cell:
+   if INF:
+      bfs from that cell
+```
+
+If there are many empty rooms, each BFS may scan a large part of the grid.
+
+### Worst-case complexity
+
+If grid is `m x n`, this can become roughly:
+
+* **O((m*n) * (m*n)) = O((m*n)^2)**
+
+That is too slow for this problem.
+
+---
+
+# ✅ Best approach for LeetCode 286 (Islands and Treasure / Walls and Gates)
+
+Use **multi-source BFS**:
+
+* Put **all treasure/gates (`0`)** into the queue first
+* Expand outward once
+* Fill each empty room with distance from nearest gate
+
+### Why this is optimal
+
+Because BFS from all sources at once guarantees the first time you reach a room is the shortest distance.
+
+### Time complexity
+
+* **O(m*n)**
+############################################################
+*/
+// class Solution {
+//     public void islandsAndTreasure(int[][] grid) {
+//         for(int i=0; i<grid.length; i++){
+//           for(int j=0; j<grid[0].length; j++){
+//             if(grid[i][j] == 2147483647){
+//               bfs(grid, i, j);
+//             }
+//           }
+//         }
+
+//         return;
+//     }
+
+//     private void bfs(int[][] grid, int i, int j){
+
+//       boolean[][] visited = new boolean[grid.length][grid[0].length];
+//       Deque<int[]> queue = new ArrayDeque<>();
+
+//       queue.addLast(new int[] {i, j, 0});
+//       visited[i][j] = true;
+
+//       int[][] dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+
+//       while(!queue.isEmpty()){
+//         int[] front = queue.pollFirst();
+//         int row = front[0];
+//         int col = front[1];
+//         int dist = front[2];
+
+//         for(int[] dir: dirs){
+//           int newrow = row + dir[0];
+//           int newcol = col + dir[1];
+
+//           if(newrow < 0 || newrow >= grid.length || newcol < 0 || newcol >= grid[0].length || grid[newrow][newcol] == -1){
+//             continue;
+//           }
+
+//           if(visited[newrow][newcol]){
+//             continue;
+//           }
+
+//           if(grid[newrow][newcol] == 0){
+//             grid[i][j] = dist + 1;
+
+//             return;
+//           }else{
+//             queue.addLast(new int[] {newrow, newcol, dist + 1});
+//             visited[newrow][newcol] = true;
+//           }
+//         }
+//       }
+
+//       return;
+//     }
+// }
+
