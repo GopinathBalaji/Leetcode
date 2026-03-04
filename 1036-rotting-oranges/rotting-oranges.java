@@ -1,4 +1,4 @@
-// Graph BFS without maintaining visited
+// Method 1: Graph BFS without maintaining visited
 /*
 # What I was doing wrong:
 
@@ -248,72 +248,230 @@ Here’s the shape you actually want:
 5. You never mutate `grid[nr][nc]` from 1 → 2 when it rots, so you're not modeling the infection state properly.
 6. You try to detect completion with `infectedCount == freshCount`, but infectedCount is counting enqueues, not guaranteed spread by minute, which is coupled with the broken timing logic.
 */
+// class Solution {
+//     public int orangesRotting(int[][] grid) {
+//         int rows = grid.length;
+//         int cols = grid[0].length;
 
+//         Queue<int[]> q = new ArrayDeque<>();
+//         int fresh = 0;
+
+//         // 1. Init: count fresh and enqueue all rotten
+//         for (int r = 0; r < rows; r++) {
+//             for (int c = 0; c < cols; c++) {
+//                 if (grid[r][c] == 2) {
+//                     q.offer(new int[]{r, c});
+//                 } else if (grid[r][c] == 1) {
+//                     fresh++;
+//                 }
+//             }
+//         }
+
+//         // Edge case: no fresh oranges at all
+//         if (fresh == 0) {
+//             return 0;
+//         }
+
+//         int minutes = 0;
+//         int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+
+//         // 2. BFS layer by layer
+//         while (!q.isEmpty()) {
+//             int size = q.size();
+//             boolean infectedThisMinute = false;
+
+//             for (int k = 0; k < size; k++) {
+//                 int[] cur = q.poll();
+//                 int r = cur[0];
+//                 int c = cur[1];
+
+//                 // Try to rot neighbors
+//                 for (int[] d : dirs) {
+//                     int nr = r + d[0];
+//                     int nc = c + d[1];
+
+//                     // bounds check (fixed!)
+//                     if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) {
+//                         continue;
+//                     }
+
+//                     // If neighbor is fresh, rot it
+//                     if (grid[nr][nc] == 1) {
+//                         grid[nr][nc] = 2;        // now rotten
+//                         fresh--;                 // one less fresh orange left
+//                         infectedThisMinute = true;
+//                         q.offer(new int[]{nr, nc});
+//                     }
+//                 }
+//             }
+
+//             // We only add a minute if we actually infected something this round
+//             if (infectedThisMinute) {
+//                 minutes++;
+//             }
+//         }
+
+//         // 3. After BFS:
+//         // If all fresh became rotten, return minutes. Otherwise, impossible.
+//         return (fresh == 0) ? minutes : -1;
+//     }
+// }
+
+
+
+
+
+
+
+
+
+// Method 1.5: My approach which is similar to the one above
+/*
+##################### WHAT WAS I DOING WRONG #######################
+## 1) You are marking a newly rotten orange with `time + 1` ❌
+
+### Your code
+
+```java
+grid[newrow][newcol] = time + 1;
+```
+
+### Why this is a problem
+
+Fresh orange is represented by `1`.
+
+If a fresh orange rots at **minute 1** (which is very common), then:
+
+* `time = 0`
+* `time + 1 = 1`
+
+So you set it to `1` again, which still looks like a **fresh orange**.
+
+That means:
+
+* it is not properly marked as visited/rotted
+* it can get added to the queue multiple times
+* BFS behavior becomes incorrect
+
+### Fix
+
+When a fresh orange rots, mark it as rotten with `2`:
+
+```java
+grid[newrow][newcol] = 2;
+```
+
+(Keep time in the queue only, not in the grid.)
+
+---
+
+## 2) You never check if fresh oranges remain at the end ❌
+
+LeetCode 994 requires:
+
+* return the minimum minutes if **all fresh oranges rot**
+* return **`-1`** if **some fresh oranges can never rot**
+
+Your code currently returns:
+
+```java
+minTime == Integer.MIN_VALUE ? 0 : minTime
+```
+
+So if there are unreachable fresh oranges, you still return a time (or 0), which is wrong.
+
+### Example where your code fails
+
+```text
+[ [2,0,1] ]
+```
+
+The fresh orange is blocked by `0`, so it can never rot.
+
+Correct answer: `-1`
+Your code returns: `0`
+
+
+
+# How to fix it (conceptually)
+
+### Option A (most common)
+
+* Count fresh oranges initially (`freshCount`)
+* Every time you rot one fresh orange:
+
+  * set it to `2`
+  * decrement `freshCount`
+  * update max time
+* After BFS:
+
+  * if `freshCount > 0`, return `-1`
+  * else return `maxTime`
+
+---
+
+# Small notes (not correctness, but clarity)
+
+* `minTime` is actually storing the **maximum** time reached, so a better name is `maxTime`
+* `rows` and `cols` are already stored; you can use them instead of `grid.length` repeatedly
+
+---
+
+# Summary of what’s wrong
+
+* ❌ `grid[newrow][newcol] = time + 1` can become `1`, so newly rotten oranges may still look fresh
+* ❌ No final check for unreachable fresh oranges (`-1` case)
+####################################################################
+*/
 class Solution {
     public int orangesRotting(int[][] grid) {
         int rows = grid.length;
         int cols = grid[0].length;
 
-        Queue<int[]> q = new ArrayDeque<>();
-        int fresh = 0;
+        int maxTime = 0;
+        int freshCount = 0;
 
-        // 1. Init: count fresh and enqueue all rotten
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                if (grid[r][c] == 2) {
-                    q.offer(new int[]{r, c});
-                } else if (grid[r][c] == 1) {
-                    fresh++;
+        Deque<int[]> queue = new ArrayDeque<>();
+
+        for(int i=0; i<rows; i++){
+            for(int j=0; j<cols; j++){
+                if(grid[i][j] == 2){
+                    queue.offerLast(new int[] {i, j, 0});
+                }else if(grid[i][j] == 1){
+                    freshCount++;
                 }
             }
         }
 
-        // Edge case: no fresh oranges at all
-        if (fresh == 0) {
-            return 0;
-        }
+        int[][] dirs = new int[][]{{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
 
-        int minutes = 0;
-        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+        while(!queue.isEmpty()){
+            int[] node = queue.pollFirst();
+            int row = node[0];
+            int col = node[1];
+            int time = node[2];
 
-        // 2. BFS layer by layer
-        while (!q.isEmpty()) {
-            int size = q.size();
-            boolean infectedThisMinute = false;
 
-            for (int k = 0; k < size; k++) {
-                int[] cur = q.poll();
-                int r = cur[0];
-                int c = cur[1];
+            for(int[] dir: dirs){
+                int newrow = row + dir[0];
+                int newcol = col + dir[1];
 
-                // Try to rot neighbors
-                for (int[] d : dirs) {
-                    int nr = r + d[0];
-                    int nc = c + d[1];
+                if(newrow < 0 || newrow >= grid.length || newcol < 0 || newcol >= grid[0].length){
+                    continue;
+                }
 
-                    // bounds check (fixed!)
-                    if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) {
-                        continue;
-                    }
+                if(grid[newrow][newcol] == 1){
+                    grid[newrow][newcol] = 2;
+                    freshCount--;
+                    maxTime = Math.max(maxTime, time + 1);
 
-                    // If neighbor is fresh, rot it
-                    if (grid[nr][nc] == 1) {
-                        grid[nr][nc] = 2;        // now rotten
-                        fresh--;                 // one less fresh orange left
-                        infectedThisMinute = true;
-                        q.offer(new int[]{nr, nc});
-                    }
+                    queue.offerLast(new int[] {newrow, newcol, time+1});
                 }
             }
-
-            // We only add a minute if we actually infected something this round
-            if (infectedThisMinute) {
-                minutes++;
-            }
         }
 
-        // 3. After BFS:
-        // If all fresh became rotten, return minutes. Otherwise, impossible.
-        return (fresh == 0) ? minutes : -1;
+
+        return freshCount > 0 ? -1 : maxTime;
     }
 }
+
