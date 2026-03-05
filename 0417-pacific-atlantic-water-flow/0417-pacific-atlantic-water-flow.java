@@ -1,4 +1,4 @@
-// Method 1: DFS from Pacific and Atlantic
+// Method 1: Reverse DFS (DFS from Pacific and Atlantic edges instead of all the cells)
 /*
 ## The naive idea you’re describing
 
@@ -147,6 +147,89 @@ class Solution {
         return;
     }
 }
+
+
+
+
+
+
+
+
+
+// Method 1.5: My approach (same as above)
+/*
+*/
+// class Solution {
+//     public List<List<Integer>> pacificAtlantic(int[][] heights) {
+//         int rows = heights.length;
+//         int cols = heights[0].length;
+
+//         Set<List<Integer>> pacificSet = new HashSet<>();
+//         Set<List<Integer>> atlanticSet = new HashSet<>();
+
+//         boolean[][] pacificVisited = new boolean[rows][cols];
+//         boolean[][] atlanticVisited = new boolean[rows][cols];
+
+//         for(int j=0; j<cols; j++){
+//             dfs(heights, 0, j, pacificSet, pacificVisited);
+//         }
+//         for(int i=0; i<rows; i++){
+//             dfs(heights, i, 0, pacificSet, pacificVisited);
+//         }
+
+//         for(int i=0; i<rows; i++){
+//             dfs(heights, i, cols-1, atlanticSet, atlanticVisited);
+//         }
+//         for(int j=0; j<cols; j++){
+//             dfs(heights, rows-1, j, atlanticSet, atlanticVisited);
+//         }
+
+//         List<List<Integer>> ans = new ArrayList<>();
+//         for(List<Integer> coord: pacificSet){
+//             if(atlanticSet.contains(coord)){
+//                 ans.add(coord);
+//             }
+//         }
+
+//         return ans;
+//     }
+
+//     private void dfs(int[][] heights, int row, int col, Set<List<Integer>> set, boolean[][] visited){
+//         if(row < 0 || row >= heights.length || col < 0 || col >= heights[0].length){
+//             return;
+//         }
+//         if(visited[row][col]){
+//             return;
+//         }
+
+//         visited[row][col] = true;
+//         set.add(Arrays.asList(row, col));
+
+//         int currHeight = heights[row][col];
+
+//         if(row - 1 >= 0 && heights[row-1][col] >= currHeight && !visited[row-1][col]){
+//             dfs(heights, row-1, col, set, visited);
+//         }
+
+//         if(col - 1 >= 0 && heights[row][col-1] >= currHeight && !visited[row][col-1]){
+//             dfs(heights, row, col-1, set, visited);
+//         }
+
+//         if(row + 1 < heights.length && heights[row+1][col] >= currHeight && !visited[row+1][col]){
+//             dfs(heights, row+1, col, set, visited);
+//         }
+
+//         if(col + 1 < heights[0].length && heights[row][col+1] >= currHeight && !visited[row][col+1]){
+//             dfs(heights, row, col+1, set, visited);
+//         }
+
+//         return;
+//     }
+// }
+
+
+
+
 
 
 
