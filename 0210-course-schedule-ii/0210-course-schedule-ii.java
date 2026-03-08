@@ -2,6 +2,9 @@
 /*
 ## What was wrong with my implementation:
 
+NOTE: Simple boolean visited (0 or 1 / true or false) for a node does not work in Directed Graphs as
+each node can be visited multiple times from different node. So use 3 states: unvisited, processing, and processed.
+
 1. **You add nodes on DFS entry (preorder), not on exit (postorder).**
    In DFS topological sort with edges `prereq → course`, you must place a node **after** all of its outgoing neighbors have been fully processed. That means: **append on exit** (when `state[u]` goes to `2`).
    Adding on entry (`ans.add(u)` before exploring neighbors) produces an order that can put a course **before** its prerequisites.
@@ -174,4 +177,3 @@ Take `2`, then `3` → order could be `[0,1,2,3]` (any valid topo order is accep
 //         return order;
 //     }
 // }
-
