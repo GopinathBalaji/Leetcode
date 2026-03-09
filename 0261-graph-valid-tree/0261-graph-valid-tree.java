@@ -1,3 +1,142 @@
+// NOTE: THE FOLLOWING METHOD ONLY CHECKS FOR A CYCLE IN GRAPH BUT THAT IS NOT THE 
+// ONLY CONDITION TO LOOK FOR. A GRPAH IS A TREE ONLY IF BOTH THESE CONDITIONS SATISFY:
+// 1. HAS NO CYCLE
+// 2. ONLY ONE CONNECTED COMPONENT
+
+// SO THIS APPROACH IS WRONG
+// Method: Finding cycle in Undirected Graph by tracking visited and parent
+/*
+A simple "visited"  array is not enough to reliably find a cycle in an undirected graph 
+using Depth First Search (DFS). While it can detect that a node has been seen 
+before, it cannot distinguish between a legitimate cycle and the edge you just 
+traversed to arrive at the current node. 
+
+• Why it fails: In an undirected graph, an edge $U-V$ means you can go from 
+$U$ to $V$ and back to $U$. A simple visited check will mistake the return path 
+($V$ to $U$) as a cycle. 
+
+• The Correct Method: You must track the parent node (the node you just came from) 
+in your DFS traversal. If you encounter a neighbor that is already  and it is not the 
+parent, then a cycle exists. 
+
+• Alternative Approach: For directed graphs, a simple  array is also insufficient, 
+requiring a  to distinguish between "in-progress" nodes (forming a cycle) and 
+"finished" nodes.
+*/
+// class Solution {
+//     public boolean validTree(int n, int[][] edges) {
+//       List<Integer>[] adjList = new ArrayList[n];
+
+//       for(int i=0; i<n; i++){
+//         adjList[i] = new ArrayList<>();
+//       }
+
+//       for(int[] edge: edges){
+//         int u = edge[0];
+//         int v = edge[1];
+
+//         adjList[u].add(v);
+//         adjList[v].add(u);
+//       }
+
+//       boolean[] visited = new boolean[n];
+
+//       for(int i=0; i<n; i++){
+//         if(!visited[i]){
+//           if(hasCycle(i, adjList, visited, -1)){
+//             return false;
+//           }
+//         }
+//       }
+
+//       return true;
+//     }
+
+//     private boolean hasCycle(int node, List<Integer>[] adjList, boolean[] visited, int parent){
+//       visited[node] = true;
+
+//       for(int neighbor: adjList[node]){
+//         if(!visited[neighbor]){
+//           if(hasCycle(neighbor, adjList, visited, node)){
+//             return true;
+//           }
+//         }else if(neighbor != parent){
+//           return true;
+//         }
+//       }
+
+//       return false;
+//     }
+// }
+
+
+
+
+
+
+
+// NOTE: THE FOLLOWING METHOD ONLY CHECKS FOR A CYCLE IN GRAPH BUT THAT IS NOT THE 
+// ONLY CONDITION TO LOOK FOR. A GRPAH IS A TREE ONLY IF BOTH THESE CONDITIONS SATISFY:
+// 1. HAS NO CYCLE
+// 2. ONLY ONE CONNECTED COMPONENT
+
+// SO THIS APPROACH IS WRONG
+// Method: Using BFS to check for a cycle
+// class Solution {
+//     public boolean validTree(int n, int[][] edges) {
+//         List<Integer>[] adjList = new ArrayList[n];
+//         for (int i = 0; i < n; i++) adjList[i] = new ArrayList<>();
+
+//         for (int[] edge : edges) {
+//             int u = edge[0];
+//             int v = edge[1];
+//             adjList[u].add(v);
+//             adjList[v].add(u);
+//         }
+
+//         boolean[] visited = new boolean[n];
+
+//         for (int i = 0; i < n; i++) {
+//             if (!visited[i]) {
+//                 if (hasCycleBFS(i, adjList, visited)) {
+//                     return false;
+//                 }
+//             }
+//         }
+
+//         return true;
+//     }
+
+//     private boolean hasCycleBFS(int start, List<Integer>[] adjList, boolean[] visited) {
+//         Deque<int[]> queue = new ArrayDeque<>();
+//         queue.offerLast(new int[] {start, -1});
+//         visited[start] = true;
+
+//         while (!queue.isEmpty()) {
+//             int[] cur = queue.pollFirst();
+//             int node = cur[0];
+//             int parent = cur[1];
+
+//             for (int neighbor : adjList[node]) {
+//                 if (!visited[neighbor]) {
+//                     visited[neighbor] = true;
+//                     queue.offerLast(new int[] {neighbor, node});
+//                 } else if (neighbor != parent) {
+//                     return true;
+//                 }
+//             }
+//         }
+
+//         return false;
+//     }
+// }
+
+
+
+
+
+
+
 // Method 1: Using BFS
 /*
 # Where was I going wrong:
@@ -236,6 +375,10 @@ class Solution {
 
 
 
+
+
+
+
 // Method 2: Using Recursive DFS
 /*
 You only need to check two facts for an undirected graph to be a valid tree:
@@ -276,6 +419,9 @@ With (1) true, “connected” ⇔ “acyclic” for undirected graphs, so a sin
 //         return count;
 //     }
 // }
+
+
+
 
 
 
@@ -324,6 +470,10 @@ don’t need this; connectivity implies acyclicity.
 //         return seen == n;
 //     }
 // }
+
+
+
+
 
 
 
@@ -479,6 +629,9 @@ edges = [[0,1],[2,3]]
 
 
 
+
+
+
 // Method 5: DSU by tracking components + cycle detection
 /*
 If you prefer not to rely on the n−1 check, you can track the number of connected components and ensure:
@@ -609,6 +762,3 @@ edges = [[0,1],[2,3]]
 //         }
 //     }
 // }
-
-
-
