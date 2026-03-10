@@ -362,3 +362,538 @@ ties—just attach smaller to larger and add sizes.
 
 
 
+
+
+
+// Method 3: BFS Approach
+/*
+## Core idea
+
+In an undirected graph, a **connected component** is a group of nodes where every node can reach every other node in the group.
+
+Algorithm:
+
+1. Build an adjacency list from edges.
+2. Keep a `visited[]` array.
+3. Loop through all nodes `0..n-1`:
+
+   * If a node is not visited, it starts a **new component**:
+
+     * increment `components`
+     * run BFS from that node to mark its entire component as visited
+4. Return `components`.
+
+
+
+# Why this works (detailed explanation)
+
+### Why increment `components` when we see an unvisited node?
+
+If `i` is unvisited, that means:
+
+* No previous BFS/DFS reached it
+* So it must belong to a **new connected component**
+
+When we run BFS from `i`, we visit **every node reachable from i**, i.e., the entire component.
+So we won’t count that component again.
+
+---
+
+## What BFS is doing here
+
+BFS is simply a way to “flood fill” the component:
+
+* Start from a node
+* Visit its neighbors
+* Then neighbors of neighbors
+* Continue until no more new nodes can be reached
+
+All visited nodes in that BFS run belong to the same component.
+
+---
+
+# Thorough example walkthrough
+
+## Example
+
+```text
+n = 7
+edges = [[0,1],[1,2],[3,4],[5,6]]
+```
+
+Let’s see the graph structure:
+
+* Component 1: `0 - 1 - 2`
+* Component 2: `3 - 4`
+* Component 3: `5 - 6`
+
+So answer should be **3 components**.
+
+---
+
+## Step 1: Build adjacency list
+
+Adjacency list looks like:
+
+* `0: [1]`
+* `1: [0, 2]`
+* `2: [1]`
+* `3: [4]`
+* `4: [3]`
+* `5: [6]`
+* `6: [5]`
+
+---
+
+## Step 2: visited array
+
+Initially:
+
+```text
+visited = [F, F, F, F, F, F, F]
+components = 0
+```
+
+---
+
+## Step 3: Loop i = 0..6
+
+### i = 0
+
+`visited[0] == false` → new component found
+
+* `components = 1`
+* BFS from 0
+
+#### BFS starting at 0
+
+Queue: `[0]`
+Mark visited[0] = true
+
+* pop 0 → neighbors: 1
+
+  * 1 not visited → mark visited[1]=true, push 1
+    Queue: `[1]`
+
+* pop 1 → neighbors: 0, 2
+
+  * 0 already visited
+  * 2 not visited → mark visited[2]=true, push 2
+    Queue: `[2]`
+
+* pop 2 → neighbors: 1 (already visited)
+
+Queue empty → BFS ends.
+
+Now:
+
+```text
+visited = [T, T, T, F, F, F, F]
+components = 1
+```
+
+---
+
+### i = 1, i = 2
+
+Both visited already → skip
+
+---
+
+### i = 3
+
+`visited[3] == false` → new component
+
+* `components = 2`
+* BFS from 3
+
+#### BFS starting at 3
+
+Queue: `[3]`, visited[3]=true
+
+* pop 3 → neighbor: 4
+
+  * 4 not visited → visited[4]=true, push 4
+    Queue: `[4]`
+
+* pop 4 → neighbor: 3 already visited
+
+Done.
+
+Now:
+
+```text
+visited = [T, T, T, T, T, F, F]
+components = 2
+```
+
+---
+
+### i = 4
+
+visited → skip
+
+---
+
+### i = 5
+
+`visited[5] == false` → new component
+
+* `components = 3`
+* BFS from 5
+
+#### BFS starting at 5
+
+Queue: `[5]`, visited[5]=true
+
+* pop 5 → neighbor: 6
+
+  * 6 not visited → visited[6]=true, push 6
+* pop 6 → neighbor: 5 already visited
+
+Done.
+
+Now:
+
+```text
+visited = [T, T, T, T, T, T, T]
+components = 3
+```
+
+---
+
+### i = 6
+
+visited → skip
+
+---
+
+## Final answer
+
+`components = 3` ✅
+
+---
+
+# Complexity
+
+Let `V = n`, `E = edges.length`
+
+* Building adjacency: `O(V + E)`
+* BFS across all components visits each node once and each edge twice:
+
+  * `O(V + E)`
+* Space: `O(V + E)` for adjacency + `O(V)` visited + BFS queue
+*/
+
+// class Solution {
+//     public int countComponents(int n, int[][] edges) {
+//         List<Integer>[] adjList = new ArrayList[n];
+//         for (int i = 0; i < n; i++) {
+//             adjList[i] = new ArrayList<>();
+//         }
+
+//         for (int[] e : edges) {
+//             int u = e[0];
+//             int v = e[1];
+//             adjList[u].add(v);
+//             adjList[v].add(u);
+//         }
+
+//         boolean[] visited = new boolean[n];
+//         int components = 0;
+
+//         for (int i = 0; i < n; i++) {
+//             if (!visited[i]) {
+//                 components++;
+//                 bfs(i, adjList, visited);
+//             }
+//         }
+
+//         return components;
+//     }
+
+//     private void bfs(int start, List<Integer>[] adjList, boolean[] visited) {
+//         Deque<Integer> queue = new ArrayDeque<>();
+//         queue.offerLast(start);
+//         visited[start] = true;
+
+//         while (!queue.isEmpty()) {
+//             int node = queue.pollFirst();
+
+//             for (int neighbor : adjList[node]) {
+//                 if (!visited[neighbor]) {
+//                     visited[neighbor] = true;
+//                     queue.offerLast(neighbor);
+//                 }
+//             }
+//         }
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 4: DFS Approach
+/*
+## Core idea
+
+Same concept as BFS:
+
+* A **connected component** is a set of nodes reachable from one another.
+* If you pick any unvisited node and run DFS, DFS will visit **every node in that component**.
+* So:
+
+  * each time you start DFS from an unvisited node, you found a **new component**.
+
+
+# Why this works (detailed explanation)
+
+### Step 1: Build adjacency list
+
+Because the graph is undirected, every edge `[u, v]` means:
+
+* `u` is connected to `v`
+* `v` is connected to `u`
+
+So we add both directions.
+
+---
+
+### Step 2: Maintain `visited[]`
+
+`visited[x]` means:
+
+* have we already visited node `x` as part of some DFS exploration?
+
+This prevents:
+
+* infinite loops in cycles
+* repeated work
+
+---
+
+### Step 3: Count components by starting DFS
+
+Loop from `0` to `n-1`:
+
+* If node `i` is already visited → it belongs to a previously discovered component.
+* If node `i` is not visited → this is the first node we’ve seen in a **new component**:
+
+  * increment `components`
+  * run DFS from `i` to mark the entire component visited
+
+Each component increases the answer exactly once.
+
+---
+
+# Thorough example walkthrough
+
+## Example
+
+```text
+n = 7
+edges = [[0,1],[1,2],[3,4],[5,6]]
+```
+
+Graph structure:
+
+* Component 1: `0 - 1 - 2`
+* Component 2: `3 - 4`
+* Component 3: `5 - 6`
+
+Expected answer: **3**
+
+---
+
+## Step A: Build adjacency list
+
+Adjacency list becomes:
+
+* `0: [1]`
+* `1: [0, 2]`
+* `2: [1]`
+* `3: [4]`
+* `4: [3]`
+* `5: [6]`
+* `6: [5]`
+
+---
+
+## Step B: Initialize tracking
+
+```text
+visited = [F, F, F, F, F, F, F]
+components = 0
+```
+
+---
+
+## Step C: Loop over nodes
+
+### i = 0
+
+`visited[0] == false` → new component found
+
+* `components = 1`
+* Call `dfs(0)`
+
+#### DFS(0)
+
+* mark `visited[0]=true`
+* neighbors: 1 → not visited → dfs(1)
+
+#### DFS(1)
+
+* mark `visited[1]=true`
+* neighbors: 0 (visited), 2 (not visited) → dfs(2)
+
+#### DFS(2)
+
+* mark `visited[2]=true`
+* neighbor: 1 (visited) → return
+
+Return chain completes. Now:
+
+```text
+visited = [T, T, T, F, F, F, F]
+components = 1
+```
+
+---
+
+### i = 1, 2
+
+Already visited → skip
+
+---
+
+### i = 3
+
+`visited[3] == false` → new component
+
+* `components = 2`
+* `dfs(3)`
+
+#### DFS(3)
+
+* mark visited[3]=true
+* neighbor 4 not visited → dfs(4)
+
+#### DFS(4)
+
+* mark visited[4]=true
+* neighbor 3 visited → return
+
+Now:
+
+```text
+visited = [T, T, T, T, T, F, F]
+components = 2
+```
+
+---
+
+### i = 4
+
+Visited → skip
+
+---
+
+### i = 5
+
+`visited[5] == false` → new component
+
+* `components = 3`
+* `dfs(5)`
+
+#### DFS(5)
+
+* mark visited[5]=true
+* neighbor 6 not visited → dfs(6)
+
+#### DFS(6)
+
+* mark visited[6]=true
+* neighbor 5 visited → return
+
+Now:
+
+```text
+visited = [T, T, T, T, T, T, T]
+components = 3
+```
+
+---
+
+### i = 6
+
+Visited → skip
+
+---
+
+## Final answer
+
+`components = 3` ✅
+
+---
+
+# Complexity
+
+Let `V = n`, `E = edges.length`
+
+* Time: `O(V + E)` (each node visited once, each edge processed twice)
+* Space: `O(V + E)` for adjacency list + `O(V)` recursion stack worst-case
+
+---
+
+## Note about recursion depth
+
+If `n` can be very large (like 200k) and the graph is a long chain, recursion can overflow the stack in Java.
+
+In that case, use:
+
+* iterative DFS (stack), or
+* BFS (queue)
+*/
+
+// class Solution {
+//     public int countComponents(int n, int[][] edges) {
+//         List<Integer>[] adjList = new ArrayList[n];
+//         for (int i = 0; i < n; i++) {
+//             adjList[i] = new ArrayList<>();
+//         }
+
+//         for (int[] e : edges) {
+//             int u = e[0];
+//             int v = e[1];
+//             adjList[u].add(v);
+//             adjList[v].add(u);
+//         }
+
+//         boolean[] visited = new boolean[n];
+//         int components = 0;
+
+//         for (int i = 0; i < n; i++) {
+//             if (!visited[i]) {
+//                 components++;
+//                 dfs(i, adjList, visited);
+//             }
+//         }
+
+//         return components;
+//     }
+
+//     private void dfs(int node, List<Integer>[] adjList, boolean[] visited) {
+//         visited[node] = true;
+
+//         for (int neighbor : adjList[node]) {
+//             if (!visited[neighbor]) {
+//                 dfs(neighbor, adjList, visited);
+//             }
+//         }
+//     }
+// }
