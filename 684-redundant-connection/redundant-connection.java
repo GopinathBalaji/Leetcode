@@ -1,4 +1,4 @@
-// Method 1: Using DSU / Union Find
+// Method 1: Using DSU / Union Find by Rank
 /*
 # What I was doing wrong:
 
@@ -26,7 +26,6 @@ Example: `[[1,2],[1,3],[2,3]]`
 
 Your original code would fail when encountering node label `3` with DSU sized for `2`.
 */
-
 class Solution {
     public int[] findRedundantConnection(int[][] edges) {
         int[] ans = null;
@@ -83,6 +82,83 @@ class Solution {
 
     }
 }
+
+
+
+
+
+
+// Method 1.5: Union Find / DSU by Size
+/*
+*/
+// class Solution {
+//     class DSU{
+//         int[] parent;
+//         int[] size;
+//         int components;
+
+//         DSU(int n){
+//             parent = new int[n+1];
+//             size = new int[n+1];
+//             components = n;
+
+//             for(int i=0; i<=n; i++){
+//                 parent[i] = i;
+//                 size[i] = 1;
+//             }
+//         }
+
+//         public int find(int x){
+//             if(x != parent[x]){
+//                 parent[x] = find(parent[x]);
+//             }
+
+//             return parent[x];
+//         }
+
+//         public boolean union(int a, int b){
+//             int ra = find(a);
+//             int rb = find(b);
+
+//             if(ra == rb){
+//                 return false;
+//             }
+
+//             if(size[ra] < size[rb]){
+//                 parent[ra] = rb;
+//                 size[rb] += size[ra];
+//             }else{
+//                 parent[rb] = ra;
+//                 size[ra] += size[rb];
+//             }
+
+//             components--;
+
+//             return true;
+//         }
+//     }
+
+//     public int[] findRedundantConnection(int[][] edges) {
+//         DSU dsu = new DSU(edges.length);
+//         int[] ans = new int[2];
+
+//         for(int[] edge: edges){
+//             int u = edge[0];
+//             int v = edge[1];
+
+//             if(!dsu.union(u, v)){
+//                 ans = edge;
+//             }
+//         }
+
+//         return ans;
+//     }
+// }
+
+
+
+
+
 
 
 
@@ -199,6 +275,9 @@ This recursive DFS approach is interview-friendly, easy to reason about, and pas
 //         return false;
 //     }
 // }
+
+
+
 
 
 
@@ -352,6 +431,8 @@ This iterative DFS version is interview-friendly, avoids recursion depth issues,
 //         return false;
 //     }
 // }
+
+
 
 
 
