@@ -264,71 +264,438 @@ The shortest ladder contains 5 words:
 If you want, I can show a variant that actually returns the **path** (not just the length) by keeping parent pointers—handy for debugging!
 */
 
+// class Solution {
+//     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+//         Set<String> dict = new HashSet<>(wordList);
+//         if (!dict.contains(endWord)) return 0;
+
+//         int L = beginWord.length();
+
+//         // 1) Build wildcard pattern map: e.g. "hot" -> "*ot","h*t","ho*"
+//         // pattern -> list of words that match it
+//         Map<String, List<String>> buckets = new HashMap<>();
+//         // include beginWord so its patterns are usable in the first expansion
+//         for (String w : dict) addPatterns(w, L, buckets);
+//         addPatterns(beginWord, L, buckets);
+
+//         // 2) Bidirectional BFS
+//         Set<String> beginSet = new HashSet<>();
+//         Set<String> endSet   = new HashSet<>();
+//         Set<String> visited  = new HashSet<>();
+
+//         beginSet.add(beginWord);
+//         endSet.add(endWord);
+//         visited.add(beginWord);
+//         visited.add(endWord);
+
+//         int steps = 1; // counts words in path (beginWord layer = 1)
+
+//         while (!beginSet.isEmpty() && !endSet.isEmpty()) {
+//             // always expand the smaller frontier
+//             if (beginSet.size() > endSet.size()) {
+//                 Set<String> tmp = beginSet; beginSet = endSet; endSet = tmp;
+//             }
+
+//             Set<String> next = new HashSet<>();
+
+//             for (String word : beginSet) {
+//                 // generate patterns for 'word' and expand via buckets
+//                 for (int i = 0; i < L; i++) {
+//                     String pat = word.substring(0, i) + '*' + word.substring(i + 1);
+//                     List<String> neigh = buckets.getOrDefault(pat, Collections.emptyList());
+
+//                     for (String nb : neigh) {
+//                         if (nb.equals(word)) continue;       // skip self
+//                         if (endSet.contains(nb)) return steps + 1; // met other side
+//                         if (!visited.contains(nb)) {
+//                             visited.add(nb);
+//                             next.add(nb);
+//                         }
+//                     }
+//                     // Optional optimization: clear to avoid reusing same bucket many times
+//                     // (safe because we've already recorded all neighbors from this pattern)
+//                     // buckets.put(pat, Collections.emptyList());
+//                 }
+//             }
+
+//             beginSet = next;
+//             steps++;
+//         }
+
+//         return 0;
+//     }
+
+//     private void addPatterns(String w, int L, Map<String, List<String>> buckets) {
+//         for (int i = 0; i < L; i++) {
+//             String pat = w.substring(0, i) + '*' + w.substring(i + 1);
+//             buckets.computeIfAbsent(pat, k -> new ArrayList<>()).add(w);
+//         }
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 2: Single direction BFS
+/*
+####################### WHAT WAS WRONG WITH MY APPROACH ########################
+There are several **logic bugs** in your BFS that make it return the wrong length (and can even explode / loop).
+
+
+## 2) Your `ans++` is not measuring “ladder length” ❌
+
+You do:
+
+```java
+ans++;
+```
+
+once per popped word. That counts **how many nodes you processed**, not the **number of transformation steps**.
+
+Word Ladder wants the **shortest path length in edges + 1**, i.e. BFS **levels**.
+
+✅ Fix: BFS by levels (process `size = queue.size()` per level), or store `(word, dist)` in the queue.
+
+---
+
+## 3) You check `visited` too late (on pop), so you enqueue duplicates a lot ⚠️
+
+Right now you do:
+
+* enqueue neighbors without marking them visited
+* only skip when you pop them
+
+This causes many duplicates in the queue.
+
+✅ Typical BFS pattern:
+
+* When you add a neighbor to the queue, immediately mark it visited.
+
+---
+
+## 4) You never stop when you reach `endWord` ❌
+
+You never check:
+
+* “if neighbor is endWord”
+* or “if current word is endWord”
+
+So even if you reach it, you keep exploring and `ans` keeps changing.
+
+✅ Fix: as soon as you reach `endWord`, return the current BFS distance.
+
+---
+
+## 5) You don’t “consume” patterns, causing repeated neighbor expansions ⚠️
+
+For each word, you generate patterns and fetch `graph.get(pattern)`.
+
+If you don’t clear/remove the list after using a pattern, you can re-scan the same neighbor lists many times.
+
+✅ Common optimization:
+
+```java
+graph.remove(pattern); // or clear list
+```
+
+after processing that pattern once.
+
+(Not required for correctness, but helps performance a lot.)
+
+---
+
+# Minimal “your style” corrections (conceptually)
+
+To keep your structure but fix correctness:
+
+* Do level BFS to compute length
+* Return as soon as endWord found
+* Mark visited when enqueueing neighbors
+* Optionally remove pattern list after use
+#################################################
+
+
+# Why your original code was wrong (and what this fixes)
+
+### 1) Wrong visited marking
+
+You were doing `visited.add(beginWord)` inside the loop.
+That means you never actually mark the current popped word as visited, causing repeats and huge queue growth.
+
+✅ Fixed by marking **the actual word** visited (and doing it when enqueuing).
+
+---
+
+### 2) `ans++` was not the ladder length
+
+Word Ladder needs the **shortest number of transformations**, which is BFS **levels**, not “how many nodes did I pop”.
+
+✅ Fixed by doing **level-order BFS** with `level` and processing `queue.size()` nodes per level.
+
+---
+
+### 3) Missing early exit
+
+You should stop as soon as `endWord` is reached (BFS guarantees it’s the shortest).
+
+✅ Fixed by returning immediately when `word.equals(endWord)`.
+
+---
+
+### 4) Pattern list reprocessing
+
+Without clearing patterns, you can repeatedly scan the same neighbor lists many times.
+
+✅ Fixed by `graph.remove(pattern)` after expanding it once.
+
+---
+
+# How the “pattern graph” works
+
+Instead of explicitly connecting every word to every word that differs by 1 letter (which is expensive), we build an **index**:
+
+* For each word, create patterns by replacing one character with `*`.
+* Words that share a pattern are neighbors (1 letter apart).
+
+Example for `"hot"`:
+
+* `*ot`
+* `h*t`
+* `ho*`
+
+If `"dot"` exists:
+
+* it also has `*ot`
+  So `"hot"` and `"dot"` are neighbors.
+
+This lets BFS find neighbors quickly.
+
+---
+
+# Thorough example walkthrough
+
+### Input
+
+```text
+beginWord = "hit"
+endWord   = "cog"
+wordList  = ["hot","dot","dog","lot","log","cog"]
+```
+
+## Step 1: Build pattern map
+
+For `"hot"`:
+
+* `*ot` -> ["hot"]
+* `h*t` -> ["hot"]
+* `ho*` -> ["hot"]
+
+For `"dot"`:
+
+* `*ot` -> ["hot","dot"]
+* `d*t` -> ["dot"]
+* `do*` -> ["dot"]
+
+For `"dog"`:
+
+* `*og` -> ["dog"]
+* `d*g` -> ["dog"]
+* `do*` -> ["dot","dog"]
+
+For `"lot"`:
+
+* `*ot` -> ["hot","dot","lot"]
+* `l*t` -> ["lot"]
+* `lo*` -> ["lot"]
+
+For `"log"`:
+
+* `*og` -> ["dog","log"]
+* `l*g` -> ["log"]
+* `lo*` -> ["lot","log"]
+
+For `"cog"`:
+
+* `*og` -> ["dog","log","cog"]
+* `c*g` -> ["cog"]
+* `co*` -> ["cog"]
+
+So the pattern map lets us jump from a word to all 1-letter neighbors by looking up its patterns.
+
+---
+
+## Step 2: BFS levels
+
+### Level 1
+
+Queue: [`hit`], visited: {hit}
+
+Pop `"hit"`:
+Patterns:
+
+* `*it` → (none)
+* `h*t` → ["hot"]
+* `hi*` → (none)
+
+So we enqueue `"hot"`.
+
+Queue after Level 1: [`hot`], visited: {hit, hot}
+
+Increment level → level = 2
+
+---
+
+### Level 2
+
+Queue: [`hot`]
+
+Pop `"hot"`:
+Patterns:
+
+* `*ot` → ["hot","dot","lot"]  → enqueue dot, lot
+* `h*t` → ["hot"]              → nothing new
+* `ho*` → ["hot"]              → nothing new
+
+Queue after Level 2: [`dot`, `lot`]
+visited: {hit, hot, dot, lot}
+
+level = 3
+
+---
+
+### Level 3
+
+Queue: [`dot`, `lot`]
+
+Pop `"dot"`:
+Patterns:
+
+* `*ot` → already removed (optimization), so skip
+* `d*t` → ["dot"] (none new)
+* `do*` → ["dot","dog"] → enqueue dog
+
+Pop `"lot"`:
+Patterns:
+
+* `*ot` removed
+* `l*t` → ["lot"] (none new)
+* `lo*` → ["lot","log"] → enqueue log
+
+Queue after Level 3: [`dog`, `log`]
+visited includes dog, log
+
+level = 4
+
+---
+
+### Level 4
+
+Queue: [`dog`, `log`]
+
+Pop `"dog"`:
+Patterns:
+
+* `*og` → ["dog","log","cog"] → enqueue cog
+* `d*g` → ["dog"] (none)
+* `do*` removed
+
+Pop `"log"`:
+
+* it would also lead to `cog`, but `cog` already visited / enqueued
+
+Queue after Level 4: [`cog`]
+
+level = 5
+
+---
+
+### Level 5
+
+Pop `"cog"` → it equals endWord → return **5**
+
+✅ Output: **5**, which matches the expected ladder:
+`hit -> hot -> dot -> dog -> cog` (5 words)
+
+---
+
+# Complexity (intuition)
+
+Let:
+
+* `N` = number of words in wordList
+* `L` = length of each word
+
+Building the pattern map: about `N * L` patterns.
+BFS explores each word once, and with `graph.remove(pattern)` each pattern list is expanded at most once.
+
+So it’s efficient in practice and standard accepted.
+*/
+
 class Solution {
     public int ladderLength(String beginWord, String endWord, List<String> wordList) {
-        Set<String> dict = new HashSet<>(wordList);
-        if (!dict.contains(endWord)) return 0;
+        // Put all words into a set for quick existence check
+        Set<String> set = new HashSet<>(wordList);
+        if (!set.contains(endWord)) {
+            return 0;
+        }
 
-        int L = beginWord.length();
-
-        // 1) Build wildcard pattern map: e.g. "hot" -> "*ot","h*t","ho*"
-        // pattern -> list of words that match it
-        Map<String, List<String>> buckets = new HashMap<>();
-        // include beginWord so its patterns are usable in the first expansion
-        for (String w : dict) addPatterns(w, L, buckets);
-        addPatterns(beginWord, L, buckets);
-
-        // 2) Bidirectional BFS
-        Set<String> beginSet = new HashSet<>();
-        Set<String> endSet   = new HashSet<>();
-        Set<String> visited  = new HashSet<>();
-
-        beginSet.add(beginWord);
-        endSet.add(endWord);
-        visited.add(beginWord);
-        visited.add(endWord);
-
-        int steps = 1; // counts words in path (beginWord layer = 1)
-
-        while (!beginSet.isEmpty() && !endSet.isEmpty()) {
-            // always expand the smaller frontier
-            if (beginSet.size() > endSet.size()) {
-                Set<String> tmp = beginSet; beginSet = endSet; endSet = tmp;
+        // Build pattern -> list of words that match that pattern
+        // Example: "hot" => "*ot", "h*t", "ho*"
+        HashMap<String, List<String>> graph = new HashMap<>();
+        for (String word : wordList) {
+            for (int i = 0; i < word.length(); i++) {
+                String pattern = word.substring(0, i) + "*" + word.substring(i + 1);
+                graph.computeIfAbsent(pattern, k -> new ArrayList<>()).add(word);
             }
+        }
 
-            Set<String> next = new HashSet<>();
+        // BFS from beginWord
+        Queue<String> queue = new ArrayDeque<>();
+        Set<String> visited = new HashSet<>();
 
-            for (String word : beginSet) {
-                // generate patterns for 'word' and expand via buckets
-                for (int i = 0; i < L; i++) {
-                    String pat = word.substring(0, i) + '*' + word.substring(i + 1);
-                    List<String> neigh = buckets.getOrDefault(pat, Collections.emptyList());
+        queue.offer(beginWord);
+        visited.add(beginWord);
 
-                    for (String nb : neigh) {
-                        if (nb.equals(word)) continue;       // skip self
-                        if (endSet.contains(nb)) return steps + 1; // met other side
-                        if (!visited.contains(nb)) {
-                            visited.add(nb);
-                            next.add(nb);
+        int level = 1; // beginWord itself counts as level 1
+
+        while (!queue.isEmpty()) {
+            int size = queue.size(); // process one BFS level at a time
+
+            for (int s = 0; s < size; s++) {
+                String word = queue.poll();
+
+                // If we reached endWord, return current level (shortest path length)
+                if (word.equals(endWord)) {
+                    return level;
+                }
+
+                // Generate all patterns of the current word and expand neighbors
+                for (int i = 0; i < word.length(); i++) {
+                    String pattern = word.substring(0, i) + "*" + word.substring(i + 1);
+
+                    List<String> neighbors = graph.get(pattern);
+                    if (neighbors == null) continue;
+
+                    for (String neighbor : neighbors) {
+                        if (!visited.contains(neighbor)) {
+                            visited.add(neighbor);
+                            queue.offer(neighbor);
                         }
                     }
-                    // Optional optimization: clear to avoid reusing same bucket many times
-                    // (safe because we've already recorded all neighbors from this pattern)
-                    // buckets.put(pat, Collections.emptyList());
+
+                    // Important optimization: prevent re-processing the same pattern list again
+                    // This keeps runtime from blowing up.
+                    graph.remove(pattern);
                 }
             }
 
-            beginSet = next;
-            steps++;
+            level++;
         }
 
         return 0;
-    }
-
-    private void addPatterns(String w, int L, Map<String, List<String>> buckets) {
-        for (int i = 0; i < L; i++) {
-            String pat = w.substring(0, i) + '*' + w.substring(i + 1);
-            buckets.computeIfAbsent(pat, k -> new ArrayList<>()).add(w);
-        }
     }
 }
