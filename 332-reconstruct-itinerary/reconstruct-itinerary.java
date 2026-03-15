@@ -1,5 +1,44 @@
-// Method 1: Hierholzer-style DFS (Eulerian-path style)
+// Method 1: Hierholzer-style DFS (Eulerian-path style / Based-on consuming edges and not nodes)
 /*
+### WHY DOES THE THREE STATE VERSION (0 = UNVISITED, 1 = VISITING, 2 = VISITED) DOES NOT WORK ####
+That approach is **not the right primary approach** for LeetCode 332.
+
+A color map like:
+
+* `0 = unvisited`
+* `1 = visiting`
+* `2 = visited`
+
+is useful for problems like:
+
+* cycle detection
+* topological sort
+* ordinary DFS traversal
+
+But in **Reconstruct Itinerary**, the important thing is not whether an **airport/node** has been visited.
+The important thing is whether a **ticket/edge** has been used.
+
+## Why color on airports fails
+
+An airport can appear multiple times in the valid answer.
+
+Example:
+
+* `JFK -> ATL`
+* `ATL -> JFK`
+
+Valid itinerary is:
+
+* `JFK, ATL, JFK`
+
+So if you color `JFK` as visited and refuse to go there again, you would wrongly block a valid path.
+
+That is the key mismatch:
+
+* color DFS is **node-based**
+* itinerary problem is **edge-based**
+###################################################################################
+
 ## Key ideas (read this first)
 
 * Model tickets as a **directed multigraph**: `from -> to`. Multiple identical tickets = **parallel edges**.
@@ -318,3 +357,5 @@ Because we tried destinations in ascending order and backtracked when needed, th
 //         return false;
 //     }
 // }
+
+
