@@ -182,8 +182,6 @@ Interpretation: the earliest time you can have a fully submerged path to the bot
   * **Binary search + BFS/DFS** on time threshold T (monotone feasibility).
   * **Union-Find (activation/Kruskal)**: increase water level or sort edges by max(elevations), union until start/end connect.
 */
-
-
 class Solution {
     public int swimInWater(int[][] grid) {
         int n = grid.length;
@@ -229,10 +227,10 @@ class Solution {
 
 
 
+
+
 // Method 2: Binary Search + BFS (feasibility check)
 /*
-Below is a tight Java implementation, followed by the intuition, complexity, and a step-by-step walkthrough on a classic example.
-
 ## Why this works
 
 ### 1) Monotonic predicate
@@ -522,7 +520,81 @@ This approach is easy to explain: “binary search the time, and for a fixed tim
 
 
 
-// Method 4: Union–Find (Kruskal/activation)
+
+
+// Method 4: Binary Search + Iterative DFS
+/*
+*/
+// class Solution {
+//     public int swimInWater(int[][] grid) {
+//         int n = grid.length;
+//         int low = 0;
+//         int high = (n * n) - 1;
+
+//         while (low < high) {
+//             int mid = low + (high - low) / 2;
+
+//             if (dfsIterative(grid, mid)) {
+//                 high = mid;
+//             } else {
+//                 low = mid + 1;
+//             }
+//         }
+
+//         return low;
+//     }
+
+//     private boolean dfsIterative(int[][] grid, int largest) {
+//         int n = grid.length;
+//         int m = grid[0].length;
+
+//         if (grid[0][0] > largest) {
+//             return false;
+//         }
+
+//         boolean[][] visited = new boolean[n][m];
+//         Deque<int[]> stack = new ArrayDeque<>();
+//         stack.push(new int[]{0, 0});
+//         visited[0][0] = true;
+
+//         int[][] dirs = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+
+//         while (!stack.isEmpty()) {
+//             int[] curr = stack.pop();
+//             int row = curr[0];
+//             int col = curr[1];
+
+//             if (row == n - 1 && col == m - 1) {
+//                 return true;
+//             }
+
+//             for (int[] dir : dirs) {
+//                 int newRow = row + dir[0];
+//                 int newCol = col + dir[1];
+
+//                 if (newRow >= 0 && newRow < n &&
+//                     newCol >= 0 && newCol < m &&
+//                     !visited[newRow][newCol] &&
+//                     grid[newRow][newCol] <= largest) {
+                    
+//                     visited[newRow][newCol] = true;
+//                     stack.push(new int[]{newRow, newCol});
+//                 }
+//             }
+//         }
+
+//         return false;
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 5: Union–Find (Kruskal/activation)
 /*
 * **Activation by height (most common & simplest to implement)**
 * **Edge-sorting Kruskal (conceptually identical; sometimes taught in MST units)**
