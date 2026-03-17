@@ -425,6 +425,312 @@ class Solution{
 
 
 
+
+
+// Method 1.5: My Kahn's Algorithm approach (similar to the one above)
+/*
+###################### WHAT WAS I DOING WRONG ############################
+There are a few important bugs in your Kahn’s algorithm approach.
+
+Your overall direction is right:
+
+* build graph from adjacent words
+* use indegree
+* run topological sort
+
+But the implementation has several correctness issues.
+
+---
+
+## 1. Prefix check is wrong
+
+You wrote:
+
+```java
+if(len1 > len2){
+  return "";
+}
+```
+
+This is not always invalid.
+
+Example:
+
+* `"abc"`
+* `"x"`
+
+Here `len1 > len2`, but that alone does **not** make it invalid, because the first characters already differ, so `"abc"` before `"x"` could be valid depending on alien order.
+
+The invalid case is only when:
+
+* `word1.length() > word2.length()`
+* and `word1.startsWith(word2)`
+
+Example:
+
+* `"abc"`
+* `"ab"`
+
+This is invalid because the longer word comes before its own prefix.
+
+So the correct check is:
+
+```java
+if (len1 > len2 && word1.startsWith(word2)) {
+    return "";
+}
+```
+
+---
+
+## 2. Your inner loop can go out of bounds
+
+You wrote:
+
+```java
+for(int j=0; j<len1; j++){
+```
+
+but you compare:
+
+```java
+word2.charAt(j)
+```
+
+If `len2 < len1`, this can throw an index error.
+
+You must compare only up to the smaller length:
+
+```java
+for (int j = 0; j < Math.min(len1, len2); j++)
+```
+
+---
+
+## 3. Queue initialization is completely wrong
+
+This is the biggest bug.
+
+You wrote:
+
+```java
+for(int in: indegree){
+  if(in == 0){
+    char ch = (char) (in + 'a');
+    queue.offer(ch);
+  }
+}
+```
+
+Problem:
+
+* `in` is the indegree value, not the index
+* so if `in == 0`, then `ch` becomes `'a'`
+* this means you will enqueue `'a'` again and again for every zero indegree slot
+
+So you are not adding the correct letters at all.
+
+You need to iterate over the actual characters present in the graph, not over indegree values.
+
+Correct idea:
+
+```java
+for (char ch : graph.keySet()) {
+    if (indegree[ch - 'a'] == 0) {
+        queue.offer(ch);
+    }
+}
+```
+
+---
+
+## 4. You may miss characters when `n == 1`
+
+You wrote:
+
+```java
+if(n == 1){
+  return words[0];
+}
+```
+
+That is not necessarily wrong if the problem allows any valid order and the single word’s character order can be arbitrary. But in Alien Dictionary style problems, returning the word itself is not conceptually the same as returning a topological order of unique characters.
+
+Example:
+
+* `["aba"]`
+
+Returning `"aba"` is not a valid character ordering because characters should appear once in the alphabet order.
+
+You should still build the graph with unique characters and run topo logic, or at least return unique characters.
+
+---
+
+## 5. You do not detect cycles
+
+Kahn’s algorithm must check whether all graph nodes were processed.
+
+If there is a cycle, the queue becomes empty before processing all nodes.
+
+Right now you just return:
+
+```java
+return ans.toString();
+```
+
+But if `ans.length() < graph.size()`, then there was a cycle, and you must return:
+
+```java
+""
+```
+
+So after the BFS:
+
+```java
+if (ans.length() != graph.size()) {
+    return "";
+}
+```
+
+---
+
+## 6. Characters not in any compared pair should still be included
+
+You partly handle this by inserting characters from both words into the graph, which is good.
+
+But because your queue initialization is wrong, these isolated characters are not handled correctly in practice.
+
+---
+
+# Summary of what is wrong
+
+Your code has these main issues:
+
+* invalid prefix check is too broad
+* inner comparison loop should use `min(len1, len2)`
+* queue initialization uses indegree values instead of character indices
+* no cycle detection
+* `n == 1` shortcut is not robust for unique-character ordering
+
+# Small example showing one of your bugs
+
+Suppose indegree array has:
+
+* `indegree['w' - 'a'] = 0`
+* `indegree['e' - 'a'] = 1`
+* `indegree['r' - 'a'] = 1`
+
+Your code does:
+
+```java
+for(int in: indegree){
+  if(in == 0){
+    char ch = (char) (in + 'a');
+    queue.offer(ch);
+  }
+}
+```
+
+For every zero indegree value, `in == 0`, so:
+
+```java
+ch = (char)('a')
+```
+
+So you enqueue `'a'` many times, even if `'a'` is not in the graph. That completely breaks Kahn’s algorithm.
+
+---
+
+# Final verdict
+
+Your approach is conceptually right, but it has **four major correctness bugs**:
+
+* wrong prefix validation
+* wrong loop bound for comparing characters
+* wrong queue initialization
+* missing cycle detection
+
+The **queue initialization** bug is the most fatal one.
+##########################################################################
+
+*/
+// class Solution {
+//     public String foreignDictionary(String[] words) {
+//       int n = words.length;
+
+//       Map<Character, Set<Character>> graph = new HashMap<>();
+//       int[] indegree = new int[26];
+
+//       for(int i=0; i<n-1; i++){
+//         String word1 = words[i];
+//         String word2 = words[i+1];
+
+//         int len1 = word1.length();
+//         int len2 = word2.length();
+
+//         if(len1 > len2 && word1.startsWith(word2)){
+//           return "";
+//         }
+
+//         for(char c: word1.toCharArray()){
+//           graph.computeIfAbsent(c , k -> new HashSet<>());
+//         }
+//         for(char c: word2.toCharArray()){
+//           graph.computeIfAbsent(c , k -> new HashSet<>());
+//         }
+
+//         for(int j=0; j<Math.min(len1, len2); j++){
+//           if(word1.charAt(j) != word2.charAt(j)){
+
+//             if( graph.get(word1.charAt(j)).add(word2.charAt(j)) ){
+//               indegree[word2.charAt(j) - 'a']++;
+//             }
+
+//             break;
+//           }
+//         }
+//       }
+
+//       StringBuilder ans = new StringBuilder();
+//       Queue<Character> queue = new ArrayDeque<>();
+
+//       for(char ch: graph.keySet()){
+//         if(indegree[ch - 'a'] == 0){
+//           queue.offer(ch);
+//         }
+//       }
+
+//       while(!queue.isEmpty()){
+//         char ch = queue.poll();
+//         ans.append(ch);
+
+//         Set<Character> set = graph.get(ch);
+//         if(set == null){
+//           continue;
+//         }
+
+//         for(char c: set){
+//           if(--indegree[c - 'a'] == 0){
+//             queue.offer(c);
+//           }
+//         }
+//       }
+
+//       if(ans.length() != graph.size()){
+//         return "";
+//       }
+
+//       return ans.toString();
+//     }
+// }
+
+
+
+
+
+
+
+
 // Method 2: DFS-based topo sort with cycle detection
 /*
 ## How this DFS topo works (conceptually)
