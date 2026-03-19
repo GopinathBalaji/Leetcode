@@ -198,7 +198,6 @@ If we had used your original `minCost[v]` single array:
 
 The provided solution uses a clean “Dijkstra over `(node, edgesUsed)`” pattern that’s correct and reusable. If you’d like, next I can also show you the Bellman-Ford/DP version side-by-side so you can see how similar the logic is.
 */
-
 class Solution {
     public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {
         // Build adjacency list: u -> (v, w)
@@ -270,15 +269,6 @@ class Solution {
 
 // Method 1: DP/Bellman-Ford algo approach
 /*
-Bellman-Ford is exactly the right hammer for this nail, so let’s go all in.
-
-I’ll do this in two parts:
-
-1. Explain **Bellman-Ford** itself: what, why, how, where it beats Dijkstra.
-2. Show how to adapt it to **LeetCode 787. Cheapest Flights Within K Stops** with full code + step-by-step walkthrough.
-
----
-
 ## 1. Bellman-Ford: what it is and how it works
 
 ### Problem it solves
@@ -600,3 +590,4 @@ Answer:
 //         return prev[dst] == INF ? -1 : prev[dst];
 //     }
 // }
+
