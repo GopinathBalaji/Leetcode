@@ -1,13 +1,13 @@
 // Method 1: Bottom-Up DP
 /*
-### \U0001f9e9 Step 1: What does the problem ask?
+### 🧩 Step 1: What does the problem ask?
 
 You can climb **1 or 2 steps** at a time.
 Question: *In how many distinct ways can you reach step `n`?*
 
 ---
 
-### \U0001fa9c Step 2: What pattern did we find before?
+### 🪜 Step 2: What pattern did we find before?
 
 From the top-down idea:
 
@@ -23,7 +23,7 @@ This is the same recurrence we’ll use here.
 
 ---
 
-### \U0001f501 Step 3: What does “bottom-up” mean?
+### 🔁 Step 3: What does “bottom-up” mean?
 
 Instead of recursion + memoization, we **build the table iteratively** from the smallest cases upward.
 
@@ -31,7 +31,7 @@ We start with known base values and use the recurrence to fill in all higher val
 
 ---
 
-### \U0001f9f1 Step 4: Building the DP table
+### 🧱 Step 4: Building the DP table
 
 1. Create an array `dp` of size `n+1`.
 2. Set base cases:
@@ -45,7 +45,7 @@ We start with known base values and use the recurrence to fill in all higher val
 
 ---
 
-### \U0001f9e0 Step 5: Why this works
+### 🧠 Step 5: Why this works
 
 Each value `dp[i]` stores the *total number of ways to reach step i*.
 Since every higher step depends only on the two previous values, we can build up the solution progressively — no recursion, no repeated work.
@@ -58,19 +58,21 @@ Since every higher step depends only on the two previous values, we can build up
 * **Space:** `O(n)` for the array.
   (Can reduce to `O(1)` using two variables if you only keep `dp[i−1]` and `dp[i−2]`.)
 */
-class Solution {
-    public int climbStairs(int n) {
-        int[] dp = new int[n+1];
-        dp[0] = 1;
-        dp[1] = 1;
+// class Solution {
+//     public int climbStairs(int n) {
+//         int[] memo = new int[n+1];
+//         memo[0] = 1;
+//         memo[1] = 1;
 
-        for(int i=2; i<=n; i++){
-            dp[i] = dp[i-1] + dp[i-2];
-        }
+//         for(int i=2; i<=n; i++){
+//             memo[i] = memo[i-1] + memo[i-2];
+//         }
 
-        return dp[n];
-    }
-}
+//         return memo[n];
+//     }
+// }
+
+
 
 
 
@@ -123,23 +125,23 @@ function ways(i, memo):
     memo[i] = ways(i-1, memo) ??? ways(i-2, memo)   // combine correctly
     return memo[i]
 ```*/
-// class Solution {
-//     public int climbStairs(int n) {
-//         int[] memo = new int[n+1];
-//         return dp(n, memo);
-//     }
+class Solution {
+    public int climbStairs(int n) {
+        int[] memo = new int[n+1];
+        return dp(n, memo);
+    }
 
-//     public int dp(int i, int[] memo){
-//         if(i <= 1){
-//             return 1;
-//         }
+    public int dp(int i, int[] memo){
+        if(i <= 1){
+            return 1;
+        }
 
-//         if(memo[i] != 0){
-//             return memo[i];
-//         }
+        if(memo[i] != 0){
+            return memo[i];
+        }
 
-//         memo[i] = dp(i-1, memo) + dp(i-2, memo);
+        memo[i] = dp(i-1, memo) + dp(i-2, memo);
 
-//         return memo[i];
-//     }
-// }
+        return memo[i];
+    }
+}
