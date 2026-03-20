@@ -1,4 +1,39 @@
-// Method 1: Top-Down Recursive 1-D DP
+// Method 1: Simpler/Cleaner Top-Down Approach (compared to Method 1.5)
+/*
+*/
+class Solution {
+    public int minCostClimbingStairs(int[] cost) {
+        int n = cost.length;
+
+        int[] memo1 = new int[n];
+        Arrays.fill(memo1, -1);
+
+        int[] memo2 = new int[n];
+        Arrays.fill(memo2, -1);
+
+        return Math.min(dp(cost, memo1, 0), dp(cost, memo2, 1));
+    }
+
+    private int dp(int[] cost, int[] memo, int i){
+        if(i >= cost.length){
+            return 0;
+        }
+
+        if(memo[i] != -1){
+            return memo[i];
+        }
+
+        memo[i] = cost[i] + Math.min(dp(cost, memo, i+1), dp(cost, memo, i+2));
+
+        return memo[i];
+    }
+}
+
+
+
+
+
+// Method 1.5: Top-Down Recursive 1-D DP
 /*
 ## 1. Problem restatement
 
@@ -387,41 +422,43 @@ That’s what drops the complexity from exponential to linear.
 
 (There is also a bottom-up version that can get O(1) extra space, but your top-down version is completely valid and very clear.)
 */
-class Solution {
-    public int minCostClimbingStairs(int[] cost) {
-        int n = cost.length;
-        int[] memo1 = new int[n];
-        Arrays.fill(memo1, -1);
+// class Solution {
+//     public int minCostClimbingStairs(int[] cost) {
+//         int n = cost.length;
+//         int[] memo1 = new int[n];
+//         Arrays.fill(memo1, -1);
 
-        int zeroIdx = dp(0, cost, memo1);
+//         int zeroIdx = dp(0, cost, memo1);
 
-        int[] memo2 = new int[n];
-        Arrays.fill(memo2, -1);
+//         int[] memo2 = new int[n];
+//         Arrays.fill(memo2, -1);
 
-        int oneIdx = dp(1, cost, memo2); 
+//         int oneIdx = dp(1, cost, memo2); 
 
-        return Math.min(zeroIdx, oneIdx);      
-    }
+//         return Math.min(zeroIdx, oneIdx);      
+//     }
 
-    public int dp(int idx, int[] cost, int[] memo){
-        if(idx >= cost.length){
-            // Reached or passed the top
-            return 0;
-        }
+//     public int dp(int idx, int[] cost, int[] memo){
+//         if(idx >= cost.length){
+//             // Reached or passed the top
+//             return 0;
+//         }
 
-        if(memo[idx] != -1){
-            // Already computed
-            return memo[idx];
-        }
+//         if(memo[idx] != -1){
+//             // Already computed
+//             return memo[idx];
+//         }
 
-        int one = cost[idx] + dp(idx + 1, cost, memo);
-        int two = cost[idx] + dp(idx + 2, cost, memo);
+//         int one = cost[idx] + dp(idx + 1, cost, memo);
+//         int two = cost[idx] + dp(idx + 2, cost, memo);
 
-        memo[idx] = Math.min(one, two);
+//         memo[idx] = Math.min(one, two);
 
-        return memo[idx];
-    }
-}
+//         return memo[idx];
+//     }
+// }
+
+
 
 
 
@@ -820,5 +857,30 @@ Your O(1) code is doing exactly these updates in a compressed form using `prev2`
         
 //         // prev1 now holds dp[n], min cost to reach the top
 //         return prev1;
+//     }
+// }
+
+
+
+
+
+
+// Method 2.5: Simpler Bottom-Up Approach
+/*
+*/
+// class Solution {
+//     public int minCostClimbingStairs(int[] cost) {
+//         int n = cost.length;
+//         int[] memo = new int[n];
+//         memo[0] = cost[0];
+//         memo[1] = cost[1];
+
+//         int ans = 0;
+
+//         for(int i=2; i<n; i++){
+//             memo[i] = cost[i] + Math.min(memo[i-1], memo[i-2]);
+//         }
+
+//         return Math.min(memo[n-1], memo[n-2]);
 //     }
 // }
