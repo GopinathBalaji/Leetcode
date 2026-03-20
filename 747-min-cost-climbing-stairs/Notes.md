@@ -1,1 +1,1 @@
-<h2>min-cost-climbing-stairs Notes</h2><hr>[ Time taken: 22 m 0 s ]
+<h2>min-cost-climbing-stairs Notes</h2><hr>[ Time taken: 2d 2hrs 1m 59s ]
