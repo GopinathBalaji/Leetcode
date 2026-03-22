@@ -98,36 +98,75 @@ Careful with small `n`:
 
 After handling these, you can safely apply the “two ranges” idea.
 */
+// class Solution {
+//     public int rob(int[] nums) {
+//         int n = nums.length;
+//         if (n == 1) {
+//             return nums[0];
+//         }
+        
+//         // Case A: rob from 0 to n-2
+//         int caseA = robLinear(nums, 0, n - 2);
+//         // Case B: rob from 1 to n-1
+//         int caseB = robLinear(nums, 1, n - 1);
+        
+//         return Math.max(caseA, caseB);
+//     }
+    
+//     // Standard House Robber I on nums[start..end]
+//     private int robLinear(int[] nums, int start, int end) {
+//         int prev2 = 0; // dp[i-2]
+//         int prev1 = 0; // dp[i-1]
+        
+//         for (int i = start; i <= end; i++) {
+//             int pick = prev2 + nums[i];  // rob this house + best up to i-2
+//             int skip = prev1;            // skip this house, keep best up to i-1
+//             int cur = Math.max(pick, skip);
+            
+//             prev2 = prev1;
+//             prev1 = cur;
+//         }
+        
+//         return prev1; // dp[end]
+//     }
+// }
+
+
+
+
+
+
+// Method 1.5: My Bottom-Up Approach (Similar to the one above)
+/*
+*/
 class Solution {
     public int rob(int[] nums) {
         int n = nums.length;
-        if (n == 1) {
+
+        if(n == 1){
             return nums[0];
         }
-        
-        // Case A: rob from 0 to n-2
-        int caseA = robLinear(nums, 0, n - 2);
-        // Case B: rob from 1 to n-1
-        int caseB = robLinear(nums, 1, n - 1);
-        
-        return Math.max(caseA, caseB);
-    }
-    
-    // Standard House Robber I on nums[start..end]
-    private int robLinear(int[] nums, int start, int end) {
-        int prev2 = 0; // dp[i-2]
-        int prev1 = 0; // dp[i-1]
-        
-        for (int i = start; i <= end; i++) {
-            int pick = prev2 + nums[i];  // rob this house + best up to i-2
-            int skip = prev1;            // skip this house, keep best up to i-1
-            int cur = Math.max(pick, skip);
-            
-            prev2 = prev1;
-            prev1 = cur;
+        if (n == 2) {
+            return Math.max(nums[0], nums[1]);
         }
-        
-        return prev1; // dp[end]
+
+        int[] memo1 = new int[n];
+        memo1[0] = nums[0];
+        memo1[1] = Math.max(nums[0], nums[1]);
+
+        for(int i=2; i<=n-2; i++){
+            memo1[i] = Math.max(memo1[i-1], nums[i] + memo1[i-2]);
+        }
+
+        int[] memo2 = new int[n];
+        memo2[1] = nums[1];
+        memo2[2] = Math.max(nums[1], nums[2]);
+
+        for(int i=3; i<=n-1; i++){
+            memo2[i] = Math.max(memo2[i-1], nums[i] + memo2[i - 2]);
+        }
+
+        return Math.max(memo1[n-2], memo2[n-1]);
     }
 }
 
