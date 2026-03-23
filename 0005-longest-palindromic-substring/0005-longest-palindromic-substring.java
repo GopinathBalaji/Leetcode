@@ -288,21 +288,78 @@ So the algorithm correctly identifies `"bb"` as the longest palindromic substrin
 * Complexity is **O(n²)** time and **O(n²)** space.
 * The only “odd” bits (like `l > r` → `false` and not memoizing base cases) are harmless given how you structured the recursion.
 */
+// class Solution {
+//     public String longestPalindrome(String s) {
+//         int n = s.length();
+
+//         Boolean[][] memo = new Boolean[n][n];
+//         int bestStart = 0;
+//         int bestLen = 0;
+
+//         for(int l=0; l<n; l++){
+//             for(int r=l; r<n; r++){
+//                 if(dp(l, r, memo, s)){
+//                     int len = r - l + 1;
+//                     if(len > bestLen){
+//                         bestLen = len;
+//                         bestStart = l;
+//                     }
+//                 }
+//             }
+//         }
+
+//         return s.substring(bestStart, bestStart + bestLen);
+//     }
+
+//     private boolean dp(int l, int r, Boolean[][] memo, String s){
+//         if(l > r){
+//             return false;
+//         }
+//         if(l == r || (r == l+1 && s.charAt(l) == s.charAt(r))){
+//             return true;
+//         }
+
+//         if(memo[l][r] != null){
+//             return memo[l][r];
+//         }
+
+//         boolean isPalindrome = false;
+//         if(s.charAt(l) == s.charAt(r) && dp(l+1, r-1, memo, s)){
+//             isPalindrome = true;
+//         }
+
+//         memo[l][r] = isPalindrome;
+
+//         return memo[l][r];        
+//     }
+// }
+
+
+
+
+
+
+// Method 1.5: My Top-Down Approach (similar to the one above)
+/*
+*/
 class Solution {
     public String longestPalindrome(String s) {
         int n = s.length();
+        int[][] memo = new int[n][n];
 
-        Boolean[][] memo = new Boolean[n][n];
+        for(int[] row: memo){
+            Arrays.fill(row, -1);
+        }
+
         int bestStart = 0;
         int bestLen = 0;
 
-        for(int l=0; l<n; l++){
-            for(int r=l; r<n; r++){
-                if(dp(l, r, memo, s)){
-                    int len = r - l + 1;
-                    if(len > bestLen){
-                        bestLen = len;
-                        bestStart = l;
+        for(int i=0; i<n; i++){
+            for(int j=i; j<n; j++){
+                if(isPalindromeDP(s, i, j, memo)){
+                    if((j - i + 1) > bestLen){
+                        bestStart = i;
+                        bestLen = j - i + 1;
                     }
                 }
             }
@@ -311,28 +368,26 @@ class Solution {
         return s.substring(bestStart, bestStart + bestLen);
     }
 
-    private boolean dp(int l, int r, Boolean[][] memo, String s){
-        if(l > r){
-            return false;
-        }
-        if(l == r || (r == l+1 && s.charAt(l) == s.charAt(r))){
+    private boolean isPalindromeDP(String s, int left, int right, int[][] memo){
+        if(left >= right){
             return true;
         }
 
-        if(memo[l][r] != null){
-            return memo[l][r];
+        if(memo[left][right] != -1){
+            return memo[left][right] == 1;
         }
 
-        boolean isPalindrome = false;
-        if(s.charAt(l) == s.charAt(r) && dp(l+1, r-1, memo, s)){
-            isPalindrome = true;
+        if(s.charAt(left) != s.charAt(right)){
+            memo[left][right] = 0;
+            return false;
         }
 
-        memo[l][r] = isPalindrome;
+        memo[left][right] = isPalindromeDP(s, left + 1, right - 1, memo) ? 1 : 0;
 
-        return memo[l][r];        
+        return memo[left][right] == 1;
     }
 }
+
 
 
 
