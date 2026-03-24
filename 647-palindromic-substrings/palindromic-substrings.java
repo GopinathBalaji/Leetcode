@@ -252,19 +252,72 @@ So:
 * **Time:** O(n²)
 * **Space:** O(n²) for the `memo` table.
 */
+// class Solution {
+//     public int countSubstrings(String s) {
+//         int n = s.length();
+//         if(n == 1){
+//             return 1;
+//         }
+        
+//         Boolean[][] memo = new Boolean[n][n];
+//         int count = 0;
+
+//         for(int l=0; l<n; l++){
+//             for(int r=l; r<n; r++){
+//                 if(dp(s, memo, l, r)){
+//                     count++;
+//                 }
+//             }
+//         }
+
+//         return count;
+//     }
+
+//     private boolean dp(String s, Boolean[][] memo, int l, int r){
+//         if(l > r){
+//             return false;
+//         }
+//         if(r == l || (r == l+1 && s.charAt(l) == s.charAt(r))){
+//             return true;
+//         }
+
+//         if(memo[l][r] != null){
+//             return memo[l][r];
+//         }
+
+//         boolean isPalindrome = false;
+//         if(s.charAt(l) == s.charAt(r) && dp(s, memo, l+1, r-1)){
+//             isPalindrome = true;
+//         }
+
+//         memo[l][r] = isPalindrome;
+
+//         return memo[l][r];
+//     }
+// }
+
+
+
+
+
+
+// Method 1.5: My Top-Down approach (similar to the one above)
+/*
+*/
 class Solution {
     public int countSubstrings(String s) {
         int n = s.length();
-        if(n == 1){
-            return 1;
+        int[][] memo = new int[n][n];
+
+        for(int[] row: memo){
+            Arrays.fill(row, -1);
         }
-        
-        Boolean[][] memo = new Boolean[n][n];
+
         int count = 0;
 
-        for(int l=0; l<n; l++){
-            for(int r=l; r<n; r++){
-                if(dp(s, memo, l, r)){
+        for(int i=0; i<n; i++){
+            for(int j=i; j<n; j++){
+                if(isPalindromeDP(s, memo, i, j)){
                     count++;
                 }
             }
@@ -273,29 +326,22 @@ class Solution {
         return count;
     }
 
-    private boolean dp(String s, Boolean[][] memo, int l, int r){
-        if(l > r){
-            return false;
-        }
-        if(r == l || (r == l+1 && s.charAt(l) == s.charAt(r))){
+    private boolean isPalindromeDP(String s, int[][] memo, int left, int right){
+        if(left >= right){
             return true;
         }
-
-        if(memo[l][r] != null){
-            return memo[l][r];
+        if(memo[left][right] != -1){
+            return memo[left][right] == 1;
+        }
+        if(s.charAt(left) != s.charAt(right)){
+            return false;
         }
 
-        boolean isPalindrome = false;
-        if(s.charAt(l) == s.charAt(r) && dp(s, memo, l+1, r-1)){
-            isPalindrome = true;
-        }
+        memo[left][right] = isPalindromeDP(s, memo, left+1, right-1) ? 1 : 0;
 
-        memo[l][r] = isPalindrome;
-
-        return memo[l][r];
+        return memo[left][right] == 1;
     }
 }
-
 
 
 
@@ -740,8 +786,6 @@ Total = 9 palindromic substrings.
 //         return count;
 //     }
 // }
-
-
 
 
 
