@@ -350,44 +350,44 @@ With memoization and the correct checks:
 * Fix: compute `twoDigit` and only add `dp(i+2)` if `10 ≤ twoDigit ≤ 26`.
 */
 
-class Solution {
-    public int numDecodings(String s) {
-        int n = s.length();
-        Integer[] memo = new Integer[n];
+// class Solution {
+//     public int numDecodings(String s) {
+//         int n = s.length();
+//         Integer[] memo = new Integer[n];
 
-        int count = dp(s, memo, 0);
+//         int count = dp(s, memo, 0);
 
-        return count;
-    }
+//         return count;
+//     }
 
-    private int dp(String s, Integer[] memo, int i){
-        if(i == s.length()){
-            return 1;
-        }
+//     private int dp(String s, Integer[] memo, int i){
+//         if(i == s.length()){
+//             return 1;
+//         }
 
-        if(s.charAt(i) == '0'){
-            return 0;
-        }
+//         if(s.charAt(i) == '0'){
+//             return 0;
+//         }
 
-        if(memo[i] != null){
-            return memo[i];
-        }
+//         if(memo[i] != null){
+//             return memo[i];
+//         }
 
 
-        int ways = dp(s, memo, i+1);
+//         int ways = dp(s, memo, i+1);
 
-        if(i+1 < s.length()){
-            int twoDigit = (s.charAt(i) - '0') * 10 + (s.charAt(i+1) - '0');
-            if(twoDigit >= 10 && twoDigit <= 26){
-                ways += dp(s, memo, i+2);
-            }
-        }
+//         if(i+1 < s.length()){
+//             int twoDigit = (s.charAt(i) - '0') * 10 + (s.charAt(i+1) - '0');
+//             if(twoDigit >= 10 && twoDigit <= 26){
+//                 ways += dp(s, memo, i+2);
+//             }
+//         }
 
-        memo[i] = ways;
+//         memo[i] = ways;
 
-        return memo[i];
-    }
-}
+//         return memo[i];
+//     }
+// }
 
 
 
@@ -847,3 +847,40 @@ If you’d like, next we can compress this DP down to **O(1) space** (like using
 //         return dp[0];
 //     }
 // }
+
+
+
+
+
+
+
+// Method 2.5: My Bottom-Up Approach (similar to the one above)
+/*
+*/
+class Solution {
+    public int numDecodings(String s) {
+        
+        if(s.charAt(0) == '0'){
+            return 0;
+        }
+
+        int n = s.length();
+        int[] memo = new int[n+1];
+        memo[n] = 1;
+
+        for(int i=n-1; i>=0; i--){
+            if(s.charAt(i) == '0'){
+                memo[i] = 0;
+            }else{
+                memo[i] = memo[i+1];
+
+                if(i+1 < n && Integer.parseInt(s.substring(i, i+2)) >= 10 && Integer.parseInt(s.substring(i, i+2)) <= 26){
+                    memo[i] += memo[i+2];
+                }
+            }
+        }
+
+        return memo[0];
+    }
+}
+
