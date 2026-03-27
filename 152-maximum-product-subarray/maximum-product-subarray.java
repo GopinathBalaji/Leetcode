@@ -433,7 +433,284 @@ class Solution {
 
 
 
-// Method 2: Top-Down 1D DP
+// Method 2: My Bottom-Up Approach
+/*
+#################### WHY IS THIS APPROACH INEFFICIENT #########################
+It is **not the right direction** for the best solution.
+
+Your `memo[l][r]` setup suggests:
+
+> “Let me compute the product of every subarray `nums[l..r]`.”
+
+That can work in a brute-force / DP-like way, but it is **not the key insight** for this problem, and it leads you toward an **O(n²)** solution with **O(n²)** space, while the standard solution is **O(n)** time and **O(1)** space.
+
+## Why this direction is not ideal
+
+For **maximum product subarray**, the difficulty is not just computing products of ranges.
+The real issue is:
+
+* a **negative number** can turn a very small negative product into a very large positive product
+* a **zero** resets everything
+
+So at each index, you do **not** only care about the maximum product ending there.
+You also care about the **minimum product ending there**.
+
+That is the main insight.
+
+---
+
+# What you should think instead
+
+Define for each index `i`:
+
+* `maxEndingHere` = maximum product of a subarray that **ends at i**
+* `minEndingHere` = minimum product of a subarray that **ends at i**
+
+Why minimum too?
+Because if `nums[i]` is negative:
+
+```text
+negative × negative = positive
+```
+
+So the previous minimum product may become the new maximum.
+
+---
+
+## Transition idea
+
+When you process `nums[i]`, three possibilities matter:
+
+1. start fresh from `nums[i]`
+2. extend previous max product: `nums[i] * maxEndingHere`
+3. extend previous min product: `nums[i] * minEndingHere`
+
+So new values come from:
+
+```text
+newMax = max(nums[i], nums[i] * oldMax, nums[i] * oldMin)
+newMin = min(nums[i], nums[i] * oldMax, nums[i] * oldMin)
+```
+
+Then update global answer with `newMax`.
+
+---
+
+# Why your 2D memo idea is awkward
+
+Suppose you define:
+
+```java
+memo[l][r] = product of nums[l..r]
+```
+
+Then maybe you think:
+
+```java
+memo[l][r] = memo[l][r - 1] * nums[r]
+```
+
+That does compute products of all subarrays.
+
+But problems:
+
+* it is **O(n²)** states
+* product values can grow/shrink wildly
+* the problem does not require all subarray products
+* the elegant property is local: only previous max/min ending at index matters
+
+So yes, it is *a possible direction*, but not the one interviewers usually want, and not the optimal one.
+
+---
+
+# Better direction
+
+Think like this:
+
+## At index `i`, what is the best product of a subarray ending at `i`?
+
+You cannot answer that with only one value, because of negatives.
+
+So track both:
+
+* best positive-ish result ending here
+* worst negative-ish result ending here
+
+That gives the correct O(n) DP.
+
+---
+
+# Small example
+
+Take:
+
+```text
+nums = [2, 3, -2, 4]
+```
+
+Process left to right.
+
+### Start with 2
+
+* maxEndingHere = 2
+* minEndingHere = 2
+* answer = 2
+
+### At 3
+
+Candidates:
+
+* `3`
+* `3 * 2 = 6`
+* `3 * 2 = 6`
+
+So:
+
+* maxEndingHere = 6
+* minEndingHere = 3
+* answer = 6
+
+### At -2
+
+Candidates:
+
+* `-2`
+* `-2 * 6 = -12`
+* `-2 * 3 = -6`
+
+So:
+
+* maxEndingHere = -2
+* minEndingHere = -12
+* answer = 6
+
+### At 4
+
+Candidates:
+
+* `4`
+* `4 * -2 = -8`
+* `4 * -12 = -48`
+
+So:
+
+* maxEndingHere = 4
+* minEndingHere = -48
+* answer = 6
+
+Correct answer is `6`.
+
+---
+
+# More important example
+
+Take:
+
+```text
+nums = [2, 3, -2, -4]
+```
+
+At the last `-4`, the previous minimum becomes very useful:
+
+before `-4`:
+
+* maxEndingHere = -2
+* minEndingHere = -12
+
+Now candidates:
+
+* `-4`
+* `-4 * -2 = 8`
+* `-4 * -12 = 48`
+
+So:
+
+* maxEndingHere = 48
+
+This is exactly why tracking only max is not enough.
+
+---
+
+# So what should you do?
+
+Instead of:
+
+```java
+int[][] memo = new int[n][n];
+```
+
+move toward:
+
+```java
+int maxEndingHere = nums[0];
+int minEndingHere = nums[0];
+int ans = nums[0];
+```
+
+Then iterate from index `1`.
+
+---
+
+# Hint without giving full code
+
+At each `i`:
+
+1. store old `maxEndingHere` and `minEndingHere`
+2. compute:
+
+   * `candidate1 = nums[i]`
+   * `candidate2 = nums[i] * oldMax`
+   * `candidate3 = nums[i] * oldMin`
+3. new max is max of these three
+4. new min is min of these three
+5. update answer with new max
+
+---
+
+# Final judgment on your approach
+
+Your current idea is:
+
+* reasonable as an initial brute-force thought
+* not the best direction for the intended DP insight
+* likely too heavy in both time and space
+
+The **right direction** is **1D DP / rolling variables with max and min product ending at each index**.
+###############################################################################
+*/
+// class Solution {
+//     public int maxProduct(int[] nums) {
+//         int n = nums.length;
+//         int[][] memo = new int[n][n];
+
+//         int max = Integer.MIN_VALUE;
+
+//         for(int i=0; i<n; i++){
+//             memo[i][i] = nums[i];
+//             max = Math.max(max, nums[i]);
+//         }
+
+//         for(int len=2; len<=n; len++){
+//             for(int l=0; l + len - 1 < n; l++){
+//                 int r = l + len - 1;
+                
+//                 memo[l][r] = memo[l][r - 1] * nums[r];
+//                 max = Math.max(max, memo[l][r]);
+//             }
+//         }
+
+//         return max;
+//     }
+// }
+
+
+
+
+
+
+
+
+// Method 3: Top-Down 1D DP
 /*
 ## 1. Core idea: why this problem is tricky
 
