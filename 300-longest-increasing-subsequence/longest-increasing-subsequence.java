@@ -90,7 +90,7 @@
 
 // ---
 
-// ## \U0001f9e9 Reminder of what each state means
+// ## 🧩 Reminder of what each state means
 
 // `dfs(i, prev)` = **length of the longest increasing subsequence** in `nums[i .. end]`,
 // given that the **last chosen element** has index `prev` (or `-1` if none chosen yet).
@@ -100,7 +100,7 @@
 
 // ---
 
-// ## \U0001fa9c Step-by-step recursion
+// ## 🪜 Step-by-step recursion
 
 // ### Start:
 
@@ -165,7 +165,7 @@
 
 // ---
 
-// ## \U0001f9ee Let’s see how memoization works
+// ## 🧮 Let’s see how memoization works
 
 // Take one repeated subproblem:
 // `dfs(5, -1)` (start at index 5, no previous chosen).
@@ -193,7 +193,7 @@
 
 // ---
 
-// ## \U0001f9e0 How the result builds up (condensed trace)
+// ## 🧠 How the result builds up (condensed trace)
 
 // Let’s follow the “taking” logic to see actual LIS lengths.
 
@@ -212,7 +212,7 @@
 
 // ---
 
-// ## \U0001f501 How memo saves time
+// ## 🔁 How memo saves time
 
 // There are only `n × (n+1)` unique subproblems:
 // For `n=8`, that’s 8×9=72 states.
@@ -221,7 +221,7 @@
 
 // ---
 
-// ## \U0001f50d Visualization (subset)
+// ## 🔍 Visualization (subset)
 
 // ```
 // dfs(0,-1)
@@ -260,31 +260,497 @@
 // This top-down approach mirrors the standard iterative DP but expresses it recursively with clean subproblem reuse.
 */
 
+// class Solution {
+//     public int lengthOfLIS(int[] nums) {
+//         int n = nums.length;
+//         // memo[i][prev+1] where prev in [-1..n-1] → shift by +1 to index 0..n
+//         Integer[][] memo = new Integer[n][n + 1];
+//         return dfs(0, -1, nums, memo);
+//     }
+
+//     // returns LIS length from i..end, given last chosen index = prev (or -1 if none)
+//     private int dfs(int i, int prev, int[] nums, Integer[][] memo) {
+//         if (i == nums.length) return 0;
+
+//         if (memo[i][prev + 1] != null) return memo[i][prev + 1];
+
+//         // Option 1: skip nums[i]
+//         int best = dfs(i + 1, prev, nums, memo);
+
+//         // Option 2: take nums[i] if it extends
+//         if (prev == -1 || nums[i] > nums[prev]) {
+//             best = Math.max(best, 1 + dfs(i + 1, i, nums, memo));
+//         }
+
+//         return memo[i][prev + 1] = best;
+//     }
+// }
+
+
+
+
+
+
+// Method 1.5: My Top-Down approach
+/*
+#################### WHAT WAS I DOING WRONG ######################
+The main problem is this line:
+
+```java
+dp(nums, memo, 0);
+```
+
+You are only computing the LIS that **starts at index 0** and whatever states get reached from there.
+
+But the LIS can start at **any** index, not necessarily `0`.
+
+## Why this is wrong
+
+Your `dp(i)` means:
+
+```text
+length of LIS starting at index i
+```
+
+So the final answer should be:
+
+```text
+max(dp(i)) for all i
+```
+
+But in your code, you only call:
+
+```java
+dp(..., 0)
+```
+
+That means some `memo[i]` values may never get computed.
+
+Then later you do:
+
+```java
+for (int val : memo) {
+    ans = Math.max(ans, val);
+}
+```
+
+But many entries may still be `-1`, because you never called `dp` on them.
+
+---
+
+## Example where it fails
+
+Take:
+
+```java
+nums = [5, 1, 2, 3]
+```
+
+The actual LIS is:
+
+```text
+1, 2, 3
+```
+
+length = `3`
+
+But your recursion starts only from index `0`:
+
+```text
+dp(0) = LIS starting from 5
+```
+
+There are no later elements greater than `5`, so:
+
+```java
+memo[0] = 1
+```
+
+And no other states get explored, because from `5` you cannot go anywhere.
+
+So memo becomes something like:
+
+```java
+[1, -1, -1, -1]
+```
+
+Then your max loop gives:
+
+```java
+ans = 1
+```
+
+which is wrong.
+
+---
+
+# How to fix it
+
+You must call `dp` for **every** starting index:
+
+```java
+int ans = 0;
+for (int i = 0; i < n; i++) {
+    ans = Math.max(ans, dp(nums, memo, i));
+}
+return ans;
+```
+
+Then every needed state gets computed, and you directly build the answer correctly.
+
+
+# Is the recursive logic itself correct?
+
+Yes. This part is fine:
+
+```java
+for(int j=i+1; j<nums.length; j++){
+    if(nums[j] > nums[i]){
+        best = Math.max(best, 1 + dp(nums, memo, j));
+    }
+}
+```
+
+It correctly says:
+
+* from index `i`
+* try every later bigger element `j`
+* take the best continuation
+
+So the recurrence is correct.
+
+---
+
+# Small conceptual summary
+
+Your state is:
+
+```text
+dp(i) = LIS length starting at i
+```
+
+That does **not** mean the overall answer is `dp(0)`.
+
+It means:
+
+```text
+answer = max(dp(0), dp(1), dp(2), ..., dp(n-1))
+```
+
+because the best subsequence may begin anywhere.
+
+---
+
+# One more edge note
+
+If the input were empty, this code would need handling, but for LeetCode 300 the array length is usually at least 1. Still, for robustness, many people add:
+
+```java
+if (nums.length == 0) return 0;
+```
+
+---
+
+The only real bug is that you started recursion from just index `0` instead of all indices.
+
+##################################################################
+
+Here are progressive **top-down DP / memoization hints** for **LeetCode 300. Longest Increasing Subsequence**.
+
+## Hint 1
+
+A very natural top-down question is:
+
+> What is the length of the LIS that **starts at index `i`**?
+
+So define:
+
+```text
+dfs(i) = length of the longest increasing subsequence starting at i
+```
+
+Then the final answer is:
+
+```text
+max(dfs(i)) for all i
+```
+
+because the overall LIS can start anywhere.
+
+---
+
+## Hint 2
+
+If you are at index `i`, the next element in the subsequence must come from some later index `j > i` such that:
+
+```text
+nums[j] > nums[i]
+```
+
+So from `i`, you try all valid next choices.
+
+---
+
+## Hint 3
+
+That gives the recurrence:
+
+```text
+dfs(i) = 1 + max(dfs(j)) for all j > i where nums[j] > nums[i]
+```
+
+If there is no such `j`, then:
+
+```text
+dfs(i) = 1
+```
+
+because the subsequence can just be the element at `i` itself.
+
+---
+
+## Hint 4
+
+Why does this work?
+
+Because once you choose `nums[i]` as the current element, the rest of the problem is:
+
+> find the longest increasing subsequence among later elements that are bigger than `nums[i]`
+
+That is exactly what the recursive calls represent.
+
+---
+
+## Hint 5
+
+Memoization is straightforward:
+
+```text
+memo[i] = LIS length starting at index i
+```
+
+If `memo[i]` is already computed, return it directly.
+
+That avoids recomputing the same suffix problem many times.
+
+---
+
+## Hint 6
+
+Pseudocode shape:
+
+```text
+dfs(i):
+    if memo[i] already exists:
+        return memo[i]
+
+    best = 1
+
+    for j from i + 1 to n - 1:
+        if nums[j] > nums[i]:
+            best = max(best, 1 + dfs(j))
+
+    memo[i] = best
+    return best
+```
+
+Then:
+
+```text
+answer = 0
+for i from 0 to n - 1:
+    answer = max(answer, dfs(i))
+```
+
+---
+
+## Hint 7
+
+Example:
+
+```text
+nums = [1, 2, 4, 3]
+```
+
+* `dfs(0)` looks for bigger elements after `1`
+* it can go to `2`, `4`, or `3`
+* the best path is `1 -> 2 -> 4` or `1 -> 2 -> 3`
+* so `dfs(0) = 3`
+
+---
+
+## Hint 8
+
+Notice this top-down version uses only **one index**, not two.
+
+That is because the current element is fixed by the starting index `i`, and that already tells you the constraint for what can come next.
+
+---
+
+## Hint 9
+
+There is also another top-down formulation with two parameters:
+
+```text
+dfs(index, prevIndex)
+```
+
+meaning:
+
+* you are currently at `index`
+* the previous chosen element was at `prevIndex`
+
+This is more general, but also heavier.
+
+For learning DP, it is useful, but for this problem the **one-index memoized version** is cleaner.
+
+---
+
+## Hint 10
+
+The one-index version works well because:
+
+* `dfs(i)` assumes `nums[i]` is already chosen
+* then it only needs to figure out the best continuation
+
+So it is similar to the bottom-up state:
+
+```text
+dp[i] = LIS length starting from i
+```
+
+just computed recursively instead of iteratively.
+
+---
+
+## Hint 11
+
+Base case is kind of implicit here:
+
+If no later `j` satisfies:
+
+```text
+nums[j] > nums[i]
+```
+
+then the loop does nothing and `best` stays `1`.
+
+So the subsequence is just `[nums[i]]`.
+
+---
+
+## Hint 12
+
+Common mistake:
+do not assume the answer is `dfs(0)`.
+
+The LIS does **not** have to start at index `0`.
+
+So you must compute:
+
+```text
+max over all starting indices
+```
+
+---
+
+## Hint 13
+
+Small dry run for:
+
+```text
+nums = [10, 9, 2, 5, 3, 7]
+```
+
+* `dfs(5)` for `7` = 1
+* `dfs(4)` for `3` can go to `7`, so = 2
+* `dfs(3)` for `5` can go to `7`, so = 2
+* `dfs(2)` for `2` can go to `5`, `3`, `7`, best = 3
+
+So the LIS starting at `2` has length 3: `[2, 5, 7]` or `[2, 3, 7]`
+
+---
+
+## Hint 14
+
+Time complexity with memoization:
+
+* there are `n` states
+* each state loops over later indices
+
+So total is:
+
+```text
+O(n^2)
+```
+
+with:
+
+```text
+O(n)
+```
+
+memo space, ignoring recursion stack.
+
+---
+
+## Hint 15
+
+If you want a very compact recurrence:
+
+```text
+dfs(i) = 1 + max(dfs(j)) over all j > i with nums[j] > nums[i]
+```
+
+and if no such `j` exists, return `1`.
+
+---
+
+## Hint 16
+
+Mental model:
+
+At each position, ask:
+
+> If I force myself to take this number, what is the longest increasing subsequence I can build after it?
+
+That is exactly the recursive state.
+*/
 class Solution {
     public int lengthOfLIS(int[] nums) {
         int n = nums.length;
-        // memo[i][prev+1] where prev in [-1..n-1] → shift by +1 to index 0..n
-        Integer[][] memo = new Integer[n][n + 1];
-        return dfs(0, -1, nums, memo);
-    }
+        
+        int[] memo = new int[n];
+        Arrays.fill(memo, -1);
 
-    // returns LIS length from i..end, given last chosen index = prev (or -1 if none)
-    private int dfs(int i, int prev, int[] nums, Integer[][] memo) {
-        if (i == nums.length) return 0;
-
-        if (memo[i][prev + 1] != null) return memo[i][prev + 1];
-
-        // Option 1: skip nums[i]
-        int best = dfs(i + 1, prev, nums, memo);
-
-        // Option 2: take nums[i] if it extends
-        if (prev == -1 || nums[i] > nums[prev]) {
-            best = Math.max(best, 1 + dfs(i + 1, i, nums, memo));
+        int ans = 0;
+        for(int i=0; i<n; i++){
+            ans = Math.max(ans, dp(nums, memo, i));
         }
 
-        return memo[i][prev + 1] = best;
+        return ans;
+    }
+
+    private int dp(int[] nums, int[] memo, int i){
+        if(memo[i] != -1){
+            return memo[i];
+        }
+
+        int best = 1;
+
+        for(int j=i+1; j<nums.length; j++){
+            if(nums[j] > nums[i]){
+                best = Math.max(best, 1 + dp(nums, memo, j));
+            }
+        }
+
+        memo[i] = best;
+        return best;
     }
 }
+
+
+
 
 
 
@@ -425,3 +891,4 @@ Note: `[2,3,7,18]` is not necessarily the actual LIS found earlier (`[2,3,7,101]
 //         return lo;
 //     }
 // }
+
