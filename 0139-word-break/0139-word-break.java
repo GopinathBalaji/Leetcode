@@ -39,35 +39,76 @@ If a prefix fails to complete the rest, we try the **next** `end`; only when all
 6. **Loop/termination conditions.**
    `if (i >= n || j >= n) return false;` prevents exploring a valid cut at the **end**. You want to allow `end == n` and succeed if recursion from that cut reaches `i == n`.
 */
+// class Solution {
+//     public boolean wordBreak(String s, List<String> wordDict) {
+//         Set<String> dict = new HashSet<>(wordDict);
+
+//         // optional pruning: max word length
+//         int maxLen = 0;
+//         for (String w : dict) maxLen = Math.max(maxLen, w.length());
+
+//         Boolean[] memo = new Boolean[s.length() + 1]; // null = unknown
+//         return dfs(0, s, dict, memo, maxLen);
+//     }
+
+//     private boolean dfs(int i, String s, Set<String> dict, Boolean[] memo, int maxLen) {
+//         if (i == s.length()) return true;          // consumed all chars → success
+//         if (memo[i] != null) return memo[i];
+
+//         int n = s.length();
+//         int limit = Math.min(n, i + maxLen);       // prune by max word length
+
+//         // try all end positions for the next word
+//         for (int end = i + 1; end <= limit; end++) {
+//             // check prefix s[i:end]
+//             if (dict.contains(s.substring(i, end)) && dfs(end, s, dict, memo, maxLen)) {
+//                 return memo[i] = true;
+//             }
+//         }
+//         return memo[i] = false;
+//     }
+// }
+
+
+
+
+
+// Method 1.5: My Top-Down Approach
+/*
+*/
 class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
-        Set<String> dict = new HashSet<>(wordDict);
+        int n = s.length();
+        Set<String> set = new HashSet<>(wordDict);
 
-        // optional pruning: max word length
-        int maxLen = 0;
-        for (String w : dict) maxLen = Math.max(maxLen, w.length());
+        Boolean[] memo = new Boolean[n];
 
-        Boolean[] memo = new Boolean[s.length() + 1]; // null = unknown
-        return dfs(0, s, dict, memo, maxLen);
+        return dp(s, set, memo, 0);
     }
 
-    private boolean dfs(int i, String s, Set<String> dict, Boolean[] memo, int maxLen) {
-        if (i == s.length()) return true;          // consumed all chars → success
-        if (memo[i] != null) return memo[i];
+    private boolean dp(String s, Set<String> set, Boolean[] memo, int i){
+        if(i == s.length()){
+            return true;
+        }
 
-        int n = s.length();
-        int limit = Math.min(n, i + maxLen);       // prune by max word length
+        if(memo[i] != null){
+            return memo[i];
+        }
 
-        // try all end positions for the next word
-        for (int end = i + 1; end <= limit; end++) {
-            // check prefix s[i:end]
-            if (dict.contains(s.substring(i, end)) && dfs(end, s, dict, memo, maxLen)) {
-                return memo[i] = true;
+        for(int end=i; end<s.length(); end++){
+            String substr = s.substring(i, end + 1);
+            if(set.contains(substr) && dp(s, set, memo, end+1)){
+                memo[i] = true;
+                return true;
             }
         }
-        return memo[i] = false;
+
+        memo[i] = false;
+        return false;
     }
 }
+
+
 
 
 
@@ -134,6 +175,37 @@ Tip: If TLE on huge inputs, you can also pre-group dict by length or first chara
 //         return dp[n];
 //     }
 // }
+
+
+
+
+
+
+// Method 2.5: My Bottom-Up Approach
+/*
+*/
+// class Solution {
+//     public boolean wordBreak(String s, List<String> wordDict) {
+//         int n = s.length();
+//         Set<String> set = new HashSet<>(wordDict);
+
+//         boolean[] memo = new boolean[n+1];
+//         memo[0] = true;
+
+//         for(int i=1; i<=n; i++){
+//             for(int j=0; j<i-1; j++){
+//                 if(memo[j] == true && set.contains(s.substring(j, i))){
+//                     memo[i] = true;
+//                     break;
+//                 }
+//             }
+//         }
+
+//         return memo[n];
+//     }
+// }
+
+
 
 
 
@@ -253,3 +325,4 @@ If you want a strictly-`char[26]` trie (assuming lowercase a–z) for even faste
 //         return root;
 //     }
 // }
+
