@@ -339,55 +339,55 @@ With memo:
 * **Time:** `O(n * target)`
 * **Space:** `O(n * target)` for the memo table (plus recursion stack up to `O(n)`).
 */
-class Solution {
-    public boolean canPartition(int[] nums) {
-        int n = nums.length;
-        int sum = 0;
+// class Solution {
+//     public boolean canPartition(int[] nums) {
+//         int n = nums.length;
+//         int sum = 0;
 
-        for (int x : nums) {
-            sum += x;
-        }
+//         for (int x : nums) {
+//             sum += x;
+//         }
 
-        // Total sum must be even to split into two equal subsets
-        if (sum % 2 != 0) {
-            return false;
-        }
+//         // Total sum must be even to split into two equal subsets
+//         if (sum % 2 != 0) {
+//             return false;
+//         }
 
-        int target = sum / 2;
-        Boolean[][] memo = new Boolean[n][target + 1];
+//         int target = sum / 2;
+//         Boolean[][] memo = new Boolean[n][target + 1];
 
-        return dp(nums, memo, target, 0);
-    }
+//         return dp(nums, memo, target, 0);
+//     }
 
-    // Can we get 'remaining' using elements from index i..end ?
-    private boolean dp(int[] nums, Boolean[][] memo, int remaining, int i) {
-        // Success: we've hit the target sum exactly
-        if (remaining == 0) {
-            return true;
-        }
+//     // Can we get 'remaining' using elements from index i..end ?
+//     private boolean dp(int[] nums, Boolean[][] memo, int remaining, int i) {
+//         // Success: we've hit the target sum exactly
+//         if (remaining == 0) {
+//             return true;
+//         }
 
-        // Out of bounds or overshoot
-        if (i == nums.length || remaining < 0) {
-            return false;
-        }
+//         // Out of bounds or overshoot
+//         if (i == nums.length || remaining < 0) {
+//             return false;
+//         }
 
-        // Memo check
-        if (memo[i][remaining] != null) {
-            return memo[i][remaining];
-        }
+//         // Memo check
+//         if (memo[i][remaining] != null) {
+//             return memo[i][remaining];
+//         }
 
-        // Choice 1: skip current element
-        boolean skip = dp(nums, memo, remaining, i + 1);
+//         // Choice 1: skip current element
+//         boolean skip = dp(nums, memo, remaining, i + 1);
 
-        // Choice 2: take current element
-        boolean take = dp(nums, memo, remaining - nums[i], i + 1);
+//         // Choice 2: take current element
+//         boolean take = dp(nums, memo, remaining - nums[i], i + 1);
 
-        boolean ans = skip || take;
-        memo[i][remaining] = ans;
+//         boolean ans = skip || take;
+//         memo[i][remaining] = ans;
 
-        return ans;
-    }
-}
+//         return ans;
+//     }
+// }
 
 
 
@@ -720,3 +720,300 @@ So `canPartition` returns **true**.
 //         return dp[target];
 //     }
 // }
+
+
+
+
+
+
+// Method 2.5: My 2D-DP Approach
+/*
+We are solving **LeetCode 416 — Partition Equal Subset Sum**, which reduces to:
+
+> Can we form a subset whose sum equals `target = totalSum / 2`?
+
+---
+
+# Step 1 — What does the DP state mean?
+
+We define:
+
+```text
+dp[i][s] = whether we can form sum s using the first i numbers
+```
+
+So:
+
+* `i` → how many numbers we are allowed to use
+* `s` → the sum we are trying to build
+
+Example:
+
+```text
+nums = [1, 5, 11, 5]
+```
+
+Then:
+
+```text
+dp[2][6]
+```
+
+means:
+
+> Can we make sum 6 using the first 2 numbers `[1, 5]`?
+
+Answer: **Yes** (`1 + 5`).
+
+---
+
+# Step 2 — The key idea: every number gives you TWO choices
+
+When you look at the current number:
+
+```text
+num = nums[i - 1]
+```
+
+you have exactly two possibilities:
+
+```text
+1) Do NOT use this number
+2) Use this number
+```
+
+That is the entire recurrence.
+
+---
+
+# Step 3 — Case 1: Do NOT use the number
+
+If we ignore the current number, then:
+
+```text
+dp[i][s] = dp[i - 1][s]
+```
+
+Meaning:
+
+> If we could already make sum `s` using the first `i-1` numbers,
+> then we can still make it now without using this number.
+
+---
+
+# Step 4 — Case 2: Use the number
+
+If we use the number `num`, then:
+
+We must have previously formed:
+
+```text
+s - num
+```
+
+So we check:
+
+```text
+dp[i - 1][s - num]
+```
+
+Meaning:
+
+> If we could make `s - num` before,
+> then by adding `num`, we can make `s`.
+
+But this only works if:
+
+```text
+s >= num
+```
+
+Otherwise the subtraction would go negative.
+
+---
+
+# Step 5 — Combine the two choices
+
+We use **OR** because either choice is enough.
+
+So:
+
+```text
+dp[i][s] =
+    dp[i - 1][s]
+    OR
+    dp[i - 1][s - num]
+```
+
+when:
+
+```text
+s >= num
+```
+
+Otherwise:
+
+```text
+dp[i][s] = dp[i - 1][s]
+```
+
+---
+
+# Final recurrence
+
+```text
+if s < num:
+    dp[i][s] = dp[i - 1][s]
+else:
+    dp[i][s] = dp[i - 1][s] || dp[i - 1][s - num]
+```
+
+---
+
+# Step 6 — Concrete example
+
+Let:
+
+```text
+nums = [1, 5]
+target = 6
+```
+
+We compute:
+
+```text
+dp[2][6]
+```
+
+Current number:
+
+```text
+num = 5
+```
+
+Now apply recurrence.
+
+## Option 1 — Do NOT take 5
+
+Check:
+
+```text
+dp[1][6]
+```
+
+Can we make 6 using `[1]`?
+
+```text
+False
+```
+
+---
+
+## Option 2 — Take 5
+
+Then we must check:
+
+```text
+dp[1][6 - 5]
+dp[1][1]
+```
+
+Can we make 1 using `[1]`?
+
+```text
+True
+```
+
+So:
+
+```text
+dp[2][6] = False OR True
+         = True
+```
+
+---
+
+# Visual interpretation
+
+Think of the DP table row by row.
+
+Each row answers:
+
+```text
+Using the first i numbers,
+which sums are reachable?
+```
+
+When a new number arrives, you:
+
+```text
+copy previous sums
++
+create new sums by adding this number
+```
+
+---
+
+# Why this recurrence is correct
+
+Because every subset decision is binary:
+
+```text
+include this number
+or
+exclude this number
+```
+
+And DP simply records whether either path works.
+
+---
+
+# Summary — The recurrence in one sentence
+
+```text
+To make sum s with i numbers,
+either:
+    we already could make s without the new number
+or:
+    we could make s - num before and now add the new number
+```
+
+That is exactly:
+
+```text
+dp[i][s] = dp[i - 1][s] || dp[i - 1][s - num]
+```
+*/
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int n = nums.length;
+
+        int sum = 0;
+        for(int val: nums){
+            sum += val;
+        }
+
+        if(sum % 2 != 0){
+            return false;
+        }
+
+        int target = sum / 2;
+
+        boolean[][] memo = new boolean[n+1][target+1];
+        memo[0][0] = true;
+
+        for(int i=1; i<=n; i++){
+            for(int s=0; s<=target; s++){
+                int num = nums[i-1];
+
+                if(s < num){
+                    memo[i][s] = memo[i-1][s];
+                }else if(s >= num){
+                    memo[i][s] = memo[i-1][s] || memo[i-1][s - num];
+                }
+            }
+        }
+
+        return memo[n][target];
+    }
+}
