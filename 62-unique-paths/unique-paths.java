@@ -371,34 +371,34 @@ At the end, `memo` looks like:
 
 Each `memo[i][j]` is “number of paths from (i,j) to (2,2)”.
 */
-class Solution {
-    public int uniquePaths(int m, int n) {
-        Integer[][] memo = new Integer[m][n];
+// class Solution {
+//     public int uniquePaths(int m, int n) {
+//         Integer[][] memo = new Integer[m][n];
 
-        return dp(memo, m, n, 0, 0);        
-    }
+//         return dp(memo, m, n, 0, 0);        
+//     }
 
-    private int dp(Integer[][] memo, int m, int n, int i, int j){
-        if(i < 0 || i >= m || j < 0 || j >= n){
-            return 0;
-        }
-        if(i == m-1 && j == n-1){
-            return 1;
-        }
+//     private int dp(Integer[][] memo, int m, int n, int i, int j){
+//         if(i < 0 || i >= m || j < 0 || j >= n){
+//             return 0;
+//         }
+//         if(i == m-1 && j == n-1){
+//             return 1;
+//         }
 
-        if(memo[i][j] != null){
-            return memo[i][j];
-        }
+//         if(memo[i][j] != null){
+//             return memo[i][j];
+//         }
 
         
-        int down = dp(memo, m, n, i+1, j);
-        int right = dp(memo, m, n, i, j+1);
+//         int down = dp(memo, m, n, i+1, j);
+//         int right = dp(memo, m, n, i, j+1);
 
-        memo[i][j] = down + right;
+//         memo[i][j] = down + right;
 
-        return memo[i][j];
-    }
-}
+//         return memo[i][j];
+//     }
+// }
 
 
 
@@ -744,29 +744,28 @@ Bottom-up DP for **Unique Paths (62)**:
   * `dp[i][j] = dp[i-1][j] + dp[i][j-1]`
 * Answer: `dp[m-1][n-1]`.
 */
+class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] dp = new int[m][n];
 
-// class Solution {
-//     public int uniquePaths(int m, int n) {
-//         int[][] dp = new int[m][n];
+        // 1) Initialize first column: only one way to go straight down
+        for (int i = 0; i < m; i++) {
+            dp[i][0] = 1;
+        }
 
-//         // 1) Initialize first column: only one way to go straight down
-//         for (int i = 0; i < m; i++) {
-//             dp[i][0] = 1;
-//         }
+        // 2) Initialize first row: only one way to go straight right
+        for (int j = 0; j < n; j++) {
+            dp[0][j] = 1;
+        }
 
-//         // 2) Initialize first row: only one way to go straight right
-//         for (int j = 0; j < n; j++) {
-//             dp[0][j] = 1;
-//         }
+        // 3) Fill the rest of the table
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
 
-//         // 3) Fill the rest of the table
-//         for (int i = 1; i < m; i++) {
-//             for (int j = 1; j < n; j++) {
-//                 dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
-//             }
-//         }
-
-//         // 4) The answer is number of ways to reach bottom-right
-//         return dp[m - 1][n - 1];
-//     }
-// }
+        // 4) The answer is number of ways to reach bottom-right
+        return dp[m - 1][n - 1];
+    }
+}
