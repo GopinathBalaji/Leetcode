@@ -286,7 +286,7 @@ class Solution {
 
 
 
-// Method 2: Bottom-Up 2D DP
+// Method 2: Bottom-Up 2D DP (Prefix-Style)
 /*
 ## 1. DP idea: define `dp[i][j]` on prefixes
 
@@ -739,5 +739,679 @@ If you like, next we can:
         
 //         // Answer is LCS of full strings
 //         return dp[m][n];
+//     }
+// }
+
+
+
+
+
+
+
+// Method 3: Bottom-Up DP (Suffix DP)
+/*
+The **suffix version** of bottom-up DP defines the state as:
+
+```text
+dp[i][j] = length of the LCS between text1[i...] and text2[j...]
+```
+
+That means:
+
+* start at index `i` in `text1`
+* start at index `j` in `text2`
+* ask for the LCS length of the remaining suffixes
+
+This is a very clean way to think about the problem.
+
+---
+
+# 1. What the state means
+
+Suppose:
+
+```text
+text1 = "abcde"
+text2 = "ace"
+```
+
+Then:
+
+```text
+dp[0][0]
+```
+
+means:
+
+> LCS length between `"abcde"` and `"ace"`
+
+and
+
+```text
+dp[2][1]
+```
+
+means:
+
+> LCS length between `"cde"` and `"ce"`
+
+because:
+
+* `text1[2...] = "cde"`
+* `text2[1...] = "ce"`
+
+So every cell is comparing two suffixes.
+
+---
+
+# 2. Why this is called the suffix version
+
+Because instead of thinking:
+
+```text
+first i chars of text1 and first j chars of text2
+```
+
+we think:
+
+```text
+remaining chars from i onward and from j onward
+```
+
+So the DP naturally moves from the **end of the strings back toward the beginning**.
+
+---
+
+# 3. The recurrence
+
+At state `(i, j)`, compare:
+
+```text
+text1.charAt(i) and text2.charAt(j)
+```
+
+There are 2 cases.
+
+## Case 1: characters match
+
+If:
+
+```text
+text1[i] == text2[j]
+```
+
+then that character can be part of the LCS.
+
+So:
+
+```text
+dp[i][j] = 1 + dp[i + 1][j + 1]
+```
+
+Why?
+
+Because:
+
+* we use this matching character
+* then solve the rest of the problem on the next suffixes
+
+---
+
+## Case 2: characters do not match
+
+If:
+
+```text
+text1[i] != text2[j]
+```
+
+then we cannot take both characters together.
+
+So we try:
+
+* skip `text1[i]`
+* skip `text2[j]`
+
+That gives:
+
+```text
+dp[i][j] = max(dp[i + 1][j], dp[i][j + 1])
+```
+
+Why?
+
+Because:
+
+* `dp[i + 1][j]` means ignore current char of `text1`
+* `dp[i][j + 1]` means ignore current char of `text2`
+
+Take whichever gives a better LCS.
+
+---
+
+# 4. Base case
+
+If either suffix is empty, LCS length is `0`.
+
+So:
+
+```text
+dp[m][j] = 0   for all j
+dp[i][n] = 0   for all i
+```
+
+where:
+
+* `m = text1.length()`
+* `n = text2.length()`
+
+That is why we make the table size:
+
+```text
+(m + 1) x (n + 1)
+```
+
+The extra row and extra column represent empty suffixes.
+
+---
+
+# 5. Why we fill from bottom-right to top-left
+
+Look at the recurrence:
+
+```text
+dp[i][j] depends on:
+dp[i + 1][j]
+dp[i][j + 1]
+dp[i + 1][j + 1]
+```
+
+So to compute `dp[i][j]`, we need values:
+
+* below
+* right
+* diagonal down-right
+
+That means we must fill the table starting from the bottom-right corner and move upward/leftward.
+
+So the loop order is:
+
+```text
+for i from m - 1 down to 0
+    for j from n - 1 down to 0
+```
+
+# 7. Line-by-line explanation
+
+## Table creation
+
+```java
+int[][] dp = new int[m + 1][n + 1];
+```
+
+We need `m+1` and `n+1` because:
+
+* row `m` means empty suffix of `text1`
+* column `n` means empty suffix of `text2`
+
+Java initializes them to `0`, which is exactly our base case.
+
+---
+
+## Outer loop
+
+```java
+for (int i = m - 1; i >= 0; i--)
+```
+
+We start from the end of `text1` and move backward.
+
+---
+
+## Inner loop
+
+```java
+for (int j = n - 1; j >= 0; j--)
+```
+
+Similarly for `text2`.
+
+---
+
+## Match case
+
+```java
+if (text1.charAt(i) == text2.charAt(j)) {
+    dp[i][j] = 1 + dp[i + 1][j + 1];
+}
+```
+
+If the current characters match, we include that character in the subsequence and move both pointers forward.
+
+---
+
+## Mismatch case
+
+```java
+else {
+    dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+}
+```
+
+If they do not match, try:
+
+* skipping current char in `text1`
+* skipping current char in `text2`
+
+Take the better result.
+
+---
+
+## Final answer
+
+```java
+return dp[0][0];
+```
+
+Because `dp[0][0]` means:
+
+> LCS of the full strings `text1[0...]` and `text2[0...]`
+
+---
+
+# 8. Thorough example walkthrough
+
+Let us use:
+
+```text
+text1 = "abcde"
+text2 = "ace"
+```
+
+So:
+
+* `m = 5`
+* `n = 3`
+
+We make a table of size:
+
+```text
+6 x 4
+```
+
+because of the extra row/column for empty suffixes.
+
+---
+
+## Step 1: label the suffixes
+
+For `text1 = "abcde"`:
+
+* `i = 0` → `"abcde"`
+* `i = 1` → `"bcde"`
+* `i = 2` → `"cde"`
+* `i = 3` → `"de"`
+* `i = 4` → `"e"`
+* `i = 5` → `""`
+
+For `text2 = "ace"`:
+
+* `j = 0` → `"ace"`
+* `j = 1` → `"ce"`
+* `j = 2` → `"e"`
+* `j = 3` → `""`
+
+---
+
+## Step 2: initialize base cases
+
+Any comparison with an empty suffix gives `0`.
+
+So:
+
+* `dp[5][0..3] = 0`
+* `dp[0..5][3] = 0`
+
+---
+
+## Step 3: fill from bottom-right upward
+
+We start with `i = 4`, `j = 2`.
+
+---
+
+## Row i = 4 → text1[4] = 'e'
+
+### j = 2 → text2[2] = 'e'
+
+Characters match:
+
+```text
+dp[4][2] = 1 + dp[5][3] = 1 + 0 = 1
+```
+
+So LCS of `"e"` and `"e"` is `1`.
+
+---
+
+### j = 1 → text2[1] = 'c'
+
+Characters do not match:
+
+```text
+dp[4][1] = max(dp[5][1], dp[4][2])
+         = max(0, 1)
+         = 1
+```
+
+That means LCS of `"e"` and `"ce"` is `1` (`"e"`).
+
+---
+
+### j = 0 → text2[0] = 'a'
+
+Mismatch:
+
+```text
+dp[4][0] = max(dp[5][0], dp[4][1])
+         = max(0, 1)
+         = 1
+```
+
+So LCS of `"e"` and `"ace"` is `1`.
+
+---
+
+## Row i = 3 → text1[3] = 'd'
+
+### j = 2 → 'e'
+
+Mismatch:
+
+```text
+dp[3][2] = max(dp[4][2], dp[3][3])
+         = max(1, 0)
+         = 1
+```
+
+LCS of `"de"` and `"e"` is `1`.
+
+---
+
+### j = 1 → 'c'
+
+Mismatch:
+
+```text
+dp[3][1] = max(dp[4][1], dp[3][2])
+         = max(1, 1)
+         = 1
+```
+
+LCS of `"de"` and `"ce"` is `1`.
+
+---
+
+### j = 0 → 'a'
+
+Mismatch:
+
+```text
+dp[3][0] = max(dp[4][0], dp[3][1])
+         = max(1, 1)
+         = 1
+```
+
+LCS of `"de"` and `"ace"` is `1`.
+
+---
+
+## Row i = 2 → text1[2] = 'c'
+
+### j = 2 → 'e'
+
+Mismatch:
+
+```text
+dp[2][2] = max(dp[3][2], dp[2][3])
+         = max(1, 0)
+         = 1
+```
+
+LCS of `"cde"` and `"e"` is `1`.
+
+---
+
+### j = 1 → 'c'
+
+Match:
+
+```text
+dp[2][1] = 1 + dp[3][2]
+         = 1 + 1
+         = 2
+```
+
+So LCS of `"cde"` and `"ce"` is `2` (`"ce"`).
+
+---
+
+### j = 0 → 'a'
+
+Mismatch:
+
+```text
+dp[2][0] = max(dp[3][0], dp[2][1])
+         = max(1, 2)
+         = 2
+```
+
+LCS of `"cde"` and `"ace"` is `2`.
+
+---
+
+## Row i = 1 → text1[1] = 'b'
+
+### j = 2 → 'e'
+
+Mismatch:
+
+```text
+dp[1][2] = max(dp[2][2], dp[1][3])
+         = max(1, 0)
+         = 1
+```
+
+---
+
+### j = 1 → 'c'
+
+Mismatch:
+
+```text
+dp[1][1] = max(dp[2][1], dp[1][2])
+         = max(2, 1)
+         = 2
+```
+
+---
+
+### j = 0 → 'a'
+
+Mismatch:
+
+```text
+dp[1][0] = max(dp[2][0], dp[1][1])
+         = max(2, 2)
+         = 2
+```
+
+So LCS of `"bcde"` and `"ace"` is `2`.
+
+---
+
+## Row i = 0 → text1[0] = 'a'
+
+### j = 2 → 'e'
+
+Mismatch:
+
+```text
+dp[0][2] = max(dp[1][2], dp[0][3])
+         = max(1, 0)
+         = 1
+```
+
+---
+
+### j = 1 → 'c'
+
+Mismatch:
+
+```text
+dp[0][1] = max(dp[1][1], dp[0][2])
+         = max(2, 1)
+         = 2
+```
+
+---
+
+### j = 0 → 'a'
+
+Match:
+
+```text
+dp[0][0] = 1 + dp[1][1]
+         = 1 + 2
+         = 3
+```
+
+Final answer:
+
+```text
+dp[0][0] = 3
+```
+
+which is correct, because the LCS is:
+
+```text
+"ace"
+```
+
+---
+
+# 9. Final DP table
+
+We can write the meaningful part of the table like this:
+
+```text
+        a  c  e  ""
+a       3  2  1  0
+b       2  2  1  0
+c       2  2  1  0
+d       1  1  1  0
+e       1  1  1  0
+""      0  0  0  0
+```
+
+Each cell means:
+
+```text
+LCS(text1 suffix starting here, text2 suffix starting here)
+```
+
+Top-left cell is the full answer.
+
+---
+
+# 10. Why the mismatch recurrence makes sense
+
+This is the part many people find subtle.
+
+Suppose:
+
+```text
+text1[i] != text2[j]
+```
+
+Then the current two characters cannot both be used as a matching pair.
+
+So one of them must be excluded from the optimal choice at this step.
+
+That is why we try:
+
+```text
+dp[i + 1][j]
+```
+
+skip `text1[i]`
+
+and
+
+```text
+dp[i][j + 1]
+```
+
+skip `text2[j]`
+
+and take the better one.
+
+We do **not** need `dp[i + 1][j + 1]` directly in the mismatch case, because that possibility is already covered indirectly by the two larger choices.
+
+---
+
+# 11. Time and space complexity
+
+Let:
+
+* `m = text1.length()`
+* `n = text2.length()`
+
+Then:
+
+* **Time:** `O(m * n)`
+* **Space:** `O(m * n)`
+
+because each cell is computed once.
+
+---
+
+# 12. Key intuition to remember
+
+For suffix DP:
+
+```text
+dp[i][j]
+```
+
+always means:
+
+> “What is the best LCS I can get starting from these two positions?”
+
+Then:
+
+* if chars match, use them and go diagonal
+* if chars do not match, skip one side and take max
+
+That is the whole pattern.
+*/
+// class Solution {
+//     public int longestCommonSubsequence(String text1, String text2) {
+//         int m = text1.length();
+//         int n = text2.length();
+
+//         int[][] dp = new int[m + 1][n + 1];
+
+//         for (int i = m - 1; i >= 0; i--) {
+//             for (int j = n - 1; j >= 0; j--) {
+//                 if (text1.charAt(i) == text2.charAt(j)) {
+//                     dp[i][j] = 1 + dp[i + 1][j + 1];
+//                 } else {
+//                     dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+//                 }
+//             }
+//         }
+
+//         return dp[0][0];
 //     }
 // }
