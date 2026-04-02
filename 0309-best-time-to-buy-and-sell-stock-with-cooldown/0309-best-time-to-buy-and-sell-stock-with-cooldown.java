@@ -427,46 +427,241 @@ Top-down DP for 309 looks like this:
 * **Memoize** every `(day, canBuy)` so we don’t recompute states.
 * Answer is `dp(0, 1)`.
 */
+// class Solution {
+//     public int maxProfit(int[] prices) {
+//         int n = prices.length;
+//         Integer[][] memo = new Integer[n][2];
+        
+//         // Start at day 0 with "canBuy = 1" (we don't own any stock yet)
+//         return dp(prices, memo, 0, 1);
+//     }
+
+//     private int dp(int[] prices, Integer[][] memo, int day, int canBuy) {
+//         // Base case: beyond last day
+//         if (day >= prices.length) {
+//             return 0;
+//         }
+
+//         // Memoization check
+//         if (memo[day][canBuy] != null) {
+//             return memo[day][canBuy];
+//         }
+
+//         int profit;
+//         if (canBuy == 1) {
+//             // Option 1: buy today
+//             int buy = -prices[day] + dp(prices, memo, day + 1, 0);
+//             // Option 2: skip today
+//             int skip = dp(prices, memo, day + 1, 1);
+//             profit = Math.max(buy, skip);
+//         } else {
+//             // We're holding a stock
+//             // Option 1: sell today (and cooldown next day)
+//             int sell = prices[day] + dp(prices, memo, day + 2, 1);
+//             // Option 2: hold
+//             int hold = dp(prices, memo, day + 1, 0);
+//             profit = Math.max(sell, hold);
+//         }
+
+//         memo[day][canBuy] = profit;
+//         return profit;
+//     }
+// }
+
+
+
+
+
+
+
+// Method 1.5: My Top-Down Approach (Similar to the one above)
+/*
+########################### WHAT WAS I DOING WRONG ##########################
+There are **two major bugs** in this top-down DP, and one smaller issue.
+
+### 1. Your memoization state is incomplete
+
+You are memoizing only by `day`:
+
+```java
+if(memo[day] != -1){
+    return memo[day];
+}
+```
+
+But your recursion depends on **both**:
+
+* `day`
+* `holding`
+
+That means:
+
+```java
+dp(prices, memo, false, 2)
+```
+
+and
+
+```java
+dp(prices, memo, true, 2)
+```
+
+are **different problems**, but both try to use `memo[2]`.
+
+That is incorrect because:
+
+* if you are **holding** on day 2, your choices are sell or skip
+* if you are **not holding** on day 2, your choices are buy or skip
+
+These states can have completely different answers.
+
+So your memo should be something like:
+
+```java
+int[][] memo = new int[n][2];
+```
+
+where index `0/1` represents `holding`.
+
+---
+
+### 2. You are adding choices instead of taking the maximum
+
+This line is the biggest logical mistake:
+
+```java
+return memo[day] = buy + sell + skip;
+```
+
+In DP for stock problems, `buy`, `sell`, and `skip` are **alternative decisions**, not actions you do all together.
+
+On any day, you choose **one** best action:
+
+* buy
+* sell
+* skip
+
+So you must do:
+
+```java
+return Math.max(...);
+```
+
+not add them.
+
+For example, if holding:
+
+```java
+return Math.max(sell, skip);
+```
+
+If not holding:
+
+```java
+return Math.max(buy, skip);
+```
+
+Adding them makes no sense because it combines mutually exclusive choices.
+
+---
+
+### 3. You forgot the `skip` option when `holding == false`
+
+When you are not holding a stock, you have **two** choices:
+
+* buy
+* skip
+
+But your code only computes `buy` in that branch:
+
+```java
+if(!holding){
+    buy = -prices[day] + dp(prices, memo, true, day+1);
+}
+```
+
+You also need:
+
+```java
+skip = dp(prices, memo, false, day+1);
+```
+
+Otherwise you force a buy whenever you're not holding, which is wrong.
+
+---
+
+## Why this fails conceptually
+
+At each state, the recurrence should be:
+
+### If not holding
+
+```java
+dp(day, 0) = max(
+    -prices[day] + dp(day + 1, 1),   // buy
+    dp(day + 1, 0)                   // skip
+)
+```
+
+### If holding
+
+```java
+dp(day, 1) = max(
+    prices[day] + dp(day + 2, 0),    // sell, then cooldown
+    dp(day + 1, 1)                   // skip
+)
+```
+
+Your code violates this because:
+
+* it memoizes only by `day`
+* it adds branches instead of maximizing
+* it misses the skip case in one state
+
+
+## In one sentence
+
+Your solution is wrong because it **does not memoize the full state** and it **treats buy/sell/skip as if they all happen together instead of choosing the best one**.
+#############################################################################
+*/
 class Solution {
     public int maxProfit(int[] prices) {
         int n = prices.length;
-        Integer[][] memo = new Integer[n][2];
-        
-        // Start at day 0 with "canBuy = 1" (we don't own any stock yet)
-        return dp(prices, memo, 0, 1);
+
+        int[][] memo = new int[n][2];
+
+        for(int i=0; i<n; i++){
+            Arrays.fill(memo[i], -1);
+        }
+
+        return dp(prices, memo, 0, 0);
     }
 
-    private int dp(int[] prices, Integer[][] memo, int day, int canBuy) {
-        // Base case: beyond last day
-        if (day >= prices.length) {
+    private int dp(int[] prices, int[][] memo, int holding, int day){
+        if(day >= prices.length){
             return 0;
         }
 
-        // Memoization check
-        if (memo[day][canBuy] != null) {
-            return memo[day][canBuy];
+        if(memo[day][holding] != -1){
+            return memo[day][holding];
         }
 
-        int profit;
-        if (canBuy == 1) {
-            // Option 1: buy today
-            int buy = -prices[day] + dp(prices, memo, day + 1, 0);
-            // Option 2: skip today
-            int skip = dp(prices, memo, day + 1, 1);
-            profit = Math.max(buy, skip);
-        } else {
-            // We're holding a stock
-            // Option 1: sell today (and cooldown next day)
-            int sell = prices[day] + dp(prices, memo, day + 2, 1);
-            // Option 2: hold
-            int hold = dp(prices, memo, day + 1, 0);
-            profit = Math.max(sell, hold);
+        int ans;
+
+        if(holding == 0){
+            int buy = -prices[day] + dp(prices, memo, 1, day+1);
+            int skip = dp(prices, memo, 0, day+1);
+            ans = Math.max(buy, skip);
+        }else{
+            int sell = prices[day] + dp(prices, memo, 0, day+2);
+            int skip = dp(prices, memo, 1, day+1);
+            ans = Math.max(sell, skip);
         }
 
-        memo[day][canBuy] = profit;
-        return profit;
+        return memo[day][holding] = ans;
     }
 }
+
 
 
 
