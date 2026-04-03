@@ -497,40 +497,40 @@ Exactly the 4 combinations we expected:
 
 * Memoize over `(idx, remaining)`.
 */
-class Solution {
-    public int change(int amount, int[] coins) {
-        int n = coins.length;
-        Integer[][] memo = new Integer[n][amount + 1];
-        return dfs(coins, 0, amount, memo);
-    }
+// class Solution {
+//     public int change(int amount, int[] coins) {
+//         int n = coins.length;
+//         Integer[][] memo = new Integer[n][amount + 1];
+//         return dfs(coins, 0, amount, memo);
+//     }
 
-    // dfs(idx, remaining): number of ways to form 'remaining' using coins[idx..end]
-    private int dfs(int[] coins, int idx, int remaining, Integer[][] memo) {
-        // Base: exact amount formed
-        if (remaining == 0) {
-            return 1;
-        }
+//     // dfs(idx, remaining): number of ways to form 'remaining' using coins[idx..end]
+//     private int dfs(int[] coins, int idx, int remaining, Integer[][] memo) {
+//         // Base: exact amount formed
+//         if (remaining == 0) {
+//             return 1;
+//         }
 
-        // Base: no coins left or overshoot
-        if (idx == coins.length || remaining < 0) {
-            return 0;
-        }
+//         // Base: no coins left or overshoot
+//         if (idx == coins.length || remaining < 0) {
+//             return 0;
+//         }
 
-        if (memo[idx][remaining] != null) {
-            return memo[idx][remaining];
-        }
+//         if (memo[idx][remaining] != null) {
+//             return memo[idx][remaining];
+//         }
 
-        // Option 1: skip this coin
-        int waysSkip = dfs(coins, idx + 1, remaining, memo);
+//         // Option 1: skip this coin
+//         int waysSkip = dfs(coins, idx + 1, remaining, memo);
 
-        // Option 2: take this coin (stay at same idx)
-        int waysTake = dfs(coins, idx, remaining - coins[idx], memo);
+//         // Option 2: take this coin (stay at same idx)
+//         int waysTake = dfs(coins, idx, remaining - coins[idx], memo);
 
-        int totalWays = waysSkip + waysTake;
-        memo[idx][remaining] = totalWays;
-        return totalWays;
-    }
-}
+//         int totalWays = waysSkip + waysTake;
+//         memo[idx][remaining] = totalWays;
+//         return totalWays;
+//     }
+// }
 
 
 
@@ -941,5 +941,659 @@ But conceptually, it’s doing the exact same recurrence we just walked through 
 //         }
 
 //         return dp[n][amount];
+//     }
+// }
+
+
+
+
+
+
+
+// Method 2.5: My Bottom-Up Approach
+/*
+*/
+class Solution {
+    public int change(int amount, int[] coins) {
+        int n = coins.length;
+
+        int[][] memo = new int[n][amount+1];
+
+        for(int i=0; i<coins.length; i++){
+            for(int a=0; a<=amount; a++){
+                if(i == 0){
+                    memo[0][a] = (a % coins[0] == 0) ? 1 : 0;
+                }else{
+                    int notTake = memo[i-1][a];
+                    int take = 0;
+                    if(a >= coins[i]){
+                        take = memo[i][a - coins[i]];
+                    }
+
+                    memo[i][a] = notTake + take;
+                }
+            }
+        }     
+
+        return memo[n-1][amount];
+    }
+}
+
+
+
+
+
+
+
+
+// Method 3: 1D Bottom-Up Approach
+/*
+# Core idea
+
+We want to count the number of **combinations** to make `amount`.
+
+For example, if:
+
+* `amount = 5`
+* `coins = [1, 2, 5]`
+
+then these are the valid combinations:
+
+* `5`
+* `2 + 2 + 1`
+* `2 + 1 + 1 + 1`
+* `1 + 1 + 1 + 1 + 1`
+
+So the answer is `4`.
+
+Notice:
+
+* `2 + 1 + 1 + 1` and `1 + 2 + 1 + 1` are **not different**
+* order does **not** matter
+* so this is a **combinations** problem, not a permutations problem
+
+---
+
+# DP meaning
+
+We use a 1D array:
+
+```java id="1f4ylh"
+dp[a]
+```
+
+which means:
+
+> number of ways to make amount `a`
+
+So if `dp[4] = 3`, that means there are 3 different combinations that make amount 4.
+
+---
+
+# Base case
+
+```java id="qj0jry"
+dp[0] = 1
+```
+
+Why?
+
+Because there is exactly **one** way to make amount `0`:
+
+* choose no coins
+
+This base case is extremely important because it helps build all other answers.
+
+---
+
+# Transition
+
+For each coin, we try to use it to contribute to larger amounts.
+
+If the current coin is `coin`, then for every amount `a >= coin`:
+
+```java id="04f5u9"
+dp[a] += dp[a - coin]
+```
+
+---
+
+# Why does this work?
+
+Suppose current coin is `2`, and we are computing `dp[5]`.
+
+Then:
+
+```java id="bs6vdb"
+dp[5] += dp[3]
+```
+
+Why?
+
+Because every way to make `3` can become a way to make `5` by adding one `2`.
+
+So if there are 2 ways to make `3`, then those 2 ways produce 2 more ways to make `5`.
+
+---
+
+# Why coins must be the outer loop
+
+The loops should be:
+
+```java id="exkxrm"
+for each coin
+    for amount from coin to target
+```
+
+This ensures combinations are counted only once.
+
+We process coin types one by one, so once we move past a coin, we do not go back and create different orderings of the same combination.
+
+That is exactly what prevents counting:
+
+* `1 + 2`
+* `2 + 1`
+
+as two separate answers.
+
+---
+
+# Why amount goes from small to large
+
+For each coin, we do:
+
+```java id="obpsy8"
+for (int a = coin; a <= amount; a++)
+```
+
+This is because the same coin can be used **unlimited times**.
+
+When we compute `dp[a]`, we want `dp[a - coin]` to already include ways that may have used this same coin earlier in the same iteration.
+
+That is why we go left to right.
+
+
+# Very detailed walkthrough
+
+Let us take:
+
+```java id="op6c0n"
+amount = 5
+coins = [1, 2, 5]
+```
+
+We create:
+
+```java id="0notr3"
+dp = [0, 0, 0, 0, 0, 0]
+```
+
+Size is `amount + 1 = 6`, so indices are `0` through `5`.
+
+Then set:
+
+```java id="ywn95m"
+dp[0] = 1
+```
+
+So now:
+
+```java id="7m5kav"
+dp = [1, 0, 0, 0, 0, 0]
+```
+
+This means:
+
+* amount 0 → 1 way
+* everything else → 0 ways so far
+
+---
+
+## Process coin = 1
+
+We loop:
+
+```java id="yjx1c8"
+for (a = 1; a <= 5; a++)
+```
+
+### a = 1
+
+```java id="xfcu5r"
+dp[1] += dp[1 - 1]
+dp[1] += dp[0]
+dp[1] += 1
+```
+
+So:
+
+```java id="9b2a4j"
+dp = [1, 1, 0, 0, 0, 0]
+```
+
+Interpretation:
+
+* amount 1 can be made in 1 way: `[1]`
+
+---
+
+### a = 2
+
+```java id="ydjlwm"
+dp[2] += dp[2 - 1]
+dp[2] += dp[1]
+dp[2] += 1
+```
+
+So:
+
+```java id="wqozx4"
+dp = [1, 1, 1, 0, 0, 0]
+```
+
+Interpretation:
+
+* amount 2 can be made in 1 way: `[1,1]`
+
+---
+
+### a = 3
+
+```java id="of0v4h"
+dp[3] += dp[2]
+dp[3] += 1
+```
+
+So:
+
+```java id="7c60eu"
+dp = [1, 1, 1, 1, 0, 0]
+```
+
+Interpretation:
+
+* amount 3 can be made in 1 way: `[1,1,1]`
+
+---
+
+### a = 4
+
+```java id="uklo99"
+dp[4] += dp[3]
+dp[4] += 1
+```
+
+So:
+
+```java id="jp6rr7"
+dp = [1, 1, 1, 1, 1, 0]
+```
+
+Interpretation:
+
+* amount 4 can be made in 1 way: `[1,1,1,1]`
+
+---
+
+### a = 5
+
+```java id="h9zoru"
+dp[5] += dp[4]
+dp[5] += 1
+```
+
+So:
+
+```java id="zw2hmy"
+dp = [1, 1, 1, 1, 1, 1]
+```
+
+Interpretation:
+
+* amount 5 can be made in 1 way: `[1,1,1,1,1]`
+
+---
+
+After processing coin `1`, the array is:
+
+```java id="9jod9m"
+dp = [1, 1, 1, 1, 1, 1]
+```
+
+This makes sense, because using only coin `1`, every amount has exactly 1 way.
+
+---
+
+## Process coin = 2
+
+Now loop:
+
+```java id="jlwmw2"
+for (a = 2; a <= 5; a++)
+```
+
+Current array before starting:
+
+```java id="7834f3"
+dp = [1, 1, 1, 1, 1, 1]
+```
+
+---
+
+### a = 2
+
+```java id="czwvrf"
+dp[2] += dp[2 - 2]
+dp[2] += dp[0]
+dp[2] += 1
+```
+
+So:
+
+```java id="x3lcb4"
+dp[2] = 2
+dp = [1, 1, 2, 1, 1, 1]
+```
+
+Interpretation:
+
+Ways to make 2:
+
+* `[1,1]`
+* `[2]`
+
+---
+
+### a = 3
+
+```java id="4jp7dc"
+dp[3] += dp[3 - 2]
+dp[3] += dp[1]
+dp[3] += 1
+```
+
+So:
+
+```java id="m90epl"
+dp[3] = 2
+dp = [1, 1, 2, 2, 1, 1]
+```
+
+Interpretation:
+
+Ways to make 3:
+
+* `[1,1,1]`
+* `[1,2]`
+
+---
+
+### a = 4
+
+```java id="8lw6zf"
+dp[4] += dp[4 - 2]
+dp[4] += dp[2]
+```
+
+Now be careful:
+
+`dp[2]` is already updated in this same coin iteration, and currently `dp[2] = 2`.
+
+So:
+
+```java id="mgt0tw"
+dp[4] = 1 + 2 = 3
+dp = [1, 1, 2, 2, 3, 1]
+```
+
+Interpretation:
+
+Ways to make 4:
+
+* `[1,1,1,1]`
+* `[1,1,2]`
+* `[2,2]`
+
+This is exactly why we loop left to right.
+We want to allow reusing coin `2`.
+
+---
+
+### a = 5
+
+```java id="dlgd1s"
+dp[5] += dp[5 - 2]
+dp[5] += dp[3]
+```
+
+Currently `dp[3] = 2`, so:
+
+```java id="bmx3l2"
+dp[5] = 1 + 2 = 3
+dp = [1, 1, 2, 2, 3, 3]
+```
+
+Interpretation:
+
+Ways to make 5 so far:
+
+* `[1,1,1,1,1]`
+* `[1,1,1,2]`
+* `[1,2,2]`
+
+---
+
+After processing coin `2`, we have:
+
+```java id="d4oumx"
+dp = [1, 1, 2, 2, 3, 3]
+```
+
+---
+
+## Process coin = 5
+
+Now loop:
+
+```java id="jyu6hf"
+for (a = 5; a <= 5; a++)
+```
+
+Only one value.
+
+### a = 5
+
+```java id="fxfn9q"
+dp[5] += dp[5 - 5]
+dp[5] += dp[0]
+dp[5] += 1
+```
+
+So:
+
+```java id="55y0yh"
+dp[5] = 4
+dp = [1, 1, 2, 2, 3, 4]
+```
+
+Interpretation:
+
+Ways to make 5:
+
+* `[1,1,1,1,1]`
+* `[1,1,1,2]`
+* `[1,2,2]`
+* `[5]`
+
+Final answer:
+
+```java id="qomc2p"
+dp[5] = 4
+```
+
+---
+
+# Why this counts combinations correctly
+
+Let us focus on `amount = 3`, `coins = [1, 2]`.
+
+The valid combinations are:
+
+* `[1,1,1]`
+* `[1,2]`
+
+We should count `2`, not `3`.
+
+We do **not** want:
+
+* `[1,2]`
+* `[2,1]`
+
+to be treated separately.
+
+Because we process:
+
+1. all combinations using coin `1`
+2. then extend them using coin `2`
+
+we naturally create combinations in a fixed order of coin types, which prevents duplicates due to reordering.
+
+---
+
+# Intuition in one sentence
+
+For each coin, we ask:
+
+> how many old ways to make `a - coin` can be extended by adding this coin once more?
+
+That is exactly:
+
+```java id="jlwmh7"
+dp[a] += dp[a - coin]
+```
+
+---
+
+# Time and space complexity
+
+## Time
+
+There are:
+
+* `coins.length` coins
+* `amount + 1` states
+
+So time is:
+
+```java id="zudl2n"
+O(coins.length * amount)
+```
+
+## Space
+
+We only use one array of length `amount + 1`:
+
+```java id="c1ci2j"
+O(amount)
+```
+
+---
+
+# Common mistake
+
+A very common mistake is reversing the loops:
+
+```java id="anxuxu"
+for (int a = 0; a <= amount; a++) {
+    for (int coin : coins) {
+        ...
+    }
+}
+```
+
+This tends to count **permutations** because the same combination can be formed in different orders during the same amount step.
+
+For Coin Change II, that is wrong.
+
+The correct order is:
+
+```java id="lap7jk"
+for (int coin : coins) {
+    for (int a = coin; a <= amount; a++) {
+        dp[a] += dp[a - coin];
+    }
+}
+```
+
+---
+
+# Small second example
+
+Take:
+
+```java id="r62vn1"
+amount = 3
+coins = [2]
+```
+
+Start:
+
+```java id="l4ofx3"
+dp = [1, 0, 0, 0]
+```
+
+Process coin `2`:
+
+* `a = 2`: `dp[2] += dp[0]` → `dp[2] = 1`
+* `a = 3`: `dp[3] += dp[1]` → `dp[3] = 0`
+
+Final:
+
+```java id="t24g0y"
+dp = [1, 0, 1, 0]
+```
+
+So answer is `0`, which is correct because amount `3` cannot be made using only coin `2`.
+
+
+# Simple mental model
+
+Think of `dp[a]` as:
+
+> number of combinations currently known for amount `a`
+
+When you process a new coin, you allow that coin to participate in building new combinations.
+
+So each coin gradually expands the set of valid combinations.
+
+---
+
+# Final takeaway
+
+The 1D version works because:
+
+* `dp[a]` stores ways to make amount `a`
+* `dp[0] = 1` seeds the process
+* `dp[a] += dp[a - coin]` means: add this coin to every way of making `a - coin`
+* coins must be the outer loop so combinations are counted once
+* amounts go from left to right so the same coin can be reused
+*/
+
+// class Solution {
+//     public int change(int amount, int[] coins) {
+//         int[] dp = new int[amount + 1];
+
+//         // One way to make amount 0: choose nothing
+//         dp[0] = 1;
+
+//         // Process one coin at a time
+//         for (int coin : coins) {
+//             // Build all amounts that can include this coin
+//             for (int a = coin; a <= amount; a++) {
+//                 dp[a] += dp[a - coin];
+//             }
+//         }
+
+//         return dp[amount];
 //     }
 // }
