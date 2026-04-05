@@ -1,345 +1,537 @@
-// Method 1: Top-Down 2D DP
+// Method 1: Bottom-Up 2D DP Approach
 /*
-# NOTE: USE OFFSET IN MEMO TO KEEP INDEX POSITIVE
+# Step 1: Convert the problem
 
-### Bug 1: Wrong base case ordering / logic
+We assign `+` to some numbers and `-` to the rest.
 
-You have:
+Let:
 
-```java
-if (val == target) {
-    return 1;
-}
-if (idx >= nums.length) {
-    return 0;
-}
-```
+* `P` = sum of numbers given `+`
+* `N` = sum of numbers given `-`
 
-This says:
-
-> “As soon as the *current* sum equals the target, count that as a valid way, even if I haven’t processed all numbers yet.”
-
-That’s incorrect. For Target Sum, you must assign **a `+` or `-` sign to every element**. So you only want to check `val == target` **after you’ve used all numbers**.
-
-Correct logic:
-
-```java
-if (idx == nums.length) {
-    return val == target ? 1 : 0;
-}
-```
-
-That is: at the end (idx == n), if the sum you’ve built equals the target, count 1 way; otherwise 0.
-
----
-
-### Bug 2: Using `val` as an array index directly
-
-You declare:
-
-```java
-Integer[][] memo = new Integer[n][target + 1];
-```
-
-and then use `memo[idx][val]`.
-
-Problems:
-
-1. `val` can be **negative** (you do `val - nums[idx]`), so `memo[idx][val]` can be an invalid index.
-2. `val` can be **greater than `target`** in absolute value. For example:
-
-   * `nums = [1000,1000,...]`, `target = 3`, but partial sums can be `±1000, ±2000, ...`.
-   * Your second dimension is `target + 1`, which may be small and doesn’t cover all reachable sums.
-3. `target` itself can be **negative** in the problem constraints, so `new Integer[n][target + 1]` can even throw `NegativeArraySizeException`.
-
-The sum `val` ranges roughly in:
+Then:
 
 ```text
-[-sum(nums), +sum(nums)]
+P - N = target
+P + N = totalSum
 ```
 
-You cannot use it directly as an index without either:
-
-* adding an **offset** (`val + offset`), or
-* using a **HashMap** to memoize `(idx, val)`.
-
----
-
-### Bug 3: Unused `amount`-like parameter
-
-You pass `amount` (named `target`) and `remaining`-like logic, but in the `dp` function you only really need:
-
-* `idx`
-* `currentSum` (your `val`)
-* `target` (constant)
-
-That’s more of a style thing; not a correctness bug, but it’s extra clutter.
-
----
-
-## 2. Correct top-down version
-
-### Key idea
-
-State:
-
-> `dp(idx, curSum)` = number of ways to assign `+/-` signs to `nums[idx..end]`
-> such that the total sum becomes `target`, given that current sum is `curSum`.
-
-We’ll implement that with:
-
-* Base case at `idx == nums.length`
-* Two choices at each index: `+ nums[idx]` and `- nums[idx]`
-* Memo over `(idx, curSum)` using an **offset** so we can store `curSum` in an array.
-
-Because `|curSum|` can be as large as `sum(nums)`, let:
+Add them:
 
 ```text
-S = sum(nums)
-curSum ∈ [-S, S]
-map curSum → (curSum + S) ∈ [0, 2S]
+2P = totalSum + target
 ```
-
-## 3. Explanation of the DP state and recurrence
-
-### State definition
-
-> `dfs(idx, curSum)` = number of ways to assign signs to `nums[idx..]`
-> such that if we start with `curSum` at this point, the final sum equals `target`.
-
-Initially:
-
-```text
-idx = 0
-curSum = 0
-```
-
-We want `dfs(0, 0)`.
-
-### Base case
-
-When we’ve assigned signs to all elements (we’re at `idx == nums.length`):
-
-* If `curSum == target` → exactly 1 way (this sign assignment works).
-* Else → 0 ways.
 
 So:
 
-```java
-if (idx == nums.length) {
-    return curSum == target ? 1 : 0;
-}
-```
-
-### Transition
-
-At position `idx`, we have two choices with `nums[idx]`:
-
-1. Assign `+nums[idx]`:
-
-   * New sum: `curSum + nums[idx]`.
-   * Recurse: `dfs(idx + 1, curSum + nums[idx])`.
-
-2. Assign `-nums[idx]`:
-
-   * New sum: `curSum - nums[idx]`.
-   * Recurse: `dfs(idx + 1, curSum - nums[idx])`.
-
-Total ways:
-
 ```text
-dfs(idx, curSum) = dfs(idx + 1, curSum + nums[idx])
-                 + dfs(idx + 1, curSum - nums[idx])
+P = (totalSum + target) / 2
 ```
 
-### Memoization
+So the problem becomes:
 
-The same `(idx, curSum)` pair can be reached by different paths, so we memoize:
+> Count the number of subsets whose sum is
+> `goal = (totalSum + target) / 2`
 
-* Use a 2D array `memo[idx][curSum + offset]`.
-* `offset` is `sum(nums)` to handle negative sums.
-
-If `memo[idx][key]` is already filled, just return it.
-
-This reduces complexity from exponential to `O(n * sum(nums))`.
+That is exactly a **count subsets with given sum** problem.
 
 ---
 
-## 4. Example walkthrough: `nums = [1,1,1,1,1]`, `target = 3`
+# Step 2: When is it impossible?
 
-We know the answer is **5**.
+Before DP, check:
 
-Valid sign assignments that sum to 3 (with 5 ones):
+```java
+if (Math.abs(target) > totalSum) return 0;
+if ((totalSum + target) % 2 != 0) return 0;
+```
 
-* `+ + + - -` (in various positions). There are exactly 5 of them.
+Why?
 
-Let’s see conceptually how `dfs` counts them.
+* If `|target| > totalSum`, even using all numbers cannot reach it.
+* If `totalSum + target` is odd, then `goal` is not an integer.
 
-### Setup
+---
 
-```text
-nums   = [1, 1, 1, 1, 1]
+# Step 3: DP meaning
+
+Let:
+
+```java
+dp[i][s]
+```
+
+mean:
+
+> number of ways to pick a subset from the first `i` numbers
+> such that the subset sum is exactly `s`
+
+Notice:
+
+* `i` goes from `0` to `n`
+* `s` goes from `0` to `goal`
+
+So the DP table size is:
+
+```java
+int[][] dp = new int[n + 1][goal + 1];
+```
+
+---
+
+# Step 4: Base case
+
+```java
+dp[0][0] = 1;
+```
+
+Meaning:
+
+* using 0 numbers
+* there is exactly 1 way to make sum 0
+* choose nothing
+
+And:
+
+```java
+dp[0][s] = 0   for s > 0
+```
+
+because with no numbers, you cannot make any positive sum.
+
+---
+
+# Step 5: Transition
+
+Suppose we are processing the `i`th number.
+
+Since Java arrays are 0-indexed, the current number is:
+
+```java
+nums[i - 1]
+```
+
+At state `dp[i][s]`, we have two choices:
+
+### Do not take this number
+
+Then the number of ways is:
+
+```java
+dp[i - 1][s]
+```
+
+### Take this number
+
+This is only possible if:
+
+```java
+s >= nums[i - 1]
+```
+
+Then the number of ways is:
+
+```java
+dp[i - 1][s - nums[i - 1]]
+```
+
+So the recurrence is:
+
+```java
+dp[i][s] = dp[i - 1][s];
+if (s >= nums[i - 1]) {
+    dp[i][s] += dp[i - 1][s - nums[i - 1]];
+}
+```
+
+
+# Why this works
+
+For each number, every subset-sum state has two possibilities:
+
+* exclude the number
+* include the number
+
+Since each array element can be used only once, both transitions come from the **previous row**:
+
+```java
+dp[i - 1][...]
+```
+
+That is why this is a **0/1 subset counting DP**.
+
+---
+
+# Detailed walkthrough
+
+Take:
+
+```java
+nums = [1, 1, 1, 1, 1]
 target = 3
-sum(nums) = 5
-offset = 5
-memo size: [5][11]  // sums from -5..+5
 ```
 
-We call:
+## First compute the goal
 
-```text
-dfs(0, 0)
+```java
+totalSum = 5
+goal = (5 + 3) / 2 = 4
 ```
 
-At each step, we branch into `+` and `-`.
+So now the question is:
 
-### Level 0 (idx = 0)
+> How many subsets of `[1,1,1,1,1]` sum to `4`?
 
-`curSum = 0`
+That answer should be `5`.
 
-Two choices with nums[0] = 1:
+---
 
-* `+1` → `dfs(1, 1)`
-* `-1` → `dfs(1, -1)`
+# DP table meaning here
 
-So:
+```java
+dp[i][s]
+```
+
+means:
+
+> using the first `i` ones, how many ways can I make sum `s`?
+
+We need `dp[5][4]`.
+
+The table has:
+
+* rows: `0` to `5`
+* cols: `0` to `4`
+
+---
+
+## Row 0: no numbers used
+
+Only sum `0` is possible:
 
 ```text
-dfs(0, 0) = dfs(1, 1) + dfs(1, -1)
+i\s   0  1  2  3  4
+0     1  0  0  0  0
 ```
 
 ---
 
-### Level 1 (idx = 1)
+## Row 1: use first number = 1
 
-#### `dfs(1, 1)`:
+For `s = 0`:
 
-Choices:
+```java
+dp[1][0] = dp[0][0] = 1
+```
 
-* `+1` → `dfs(2, 2)`
-* `-1` → `dfs(2, 0)`
+For `s = 1`:
+
+```java
+dp[1][1] = dp[0][1] + dp[0][0]
+         = 0 + 1
+         = 1
+```
+
+For `s = 2, 3, 4`, impossible.
 
 So:
 
 ```text
-dfs(1, 1) = dfs(2, 2) + dfs(2, 0)
+i\s   0  1  2  3  4
+0     1  0  0  0  0
+1     1  1  0  0  0
 ```
-
-#### `dfs(1, -1)`:
-
-Choices:
-
-* `+1` → `dfs(2, 0)`
-* `-1` → `dfs(2, -2)`
-
-So:
-
-```text
-dfs(1, -1) = dfs(2, 0) + dfs(2, -2)
-```
-
-(Here you can already see how memoization helps: `dfs(2, 0)` is reused.)
 
 ---
 
-### Level 2 and beyond
+## Row 2: use first two numbers = [1,1]
 
-We keep branching until `idx == 5`. At that point we check:
+For `s = 0`:
 
-```text
-if (curSum == target) return 1; else 0;
+```java
+dp[2][0] = dp[1][0] = 1
 ```
 
-I won’t enumerate *all* 2⁵ = 32 paths, but here’s the pattern:
+For `s = 1`:
 
-* Every path corresponds to a sequence of `+1` / `-1` over 5 positions.
-* Each path produces a final sum `curSum`.
-* Exactly 5 of those paths produce `curSum == 3`.
-
-For instance:
-
-1. `+ + + - -` → sum = 1+1+1-1-1 = 1 (oops, miscalc? Let’s be precise)
-
-Let’s properly compute some:
-
-* `+ + + - -` → 1 + 1 + 1 - 1 - 1 = 1
-  (not 3)
-* `+ + - + -` → 1 + 1 - 1 + 1 - 1 = 1
-  not 3
-  We need exactly three `+` and two `-`, but signs matter in their positions on a sequence of all 1’s. Actually, sum over 5 ones:
-
-```text
-Let #plus = p, #minus = q, p + q = 5
-Total sum = p*1 + q*(-1) = p - q
-We want p - q = 3 and p + q = 5 → solve:
-p - q = 3
-p + q = 5
------------
-2p = 8 → p = 4, q = 1
+```java
+dp[2][1] = dp[1][1] + dp[1][0]
+         = 1 + 1
+         = 2
 ```
 
-So we need **4 pluses and 1 minus** in the sequence of 5 positions.
+Why 2?
 
-Number of such sequences: choose 1 position to be minus:
+Because there are two ways to pick one of the two `1`s.
 
-```text
-C(5,1) = 5
+For `s = 2`:
+
+```java
+dp[2][2] = dp[1][2] + dp[1][1]
+         = 0 + 1
+         = 1
 ```
 
-That’s exactly the 5 ways the DP will count and return.
+So now:
 
-Example valid sequences:
+```text
+i\s   0  1  2  3  4
+0     1  0  0  0  0
+1     1  1  0  0  0
+2     1  2  1  0  0
+```
 
-1. `- + + + +` → -1 + 1 + 1 + 1 + 1 = 3
-2. `+ - + + +`
-3. `+ + - + +`
-4. `+ + + - +`
-5. `+ + + + -`
+---
 
-For each such sequence, the recursion travels down to `idx == 5` with `curSum == 3`, and returns 1 for that leaf.
+## Row 3: use first three numbers
 
-All other sign patterns eventually reach `idx == 5` with `curSum != 3` and return 0.
+For `s = 1`:
 
-The recursion adds these leaf results up, and with memoization it avoids recomputing repeated `(idx, curSum)` states.
+```java
+dp[3][1] = dp[2][1] + dp[2][0]
+         = 2 + 1
+         = 3
+```
+
+For `s = 2`:
+
+```java
+dp[3][2] = dp[2][2] + dp[2][1]
+         = 1 + 2
+         = 3
+```
+
+For `s = 3`:
+
+```java
+dp[3][3] = dp[2][3] + dp[2][2]
+         = 0 + 1
+         = 1
+```
+
+So:
+
+```text
+i\s   0  1  2  3  4
+0     1  0  0  0  0
+1     1  1  0  0  0
+2     1  2  1  0  0
+3     1  3  3  1  0
+```
+
+---
+
+## Row 4: use first four numbers
+
+For `s = 1`:
+
+```java
+dp[4][1] = dp[3][1] + dp[3][0]
+         = 3 + 1
+         = 4
+```
+
+For `s = 2`:
+
+```java
+dp[4][2] = dp[3][2] + dp[3][1]
+         = 3 + 3
+         = 6
+```
+
+For `s = 3`:
+
+```java
+dp[4][3] = dp[3][3] + dp[3][2]
+         = 1 + 3
+         = 4
+```
+
+For `s = 4`:
+
+```java
+dp[4][4] = dp[3][4] + dp[3][3]
+         = 0 + 1
+         = 1
+```
+
+So:
+
+```text
+i\s   0  1  2  3  4
+0     1  0  0  0  0
+1     1  1  0  0  0
+2     1  2  1  0  0
+3     1  3  3  1  0
+4     1  4  6  4  1
+```
+
+---
+
+## Row 5: use all five numbers
+
+For `s = 1`:
+
+```java
+dp[5][1] = dp[4][1] + dp[4][0]
+         = 4 + 1
+         = 5
+```
+
+For `s = 2`:
+
+```java
+dp[5][2] = dp[4][2] + dp[4][1]
+         = 6 + 4
+         = 10
+```
+
+For `s = 3`:
+
+```java
+dp[5][3] = dp[4][3] + dp[4][2]
+         = 4 + 6
+         = 10
+```
+
+For `s = 4`:
+
+```java
+dp[5][4] = dp[4][4] + dp[4][3]
+         = 1 + 4
+         = 5
+```
+
+Final table:
+
+```text
+i\s   0  1  2  3  4
+0     1  0  0  0  0
+1     1  1  0  0  0
+2     1  2  1  0  0
+3     1  3  3  1  0
+4     1  4  6  4  1
+5     1  5 10 10  5
+```
+
+Answer:
+
+```java
+dp[5][4] = 5
+```
+
+So there are **5 ways**.
+
+---
+
+# What about zeros?
+
+This is very important.
+
+Suppose:
+
+```java
+nums = [0, 0, 1]
+target = 1
+```
+
+Each zero can be assigned `+0` or `-0`, which are treated as different choices.
+
+The DP handles this naturally.
+
+Why?
+
+Because when `num = 0`:
+
+```java
+dp[i][s] = dp[i - 1][s] + dp[i - 1][s]
+         = 2 * dp[i - 1][s]
+```
+
+So the count doubles, exactly as it should.
+
+---
+
+# Time and space complexity
+
+For `n = nums.length` and `goal = (sum + target)/2`:
+
+Time:
+
+```text
+O(n * goal)
+```
+
+Space:
+
+```text
+O(n * goal)
+```
+
+---
+
+# Very important intuition
+
+This DP is not directly assigning `+` and `-`.
+
+Instead, it counts:
+
+> how many ways can I choose the numbers that will belong to the positive subset?
+
+Once that subset is chosen, the rest automatically become negative.
+
+That is why the transformation works.
+
+---
+
+# One-line recurrence summary
+
+```java
+dp[i][s] = dp[i - 1][s] + dp[i - 1][s - nums[i - 1]]
+```
+
+when `s >= nums[i - 1]`, otherwise just:
+
+```java
+dp[i][s] = dp[i - 1][s]
+```
 */
 class Solution {
     public int findTargetSumWays(int[] nums, int target) {
         int n = nums.length;
-        int sum = 0;
-        for (int x : nums) sum += x;
 
-        // If |target| > sum, it's impossible
-        if (Math.abs(target) > sum) return 0;
-
-        int offset = sum;
-        // memo[idx][curSum + offset]
-        Integer[][] memo = new Integer[n][2 * sum + 1];
-
-        return dp(nums, target, 0, 0, memo, offset);
-    }
-
-    // dfs(idx, curSum): #ways using nums[idx..] to reach target
-    private int dp(int[] nums, int target,
-                    int idx, int curSum,
-                    Integer[][] memo, int offset) {
-
-        if (idx == nums.length) {
-            return curSum == target ? 1 : 0;
+        int totalSum = 0;
+        int goal = 0;
+        for(int num: nums){
+            totalSum += num;
         }
 
-        int key = curSum + offset;  // shift sum into [0..2*sum]
-        if (memo[idx][key] != null) {
-            return memo[idx][key];
+        goal = (target + totalSum) / 2;
+
+        if(Math.abs(target) > totalSum){
+            return 0;
+        }
+        if((totalSum + target) % 2 != 0){
+            return 0;
         }
 
-        // Choose '+'
-        int plus = dp(nums, target, idx + 1, curSum + nums[idx], memo, offset);
+        int[][] memo = new int[n+1][goal+1];
+        memo[0][0] = 1;
 
-        // Choose '-'
-        int minus = dp(nums, target, idx + 1, curSum - nums[idx], memo, offset);
+        for(int i=1; i<=nums.length; i++){
+            for(int s=0; s<=goal; s++){
+                int skip = memo[i-1][s];
+                int take = 0;
+                
+                if(s >= nums[i-1]){
+                    take = memo[i-1][s - nums[i-1]];
+                }
 
-        memo[idx][key] = plus + minus;
-        return memo[idx][key];
+                memo[i][s] = skip + take;
+            }
+        }
+
+        return memo[n][goal];
     }
 }
 
@@ -657,4 +849,347 @@ If you’d like, I can also show the **direct** bottom-up DP on `(index, current
 
 
 
-// 
+// Method 3: Top-Down 2D DP
+/*
+# NOTE: USE OFFSET IN MEMO TO KEEP INDEX POSITIVE
+
+### Bug 1: Wrong base case ordering / logic
+
+You have:
+
+```java
+if (val == target) {
+    return 1;
+}
+if (idx >= nums.length) {
+    return 0;
+}
+```
+
+This says:
+
+> “As soon as the *current* sum equals the target, count that as a valid way, even if I haven’t processed all numbers yet.”
+
+That’s incorrect. For Target Sum, you must assign **a `+` or `-` sign to every element**. So you only want to check `val == target` **after you’ve used all numbers**.
+
+Correct logic:
+
+```java
+if (idx == nums.length) {
+    return val == target ? 1 : 0;
+}
+```
+
+That is: at the end (idx == n), if the sum you’ve built equals the target, count 1 way; otherwise 0.
+
+---
+
+### Bug 2: Using `val` as an array index directly
+
+You declare:
+
+```java
+Integer[][] memo = new Integer[n][target + 1];
+```
+
+and then use `memo[idx][val]`.
+
+Problems:
+
+1. `val` can be **negative** (you do `val - nums[idx]`), so `memo[idx][val]` can be an invalid index.
+2. `val` can be **greater than `target`** in absolute value. For example:
+
+   * `nums = [1000,1000,...]`, `target = 3`, but partial sums can be `±1000, ±2000, ...`.
+   * Your second dimension is `target + 1`, which may be small and doesn’t cover all reachable sums.
+3. `target` itself can be **negative** in the problem constraints, so `new Integer[n][target + 1]` can even throw `NegativeArraySizeException`.
+
+The sum `val` ranges roughly in:
+
+```text
+[-sum(nums), +sum(nums)]
+```
+
+You cannot use it directly as an index without either:
+
+* adding an **offset** (`val + offset`), or
+* using a **HashMap** to memoize `(idx, val)`.
+
+---
+
+### Bug 3: Unused `amount`-like parameter
+
+You pass `amount` (named `target`) and `remaining`-like logic, but in the `dp` function you only really need:
+
+* `idx`
+* `currentSum` (your `val`)
+* `target` (constant)
+
+That’s more of a style thing; not a correctness bug, but it’s extra clutter.
+
+---
+
+## 2. Correct top-down version
+
+### Key idea
+
+State:
+
+> `dp(idx, curSum)` = number of ways to assign `+/-` signs to `nums[idx..end]`
+> such that the total sum becomes `target`, given that current sum is `curSum`.
+
+We’ll implement that with:
+
+* Base case at `idx == nums.length`
+* Two choices at each index: `+ nums[idx]` and `- nums[idx]`
+* Memo over `(idx, curSum)` using an **offset** so we can store `curSum` in an array.
+
+Because `|curSum|` can be as large as `sum(nums)`, let:
+
+```text
+S = sum(nums)
+curSum ∈ [-S, S]
+map curSum → (curSum + S) ∈ [0, 2S]
+```
+
+## 3. Explanation of the DP state and recurrence
+
+### State definition
+
+> `dfs(idx, curSum)` = number of ways to assign signs to `nums[idx..]`
+> such that if we start with `curSum` at this point, the final sum equals `target`.
+
+Initially:
+
+```text
+idx = 0
+curSum = 0
+```
+
+We want `dfs(0, 0)`.
+
+### Base case
+
+When we’ve assigned signs to all elements (we’re at `idx == nums.length`):
+
+* If `curSum == target` → exactly 1 way (this sign assignment works).
+* Else → 0 ways.
+
+So:
+
+```java
+if (idx == nums.length) {
+    return curSum == target ? 1 : 0;
+}
+```
+
+### Transition
+
+At position `idx`, we have two choices with `nums[idx]`:
+
+1. Assign `+nums[idx]`:
+
+   * New sum: `curSum + nums[idx]`.
+   * Recurse: `dfs(idx + 1, curSum + nums[idx])`.
+
+2. Assign `-nums[idx]`:
+
+   * New sum: `curSum - nums[idx]`.
+   * Recurse: `dfs(idx + 1, curSum - nums[idx])`.
+
+Total ways:
+
+```text
+dfs(idx, curSum) = dfs(idx + 1, curSum + nums[idx])
+                 + dfs(idx + 1, curSum - nums[idx])
+```
+
+### Memoization
+
+The same `(idx, curSum)` pair can be reached by different paths, so we memoize:
+
+* Use a 2D array `memo[idx][curSum + offset]`.
+* `offset` is `sum(nums)` to handle negative sums.
+
+If `memo[idx][key]` is already filled, just return it.
+
+This reduces complexity from exponential to `O(n * sum(nums))`.
+
+---
+
+## 4. Example walkthrough: `nums = [1,1,1,1,1]`, `target = 3`
+
+We know the answer is **5**.
+
+Valid sign assignments that sum to 3 (with 5 ones):
+
+* `+ + + - -` (in various positions). There are exactly 5 of them.
+
+Let’s see conceptually how `dfs` counts them.
+
+### Setup
+
+```text
+nums   = [1, 1, 1, 1, 1]
+target = 3
+sum(nums) = 5
+offset = 5
+memo size: [5][11]  // sums from -5..+5
+```
+
+We call:
+
+```text
+dfs(0, 0)
+```
+
+At each step, we branch into `+` and `-`.
+
+### Level 0 (idx = 0)
+
+`curSum = 0`
+
+Two choices with nums[0] = 1:
+
+* `+1` → `dfs(1, 1)`
+* `-1` → `dfs(1, -1)`
+
+So:
+
+```text
+dfs(0, 0) = dfs(1, 1) + dfs(1, -1)
+```
+
+---
+
+### Level 1 (idx = 1)
+
+#### `dfs(1, 1)`:
+
+Choices:
+
+* `+1` → `dfs(2, 2)`
+* `-1` → `dfs(2, 0)`
+
+So:
+
+```text
+dfs(1, 1) = dfs(2, 2) + dfs(2, 0)
+```
+
+#### `dfs(1, -1)`:
+
+Choices:
+
+* `+1` → `dfs(2, 0)`
+* `-1` → `dfs(2, -2)`
+
+So:
+
+```text
+dfs(1, -1) = dfs(2, 0) + dfs(2, -2)
+```
+
+(Here you can already see how memoization helps: `dfs(2, 0)` is reused.)
+
+---
+
+### Level 2 and beyond
+
+We keep branching until `idx == 5`. At that point we check:
+
+```text
+if (curSum == target) return 1; else 0;
+```
+
+I won’t enumerate *all* 2⁵ = 32 paths, but here’s the pattern:
+
+* Every path corresponds to a sequence of `+1` / `-1` over 5 positions.
+* Each path produces a final sum `curSum`.
+* Exactly 5 of those paths produce `curSum == 3`.
+
+For instance:
+
+1. `+ + + - -` → sum = 1+1+1-1-1 = 1 (oops, miscalc? Let’s be precise)
+
+Let’s properly compute some:
+
+* `+ + + - -` → 1 + 1 + 1 - 1 - 1 = 1
+  (not 3)
+* `+ + - + -` → 1 + 1 - 1 + 1 - 1 = 1
+  not 3
+  We need exactly three `+` and two `-`, but signs matter in their positions on a sequence of all 1’s. Actually, sum over 5 ones:
+
+```text
+Let #plus = p, #minus = q, p + q = 5
+Total sum = p*1 + q*(-1) = p - q
+We want p - q = 3 and p + q = 5 → solve:
+p - q = 3
+p + q = 5
+-----------
+2p = 8 → p = 4, q = 1
+```
+
+So we need **4 pluses and 1 minus** in the sequence of 5 positions.
+
+Number of such sequences: choose 1 position to be minus:
+
+```text
+C(5,1) = 5
+```
+
+That’s exactly the 5 ways the DP will count and return.
+
+Example valid sequences:
+
+1. `- + + + +` → -1 + 1 + 1 + 1 + 1 = 3
+2. `+ - + + +`
+3. `+ + - + +`
+4. `+ + + - +`
+5. `+ + + + -`
+
+For each such sequence, the recursion travels down to `idx == 5` with `curSum == 3`, and returns 1 for that leaf.
+
+All other sign patterns eventually reach `idx == 5` with `curSum != 3` and return 0.
+
+The recursion adds these leaf results up, and with memoization it avoids recomputing repeated `(idx, curSum)` states.
+*/
+// class Solution {
+//     public int findTargetSumWays(int[] nums, int target) {
+//         int n = nums.length;
+//         int sum = 0;
+//         for (int x : nums) sum += x;
+
+//         // If |target| > sum, it's impossible
+//         if (Math.abs(target) > sum) return 0;
+
+//         int offset = sum;
+//         // memo[idx][curSum + offset]
+//         Integer[][] memo = new Integer[n][2 * sum + 1];
+
+//         return dp(nums, target, 0, 0, memo, offset);
+//     }
+
+//     // dfs(idx, curSum): #ways using nums[idx..] to reach target
+//     private int dp(int[] nums, int target,
+//                     int idx, int curSum,
+//                     Integer[][] memo, int offset) {
+
+//         if (idx == nums.length) {
+//             return curSum == target ? 1 : 0;
+//         }
+
+//         int key = curSum + offset;  // shift sum into [0..2*sum]
+//         if (memo[idx][key] != null) {
+//             return memo[idx][key];
+//         }
+
+//         // Choose '+'
+//         int plus = dp(nums, target, idx + 1, curSum + nums[idx], memo, offset);
+
+//         // Choose '-'
+//         int minus = dp(nums, target, idx + 1, curSum - nums[idx], memo, offset);
+
+//         memo[idx][key] = plus + minus;
+//         return memo[idx][key];
+//     }
+// }
