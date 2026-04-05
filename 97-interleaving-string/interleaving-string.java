@@ -41,34 +41,34 @@
 * Match `b` from `s1` → `dfs(2,1)`
 * Match `d` from `s2` → `dfs(2,2)` hits base case → `true`, which memo bubbles back up.
 */
-class Solution {
-    public boolean isInterleave(String s1, String s2, String s3) {
-        int m = s1.length(), n = s2.length();
-        if (m + n != s3.length()) return false;
+// class Solution {
+//     public boolean isInterleave(String s1, String s2, String s3) {
+//         int m = s1.length(), n = s2.length();
+//         if (m + n != s3.length()) return false;
 
-        Boolean[][] memo = new Boolean[m + 1][n + 1];
-        return dfs(0, 0, s1, s2, s3, memo);
-    }
+//         Boolean[][] memo = new Boolean[m + 1][n + 1];
+//         return dfs(0, 0, s1, s2, s3, memo);
+//     }
 
-    // dfs(i,j): can s1[i:] and s2[j:] form s3[i+j:] ?
-    private boolean dfs(int i, int j, String s1, String s2, String s3, Boolean[][] memo) {
-        int m = s1.length(), n = s2.length();
-        if (i == m && j == n) return true;
+//     // dfs(i,j): can s1[i:] and s2[j:] form s3[i+j:] ?
+//     private boolean dfs(int i, int j, String s1, String s2, String s3, Boolean[][] memo) {
+//         int m = s1.length(), n = s2.length();
+//         if (i == m && j == n) return true;
 
-        if (memo[i][j] != null) return memo[i][j];
+//         if (memo[i][j] != null) return memo[i][j];
 
-        boolean ans = false;
-        // take from s1
-        if (i < m && s1.charAt(i) == s3.charAt(i + j)) {
-            ans = dfs(i + 1, j, s1, s2, s3, memo);
-        }
-        // take from s2 (only try if not already true)
-        if (!ans && j < n && s2.charAt(j) == s3.charAt(i + j)) {
-            ans = dfs(i, j + 1, s1, s2, s3, memo);
-        }
-        return memo[i][j] = ans;
-    }
-}
+//         boolean ans = false;
+//         // take from s1
+//         if (i < m && s1.charAt(i) == s3.charAt(i + j)) {
+//             ans = dfs(i + 1, j, s1, s2, s3, memo);
+//         }
+//         // take from s2 (only try if not already true)
+//         if (!ans && j < n && s2.charAt(j) == s3.charAt(i + j)) {
+//             ans = dfs(i, j + 1, s1, s2, s3, memo);
+//         }
+//         return memo[i][j] = ans;
+//     }
+// }
 
 
 
@@ -106,34 +106,36 @@ Then fill the table by the recurrence. You’ll end at `dp[5][5] = true`.
 (Conversely, with `s3="aadbbbaccc"`, you’ll eventually get `dp[5][5] = false`.)
 
 */
-// class Solution {
-//     public boolean isInterleave(String s1, String s2, String s3) {
-//         int m = s1.length(), n = s2.length();
-//         if (m + n != s3.length()) return false;
+class Solution {
+    public boolean isInterleave(String s1, String s2, String s3) {
+        int m = s1.length(), n = s2.length();
+        if (m + n != s3.length()) return false;
 
-//         boolean[][] dp = new boolean[m + 1][n + 1];
-//         dp[0][0] = true;
+        boolean[][] memo = new boolean[m + 1][n + 1];
+        memo[0][0] = true;
 
-//         // First column: only s1 contributes
-//         for (int i = 1; i <= m; i++) {
-//             dp[i][0] = dp[i - 1][0] && (s1.charAt(i - 1) == s3.charAt(i - 1));
-//         }
-//         // First row: only s2 contributes
-//         for (int j = 1; j <= n; j++) {
-//             dp[0][j] = dp[0][j - 1] && (s2.charAt(j - 1) == s3.charAt(j - 1));
-//         }
+        // First column: only s1 contributes
+        for (int i = 1; i <= m; i++) {
+            memo[i][0] = memo[i - 1][0] && (s1.charAt(i - 1) == s3.charAt(i - 1));
+        }
+        // First row: only s2 contributes
+        for (int j = 1; j <= n; j++) {
+            memo[0][j] = memo[0][j - 1] && (s2.charAt(j - 1) == s3.charAt(j - 1));
+        }
 
-//         for (int i = 1; i <= m; i++) {
-//             for (int j = 1; j <= n; j++) {
-//                 char need = s3.charAt(i + j - 1);
-//                 boolean from1 = dp[i - 1][j] && s1.charAt(i - 1) == need;
-//                 boolean from2 = dp[i][j - 1] && s2.charAt(j - 1) == need;
-//                 dp[i][j] = from1 || from2;
-//             }
-//         }
-//         return dp[m][n];
-//     }
-// }
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                boolean fromS1 = memo[i-1][j] && s1.charAt(i-1) == s3.charAt(i + j - 1);
+                boolean fromS2 = memo[i][j-1] && s2.charAt(j-1) == s3.charAt(i + j - 1);
+
+                if(fromS1 || fromS2){
+                    memo[i][j] = true;
+                }
+            }
+        }
+        return memo[m][n];
+    }
+}
 
 
 
