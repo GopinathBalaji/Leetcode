@@ -740,56 +740,57 @@ So the algorithm returns `4`, which is the correct answer.
    Some cells (like the `1` at `(2,1)`) have very long paths ahead; others (like the `9`s) have no neighbors bigger than them, so their path length is just 1.
 */
 
-class Solution {
-    public int longestIncreasingPath(int[][] matrix) {
-        int m = matrix.length;
-        int n = matrix[0].length;
+// class Solution {
+//     public int longestIncreasingPath(int[][] matrix) {
+//         int m = matrix.length;
+//         int n = matrix[0].length;
 
-        int[][] memo = new int[m][n]; // 0 means "not computed yet"
-        int maxLen = 0;
+//         int[][] memo = new int[m][n]; // 0 means "not computed yet"
+//         int maxLen = 0;
 
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < n; j++) {
-                maxLen = Math.max(maxLen, dp(matrix, memo, m, n, i, j));
-            }
-        }
+//         for (int i = 0; i < m; i++) {
+//             for (int j = 0; j < n; j++) {
+//                 maxLen = Math.max(maxLen, dp(matrix, memo, m, n, i, j));
+//             }
+//         }
 
-        return maxLen;
-    }
+//         return maxLen;
+//     }
 
-    private int dp(int[][] matrix, int[][] memo, int m, int n, int i, int j) {
-        // If we already computed this cell's best path length, return it
-        if (memo[i][j] != 0) {
-            return memo[i][j];
-        }
+//     private int dp(int[][] matrix, int[][] memo, int m, int n, int i, int j) {
+//         // If we already computed this cell's best path length, return it
+//         if (memo[i][j] != 0) {
+//             return memo[i][j];
+//         }
 
-        int current = matrix[i][j];
-        int best = 1; // at least the cell itself
+//         int current = matrix[i][j];
+//         int best = 1; // at least the cell itself
 
-        // Right
-        if (j + 1 < n && current < matrix[i][j + 1]) {
-            best = Math.max(best, 1 + dp(matrix, memo, m, n, i, j + 1));
-        }
+//         // Right
+//         if (j + 1 < n && current < matrix[i][j + 1]) {
+//             best = Math.max(best, 1 + dp(matrix, memo, m, n, i, j + 1));
+//         }
 
-        // Down
-        if (i + 1 < m && current < matrix[i + 1][j]) {
-            best = Math.max(best, 1 + dp(matrix, memo, m, n, i + 1, j));
-        }
+//         // Down
+//         if (i + 1 < m && current < matrix[i + 1][j]) {
+//             best = Math.max(best, 1 + dp(matrix, memo, m, n, i + 1, j));
+//         }
 
-        // Left
-        if (j - 1 >= 0 && current < matrix[i][j - 1]) {
-            best = Math.max(best, 1 + dp(matrix, memo, m, n, i, j - 1));
-        }
+//         // Left
+//         if (j - 1 >= 0 && current < matrix[i][j - 1]) {
+//             best = Math.max(best, 1 + dp(matrix, memo, m, n, i, j - 1));
+//         }
 
-        // Up
-        if (i - 1 >= 0 && current < matrix[i - 1][j]) {
-            best = Math.max(best, 1 + dp(matrix, memo, m, n, i - 1, j));
-        }
+//         // Up
+//         if (i - 1 >= 0 && current < matrix[i - 1][j]) {
+//             best = Math.max(best, 1 + dp(matrix, memo, m, n, i - 1, j));
+//         }
 
-        memo[i][j] = best;
-        return best;
-    }
-}
+//         memo[i][j] = best;
+//         return best;
+//     }
+// }
+
 
 
 
@@ -1262,65 +1263,53 @@ Theyâ€™re solving the **same problem** from opposite directions:
 
 Both give the same final answer; bottom-up just avoids recursion by using a topological order (the sorted cell values).
 */
-// class Solution {
+class Solution {
+    public int longestIncreasingPath(int[][] matrix) {
+        int m = matrix.length;
+        int n = matrix[0].length;
 
-//     static class Cell {
-//         int r, c, val;
-//         Cell(int r, int c, int val) {
-//             this.r = r;
-//             this.c = c;
-//             this.val = val;
-//         }
-//     }
+        int[][] memo = new int[m][n];
 
-//     public int longestIncreasingPath(int[][] matrix) {
-//         int m = matrix.length;
-//         if (m == 0) return 0;
-//         int n = matrix[0].length;
-//         if (n == 0) return 0;
+        for(int[] row: memo){
+            Arrays.fill(row, 1);
+        }
 
-//         int[][] dp = new int[m][n];      // dp[i][j] = longest inc path ending at (i, j)
-//         List<Cell> cells = new ArrayList<>();
+        List<int[]> list = new ArrayList<>();
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n; j++){
+                list.add(new int[] {matrix[i][j], i, j});
+            }
+        }
 
-//         // 1) Initialize dp and collect all cells
-//         for (int i = 0; i < m; i++) {
-//             for (int j = 0; j < n; j++) {
-//                 dp[i][j] = 1;  // path of length 1 (just the cell itself)
-//                 cells.add(new Cell(i, j, matrix[i][j]));
-//             }
-//         }
+        list.sort((a, b) -> Integer.compare(a[0], b[0]));
 
-//         // 2) Sort cells by value in ascending order
-//         cells.sort((a, b) -> Integer.compare(a.val, b.val));
+        int[][] dirs = {{1,0}, {0, -1}, {-1, 0}, {0, 1}};
 
-//         // Directions for neighbors: down, up, right, left
-//         int[][] dirs = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        int ans = 0;
 
-//         int maxLen = 1;
+        for(int i=0; i<list.size(); i++){
+            int[] coord = list.get(i);
+            int val = coord[0];
+            int r = coord[1];
+            int c = coord[2];
 
-//         // 3) Process cells in sorted order
-//         for (Cell cell : cells) {
-//             int i = cell.r;
-//             int j = cell.c;
+            for(int[] dir: dirs){
+                int nr = r + dir[0];
+                int nc = c + dir[1];
 
-//             // Look at all neighbors with smaller value
-//             for (int[] d : dirs) {
-//                 int ni = i + d[0];
-//                 int nj = j + d[1];
+                if(nr >= 0 && nr < m && nc >= 0 && nc < n && matrix[nr][nc] < matrix[r][c]){
+                    memo[r][c] = Math.max(memo[r][c], 1 + memo[nr][nc]);
+                }
+            }
 
-//                 if (ni >= 0 && ni < m && nj >= 0 && nj < n
-//                         && matrix[ni][nj] < matrix[i][j]) {
+            ans = Math.max(ans, memo[r][c]);   
+        }
 
-//                     dp[i][j] = Math.max(dp[i][j], dp[ni][nj] + 1);
-//                 }
-//             }
+        return ans;
+    }
+}
 
-//             maxLen = Math.max(maxLen, dp[i][j]);
-//         }
 
-//         return maxLen;
-//     }
-// }
 
 
 
@@ -1950,3 +1939,4 @@ All three are just different ways of exploiting the **same DAG structure** of â€
 //         return longest;
 //     }
 // }
+
