@@ -619,50 +619,50 @@ Top-down DP for Distinct Subsequences:
 * **Memoize** `dp(i, j)` to avoid recomputation.
 * Answer: `dp(0, 0)`.
 */
-class Solution {
-    public int numDistinct(String s, String t) {
-        int m = s.length();
-        int n = t.length();
+// class Solution {
+//     public int numDistinct(String s, String t) {
+//         int m = s.length();
+//         int n = t.length();
 
-        if (m < n) {
-            return 0;  // impossible to form longer t from shorter s
-        }
+//         if (m < n) {
+//             return 0;  // impossible to form longer t from shorter s
+//         }
 
-        Integer[][] memo = new Integer[m][n];
-        return dp(s, t, memo, m, n, 0, 0);
-    }
+//         Integer[][] memo = new Integer[m][n];
+//         return dp(s, t, memo, m, n, 0, 0);
+//     }
 
-    private int dp(String s, String t, Integer[][] memo, int m, int n, int i, int j) {
-        // If we've matched all of t, that's 1 valid subsequence
-        if (j == n) {
-            return 1;
-        }
+//     private int dp(String s, String t, Integer[][] memo, int m, int n, int i, int j) {
+//         // If we've matched all of t, that's 1 valid subsequence
+//         if (j == n) {
+//             return 1;
+//         }
 
-        // If we've exhausted s but still have characters in t, no way
-        if (i == m) {
-            return 0;
-        }
+//         // If we've exhausted s but still have characters in t, no way
+//         if (i == m) {
+//             return 0;
+//         }
 
-        if (memo[i][j] != null) {
-            return memo[i][j];
-        }
+//         if (memo[i][j] != null) {
+//             return memo[i][j];
+//         }
 
-        int val = 0;
-        if (s.charAt(i) != t.charAt(j)) {
-            // Can't use s[i] to match t[j], so skip s[i]
-            val = dp(s, t, memo, m, n, i + 1, j);
-        } else {
-            // Option 1: use s[i] to match t[j]
-            int use = dp(s, t, memo, m, n, i + 1, j + 1);
-            // Option 2: skip s[i]
-            int skip = dp(s, t, memo, m, n, i + 1, j);
-            val = use + skip;
-        }
+//         int val = 0;
+//         if (s.charAt(i) != t.charAt(j)) {
+//             // Can't use s[i] to match t[j], so skip s[i]
+//             val = dp(s, t, memo, m, n, i + 1, j);
+//         } else {
+//             // Option 1: use s[i] to match t[j]
+//             int use = dp(s, t, memo, m, n, i + 1, j + 1);
+//             // Option 2: skip s[i]
+//             int skip = dp(s, t, memo, m, n, i + 1, j);
+//             val = use + skip;
+//         }
 
-        memo[i][j] = val;
-        return val;
-    }
-}
+//         memo[i][j] = val;
+//         return val;
+//     }
+// }
 
 
 
@@ -1301,41 +1301,127 @@ So:
 * 2D DP: `dp[i][j] = dp[i-1][j] + (s[i-1]==t[j-1] ? dp[i-1][j-1] : 0)`, answer `dp[m][n]`.
 * 1D DP: same recurrence, but with `j` loop going **backwards** to avoid overwriting needed previous values.
 
+######################## WHAT EACH CASE MEANS ############################
+
+Because of what `dp[i][j]` means.
+
+We defined:
+
+```java
+dp[i][j]
+```
+
+as:
+
+> number of ways to form the first `j` characters of `t`
+> using the first `i` characters of `s`
+
+So the row index `i` tells you how much of **source string `s`** you are allowed to use, and the column index `j` tells you how much of **target string `t`** you still need to form.
+
+That meaning completely determines why the recurrence uses `dp[i - 1][j - 1]` and `dp[i - 1][j]`.
+
+---
+
+## When characters match
+
+Suppose:
+
+```java
+s.charAt(i - 1) == t.charAt(j - 1)
+```
+
+Now look at the last available character of the current prefix of `s`, namely `s[i-1]`.
+
+You have **two choices**.
+
+### Choice 1: use `s[i - 1]`
+
+If you decide to use this character to match `t[j - 1]`, then:
+
+* this character from `s` is consumed
+* this character from `t` is also matched and consumed
+
+So now the problem becomes:
+
+> how many ways can I form the first `j - 1` characters of `t`
+> using the first `i - 1` characters of `s`
+
+That is exactly:
+
+```java
+dp[i - 1][j - 1]
+```
+
+So this is why the “use it” part is `dp[i - 1][j - 1]`.
+
+---
+
+### Choice 2: skip `s[i - 1]`
+
+If you do **not** use `s[i - 1]`, then:
+
+* you have one fewer character available from `s`
+* but you still need to form the same `j` characters of `t`
+
+So the problem becomes:
+
+> how many ways can I form the first `j` characters of `t`
+> using only the first `i - 1` characters of `s`
+
+That is exactly:
+
+```java
+dp[i - 1][j]
+```
+
+So this is why the “skip it” part is `dp[i - 1][j]`.
+
+---
+
+## Why not `dp[i][j - 1]` for skip?
+
+Because when you skip, you are skipping a character from **`s`**, not from `t`.
+
+So skipping changes the amount of source available, not the amount of target needed.
+
+* skipping `s[i-1]` means move from `i` to `i-1`
+* it does **not** mean move from `j` to `j-1`
+
+`dp[i][j - 1]` would mean:
+
+> using the same first `i` characters of `s`,
+> form a shorter target prefix of length `j - 1`
+
+But that is not what “skip `s[i-1]`” means at all.
 */
-// class Solution {
-//     public int numDistinct(String s, String t) {
-//         int m = s.length();
-//         int n = t.length();
+class Solution {
+    public int numDistinct(String s, String t) {
+        int lenS = s.length();
+        int lenT = t.length();
 
-//         if (m < n) {
-//             // Cannot form longer t from shorter s
-//             return 0;
-//         }
+        int[][] memo = new int[lenS + 1][lenT + 1];
 
-//         // dp[i][j] = # ways to form t[0..j-1] from s[0..i-1]
-//         long[][] dp = new long[m + 1][n + 1]; // use long internally for safety
+        for(int i=0; i<lenS; i++){
+            memo[i][0] = 1;
+        }
 
-//         // Base: dp[i][0] = 1 for all i
-//         for (int i = 0; i <= m; i++) {
-//             dp[i][0] = 1;
-//         }
+        for(int j=1; j<lenT; j++){
+            memo[0][j] = 0;
+        }
 
-//         // First row dp[0][j>0] is already 0 by default
+        for(int i=1; i<=lenS; i++){
+            for(int j=1; j<=lenT; j++){
+                if(s.charAt(i-1) != t.charAt(j-1)){
+                    memo[i][j] = memo[i-1][j];
+                }else{
+                    int use = memo[i-1][j-1];
+                    int skip = memo[i-1][j];
 
-//         // Fill table
-//         for (int i = 1; i <= m; i++) {
-//             for (int j = 1; j <= n; j++) {
-//                 // Always can skip s[i-1]
-//                 dp[i][j] = dp[i - 1][j];
+                    memo[i][j] = use + skip;
+                }
+            }
+        }
 
-//                 // If last characters match, add ways that use this char
-//                 if (s.charAt(i - 1) == t.charAt(j - 1)) {
-//                     dp[i][j] += dp[i - 1][j - 1];
-//                 }
-//             }
-//         }
-
-//         // The answer fits in int as per problem statement
-//         return (int) dp[m][n];
-//     }
-// }
+        return memo[lenS][lenT];
+    }
+}
