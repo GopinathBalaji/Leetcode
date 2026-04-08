@@ -81,36 +81,35 @@ You can follow the memo table filling: once `dp(3,2)` or `dp(2,2)` is computed, 
 
 If you want, I can also show the **O(n)-space** rolling-row bottom-up version and how to keep the “diagonal” value (`dp[i-1][j-1]`) with a temp variable.
 */
-import java.util.Arrays;
 
-class Solution {
-    public int minDistance(String word1, String word2) {
-        int m = word1.length(), n = word2.length();
-        // If one is empty, cost is the length of the other
-        if (m == 0) return n;
-        if (n == 0) return m;
+// class Solution {
+//     public int minDistance(String word1, String word2) {
+//         int m = word1.length(), n = word2.length();
+//         // If one is empty, cost is the length of the other
+//         if (m == 0) return n;
+//         if (n == 0) return m;
 
-        Integer[][] memo = new Integer[m + 1][n + 1];
-        return dp(word1, word2, m, n, memo);
-    }
+//         Integer[][] memo = new Integer[m + 1][n + 1];
+//         return dp(word1, word2, m, n, memo);
+//     }
 
-    // dp(i, j): edit distance to convert word1[0..i-1] -> word2[0..j-1]
-    private int dp(String a, String b, int i, int j, Integer[][] memo) {
-        if (i == 0) return j; // insert j chars
-        if (j == 0) return i; // delete i chars
-        if (memo[i][j] != null) return memo[i][j];
+//     // dp(i, j): edit distance to convert word1[0..i-1] -> word2[0..j-1]
+//     private int dp(String a, String b, int i, int j, Integer[][] memo) {
+//         if (i == 0) return j; // insert j chars
+//         if (j == 0) return i; // delete i chars
+//         if (memo[i][j] != null) return memo[i][j];
 
-        if (a.charAt(i - 1) == b.charAt(j - 1)) {
-            // last chars equal: no cost here
-            return memo[i][j] = dp(a, b, i - 1, j - 1, memo);
-        } else {
-            int del = dp(a, b, i - 1, j,     memo); // delete a[i-1]
-            int ins = dp(a, b, i,     j - 1, memo); // insert b[j-1]
-            int rep = dp(a, b, i - 1, j - 1, memo); // replace a[i-1]->b[j-1]
-            return memo[i][j] = 1 + Math.min(del, Math.min(ins, rep));
-        }
-    }
-}
+//         if (a.charAt(i - 1) == b.charAt(j - 1)) {
+//             // last chars equal: no cost here
+//             return memo[i][j] = dp(a, b, i - 1, j - 1, memo);
+//         } else {
+//             int del = dp(a, b, i - 1, j,     memo); // delete a[i-1]
+//             int ins = dp(a, b, i,     j - 1, memo); // insert b[j-1]
+//             int rep = dp(a, b, i - 1, j - 1, memo); // replace a[i-1]->b[j-1]
+//             return memo[i][j] = 1 + Math.min(del, Math.min(ins, rep));
+//         }
+//     }
+// }
 
 
 
@@ -265,32 +264,35 @@ Different but equivalent sequences exist; the DP finds the minimal count.
 If you want the **O(n)-space** rolling-row version (with the `prevDiag` trick for `dp[i-1][j-1]`), I can provide that next.
 
 */
-// class Solution {
-//     public int minDistance(String word1, String word2) {
-//         int m = word1.length(), n = word2.length();
-//         int[][] dp = new int[m + 1][n + 1];
+class Solution {
+    public int minDistance(String word1, String word2) {
+        int m = word1.length(), n = word2.length();
+        int[][] dp = new int[m + 1][n + 1];
 
-//         // Base cases: empty prefixes
-//         for (int i = 0; i <= m; i++) dp[i][0] = i;   // delete i chars
-//         for (int j = 0; j <= n; j++) dp[0][j] = j;   // insert j chars
+        // Base cases: empty prefixes
+        for (int i = 0; i <= m; i++) dp[i][0] = i;   // delete i chars
+        for (int j = 0; j <= n; j++) dp[0][j] = j;   // insert j chars
 
-//         for (int i = 1; i <= m; i++) {
-//             char a = word1.charAt(i - 1);
-//             for (int j = 1; j <= n; j++) {
-//                 char b = word2.charAt(j - 1);
-//                 if (a == b) {
-//                     dp[i][j] = dp[i - 1][j - 1]; // match: no extra cost
-//                 } else {
-//                     int del = dp[i - 1][j];      // delete a
-//                     int ins = dp[i][j - 1];      // insert b
-//                     int rep = dp[i - 1][j - 1];  // replace a->b
-//                     dp[i][j] = 1 + Math.min(del, Math.min(ins, rep));
-//                 }
-//             }
-//         }
-//         return dp[m][n];
-//     }
-// }
+        for (int i = 1; i <= m; i++) {
+            char a = word1.charAt(i - 1);
+            for (int j = 1; j <= n; j++) {
+                char b = word2.charAt(j - 1);
+                if (a == b) {
+                    dp[i][j] = dp[i - 1][j - 1]; // match: no extra cost
+                } else {
+                    int del = dp[i - 1][j];      // delete a
+                    int ins = dp[i][j - 1];      // insert b
+                    int rep = dp[i - 1][j - 1];  // replace a->b
+                    dp[i][j] = 1 + Math.min(del, Math.min(ins, rep));
+                }
+            }
+        }
+        return dp[m][n];
+    }
+}
+
+
+
 
 
 
@@ -326,7 +328,7 @@ At column `j`, before we overwrite `dp[j]`, it still holds `dp[i-1][j]`. We stas
 * `dp[j-1] + 1` for insert (note `dp[j-1]` is already the current row’s value).
   Finally we set `prevDiag = temp` to shift the diagonal for the next column.
 
-# \U0001f9ed Step-by-step walkthrough: `word1 = "horse"`, `word2 = "ros"`
+# 🧭 Step-by-step walkthrough: `word1 = "horse"`, `word2 = "ros"`
 
 Let `m=5` (“h o r s e”), `n=3` (“r o s”).
 We’ll print the 1-D `dp` after each row (each `i`).
@@ -426,7 +428,7 @@ dp = [5, 4, 4, 3]
 
 **Answer** = `dp[n] = dp[3] = 3`, which matches the known minimum edits (`horse` → `ros`).
 
-# \U0001f9e0 Why this is correct
+# 🧠 Why this is correct
 
 * We’ve preserved the exact same recurrence as the 2-D DP.
 * At each cell `(i,j)`, we combine:
@@ -476,4 +478,3 @@ dp = [5, 4, 4, 3]
 //         return dp[n];
 //     }
 // }
-
