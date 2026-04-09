@@ -1002,53 +1002,56 @@ So the interval top-down DP you’re using:
 * Encodes “which balloons are still there” as the interval `(left, right)`.
 * Splits the problem into independent left/right subproblems around the last burst `k`.
 * Produces the optimal answer 167 for `[3,1,5,8]`, and the bursting order you’d expect from editorial solutions.
-
 */
-class Solution {
-    public int maxCoins(int[] nums) {
-        int n = nums.length;
-        // Build padded array
-        int[] val = new int[n + 2];
-        val[0] = 1;
-        val[n + 1] = 1;
-        for (int i = 0; i < n; i++) {
-            val[i + 1] = nums[i];
-        }
 
-        int[][] memo = new int[n + 2][n + 2];
-        // memo[left][right] = 0 means uncomputed, also valid result can be 0,
-        // but we only compute when left+1 < right, so it's fine with a small tweak
-        // or we can use -1 as sentinel.
+// class Solution {
+//     public int maxCoins(int[] nums) {
+//         int n = nums.length;
+//         // Build padded array
+//         int[] val = new int[n + 2];
+//         val[0] = 1;
+//         val[n + 1] = 1;
+//         for (int i = 0; i < n; i++) {
+//             val[i + 1] = nums[i];
+//         }
 
-        return burst(val, memo, 0, n + 1);
-    }
+//         int[][] memo = new int[n + 2][n + 2];
+//         // memo[left][right] = 0 means uncomputed, also valid result can be 0,
+//         // but we only compute when left+1 < right, so it's fine with a small tweak
+//         // or we can use -1 as sentinel.
 
-    // burst all balloons in (left, right), val[left] and val[right] remain
-    private int burst(int[] val, int[][] memo, int left, int right) {
-        // no balloon to burst
-        if (left + 1 >= right) {
-            return 0;
-        }
+//         return burst(val, memo, 0, n + 1);
+//     }
 
-        if (memo[left][right] != 0) {
-            return memo[left][right];
-        }
+//     // burst all balloons in (left, right), val[left] and val[right] remain
+//     private int burst(int[] val, int[][] memo, int left, int right) {
+//         // no balloon to burst
+//         if (left + 1 >= right) {
+//             return 0;
+//         }
 
-        int best = 0;
-        // try every k as the last balloon to burst in (left, right)
-        for (int k = left + 1; k < right; k++) {
-            int coins = val[left] * val[k] * val[right]
-                      + burst(val, memo, left, k)
-                      + burst(val, memo, k, right);
-            if (coins > best) {
-                best = coins;
-            }
-        }
+//         if (memo[left][right] != 0) {
+//             return memo[left][right];
+//         }
 
-        memo[left][right] = best;
-        return best;
-    }
-}
+//         int best = 0;
+//         // try every k as the last balloon to burst in (left, right)
+//         for (int k = left + 1; k < right; k++) {
+//             int coins = val[left] * val[k] * val[right]
+//                       + burst(val, memo, left, k)
+//                       + burst(val, memo, k, right);
+//             if (coins > best) {
+//                 best = coins;
+//             }
+//         }
+
+//         memo[left][right] = best;
+//         return best;
+//     }
+// }
+
+
+
 
 
 
@@ -1550,3 +1553,37 @@ Exactly matching `dp[0][5]`.
 //         return dp[0][n + 1];
 //     }
 // }
+
+
+
+
+
+
+
+// Method 2.5: My Bottom-Up approach
+/*
+*/
+class Solution {
+    public int maxCoins(int[] nums) {
+        int[] arr = new int[nums.length + 2];
+
+        arr[0] = 1;
+        arr[nums.length + 1] = 1;
+        System.arraycopy(nums, 0, arr, 1, nums.length);
+
+        int[][] memo = new int[nums.length + 2][nums.length + 2];
+        int n = memo.length;
+
+        for(int len=2; len < n; len++){
+            for(int i=0; i + len < n; i++){
+                int j = i + len;
+
+                for(int k=i+1; k<j; k++){
+                    memo[i][j] = Math.max(memo[i][j], memo[i][k] + memo[k][j] + arr[i] * arr[k] * arr[j]);
+                }
+            }
+        }
+
+        return memo[0][n-1];
+    }
+}
