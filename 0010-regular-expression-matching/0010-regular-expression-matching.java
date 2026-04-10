@@ -303,50 +303,52 @@ Without memo, you might revisit states like `(2, 4)` many times in different bra
 This makes the complexity roughly `O(m * n)`.
 */
 
-class Solution {
-    public boolean isMatch(String s, String p) {
-        int m = s.length();
-        int n = p.length();
-        Boolean[][] memo = new Boolean[m + 1][n + 1];
-        return dp(s, p, memo, m, n, 0, 0);
-    }
+// class Solution {
+//     public boolean isMatch(String s, String p) {
+//         int m = s.length();
+//         int n = p.length();
+//         Boolean[][] memo = new Boolean[m + 1][n + 1];
+//         return dp(s, p, memo, m, n, 0, 0);
+//     }
 
-    private boolean dp(String s, String p, Boolean[][] memo, int m, int n, int i, int j) {
-        // if pattern is finished, string must also be finished
-        if (j == n) {
-            return i == m;
-        }
+//     private boolean dp(String s, String p, Boolean[][] memo, int m, int n, int i, int j) {
+//         // if pattern is finished, string must also be finished
+//         if (j == n) {
+//             return i == m;
+//         }
 
-        // if already computed
-        if (memo[i][j] != null) {
-            return memo[i][j];
-        }
+//         // if already computed
+//         if (memo[i][j] != null) {
+//             return memo[i][j];
+//         }
 
-        // check if first char matches (only if i < m)
-        boolean firstMatch = (i < m) &&
-            (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.');
+//         // check if first char matches (only if i < m)
+//         boolean firstMatch = (i < m) &&
+//             (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.');
 
-        boolean ans;
+//         boolean ans;
 
-        // star case: next char exists and is '*'
-        if (j + 1 < n && p.charAt(j + 1) == '*') {
-            ans = dp(s, p, memo, m, n, i, j + 2)         // skip x*
-                  || (firstMatch && dp(s, p, memo, m, n, i + 1, j)); // use x* once
-        } else {
-            // normal case: must consume one char from both
-            ans = firstMatch && dp(s, p, memo, m, n, i + 1, j + 1);
-        }
+//         // star case: next char exists and is '*'
+//         if (j + 1 < n && p.charAt(j + 1) == '*') {
+//             ans = dp(s, p, memo, m, n, i, j + 2)         // skip x*
+//                   || (firstMatch && dp(s, p, memo, m, n, i + 1, j)); // use x* once
+//         } else {
+//             // normal case: must consume one char from both
+//             ans = firstMatch && dp(s, p, memo, m, n, i + 1, j + 1);
+//         }
 
-        memo[i][j] = ans;
-        return ans;
-    }
-}
-
-
+//         memo[i][j] = ans;
+//         return ans;
+//     }
+// }
 
 
 
-// Method 2: Bottom-Up 2D DP
+
+
+
+
+// Method 2: Bottom-Up 2D DP (Prefix DP Approach)
 /*
 ## 1. DP definition
 
@@ -762,3 +764,307 @@ The logic is identical, just flipped.
 //         return dp[m][n];
 //     }
 // }
+
+
+
+
+
+
+// Method 3: Bottom-Up (Suffix DP)
+/*
+ `.` matches **any one character**
+ `*` means **zero or more of the previous element**
+
+So `"a*"` can match:
+
+* `""`
+* `"a"`
+* `"aa"`
+* `"aaa"`
+  and so on.
+
+---
+
+## Hint 1: Define the DP state carefully
+
+Let:
+
+`dp[i][j] = whether s[i...] matches p[j...]`
+
+So this is a **suffix DP**.
+
+* `i` is where you are in string `s`
+* `j` is where you are in pattern `p`
+
+Final answer:
+
+`dp[0][0]`
+
+---
+
+## Hint 2: Table size
+
+If:
+
+* `m = s.length()`
+* `n = p.length()`
+
+make a table of size:
+
+`(m + 1) x (n + 1)`
+
+Why `+1`?
+
+Because you must handle the case where you are at the **end** of the string or pattern.
+
+---
+
+## Hint 3: Base case
+
+When both string and pattern are exhausted:
+
+`dp[m][n] = true`
+
+because empty string matches empty pattern.
+
+---
+
+## Hint 4: Think about whether current characters match
+
+At state `(i, j)`, first compute whether the current characters match.
+
+That is true if:
+
+* `i < m`, and
+* either `s.charAt(i) == p.charAt(j)`
+* or `p.charAt(j) == '.'`
+
+So conceptually:
+
+`firstMatch = (i < m) && (s[i] == p[j] || p[j] == '.')`
+
+---
+
+## Hint 5: The most important split is whether the next pattern char is `*`
+
+At position `j`, look ahead to see if:
+
+`j + 1 < n && p.charAt(j + 1) == '*'`
+
+This creates two very different cases.
+
+---
+
+## Hint 6: Case 1 — next character is `*`
+
+Suppose pattern looks like:
+
+`p[j] p[j+1] = x *`
+
+Then you have **two choices**:
+
+### Choice A: Use `x*` as matching zero characters
+
+Skip both pattern characters:
+
+`dp[i][j] = dp[i][j + 2]`
+
+because you ignore `x*`.
+
+### Choice B: Use `x*` to match one character
+
+You can do this only if `firstMatch` is true.
+
+Then:
+
+`dp[i][j] = firstMatch && dp[i + 1][j]`
+
+Why `dp[i + 1][j]` and not `j + 2`?
+
+Because `*` can still be reused again.
+You consumed one character from `s`, but you stay on the same pattern position `j`.
+
+So overall for star case:
+
+`dp[i][j] = dp[i][j + 2] || (firstMatch && dp[i + 1][j])`
+
+This is the core recurrence.
+
+---
+
+## Hint 7: Case 2 — next character is not `*`
+
+Then this is simpler.
+
+You must have a match at the current character, and then move both pointers:
+
+`dp[i][j] = firstMatch && dp[i + 1][j + 1]`
+
+---
+
+## Hint 8: Filling order
+
+Since `dp[i][j]` depends on:
+
+* `dp[i][j + 2]`
+* `dp[i + 1][j]`
+* `dp[i + 1][j + 1]`
+
+you should fill the table **from bottom-right to top-left**.
+
+So:
+
+* `i` goes from `m` down to `0`
+* `j` goes from `n - 1` down to `0`
+
+---
+
+## Hint 9: Be careful with the last row
+
+When `i == m`, the string is exhausted.
+
+Then `firstMatch` is automatically false.
+
+But some patterns can still match the empty string, like:
+
+* `"a*"`
+* `"a*b*"`
+* `"c*a*b*"`
+
+That is why the `dp[i][j + 2]` part is so important when handling `*`.
+
+---
+
+## Hint 10: Common intuition for `*`
+
+For something like `"a*"`:
+
+* skip it entirely → zero `'a'`
+* or consume one matching `'a'` and keep `"a*"` available
+
+That is exactly why the recurrence is:
+
+* `dp[i][j + 2]`
+* or `dp[i + 1][j]`
+
+---
+
+## Hint 11: Very important loop bounds
+
+Use something like:
+
+```java
+for (int i = m; i >= 0; i--) {
+    for (int j = n - 1; j >= 0; j--) {
+        ...
+    }
+}
+```
+
+Why not start `j` at `n`?
+
+Because `p.charAt(j)` is used, so `j` must be a valid pattern index.
+
+---
+
+## Hint 12: What happens when `i == m`?
+
+You still compute `dp[m][j]`.
+
+Example:
+
+* `s = ""`
+* `p = "a*"`
+
+This should be true.
+
+So do not skip the row `i = m`.
+
+---
+
+## Hint 13: Small example to think through
+
+Take:
+
+* `s = "aa"`
+* `p = "a*"`
+
+At `(0, 0)`:
+
+* skip `"a*"` → `dp[0][2]`
+* or match one `'a'` and stay at pattern index `0` → `dp[1][0]`
+
+That is exactly how multiple `'a'`s get handled.
+
+---
+
+## Hint 14: Another small example
+
+Take:
+
+* `s = "ab"`
+* `p = ".*"`
+
+At `(0, 0)`:
+
+* `.` matches `'a'`
+* `*` allows repeated use
+
+So:
+
+* skip `".*"` entirely
+* or consume one char and stay on same pattern
+
+This is why `".*"` can match almost anything.
+
+---
+
+## Hint 15: Most common mistakes
+
+Common bugs are:
+
+* forgetting `dp[m][n] = true`
+* using prefix DP but mixing suffix recurrence
+* moving to `j + 2` after consuming one char in star case
+* not allowing `*` to match zero characters
+* forgetting to compute row `i = m`
+
+---
+
+## Hint 16: Time and space
+
+* Time: `O(m * n)`
+* Space: `O(m * n)`
+
+---
+
+A very good way to remember the recurrence is:
+
+* **normal char / dot** → move both
+* **star** → either skip pattern pair, or consume one char and stay
+*/
+class Solution {
+    public boolean isMatch(String s, String p) {
+        int m = s.length();
+        int n = p.length();
+
+        boolean[][] memo = new boolean[m + 1][n + 1];
+        memo[m][n] = true;
+
+        for(int i=m; i>=0; i--){
+            for(int j=n-1; j>=0; j--){
+                boolean firstMatch = (i < m) && (s.charAt(i) == p.charAt(j) || p.charAt(j) == '.');
+
+                if(j + 1 < n && p.charAt(j + 1) == '*'){
+                    boolean skip = memo[i][j+2];
+                    boolean use = firstMatch && memo[i+1][j];
+                    memo[i][j] = skip || use;
+                }else{
+                    memo[i][j] = firstMatch && memo[i + 1][j + 1];
+                }
+            }
+        }
+
+        return memo[0][0];
+    }
+}
