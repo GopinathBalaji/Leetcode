@@ -1,4 +1,4 @@
-// Forward Greedy Solution (track farthest reach)
+// Method 1: Forward Greedy Solution (track farthest reach)
 /*
 Keep the farthest index we can reach so far. If we ever stand at an index beyond that, we’re stuck.
 
@@ -26,7 +26,10 @@ class Solution {
 }
 
 
-// Backwards Greedy (move the goal left) (DP with state compression)
+
+
+
+// Method 2: Backwards Greedy (move the goal left) (DP with state compression)
 /*
 Track the leftmost index that can reach the end. Initialize goal = n-1; 
 scan left: if i + nums[i] >= goal, move goal = i. At the end, check goal == 0.
@@ -43,7 +46,9 @@ scan left: if i + nums[i] >= goal, move goal = i. At the end, check goal == 0.
 
 
 
-// Iterative Dynamic Programming (O(n²) time, O(n) space)
+
+
+// Method 3: Iterative Dynamic Programming (O(n²) time, O(n) space)
 /*
 Why it works:
 Each dp[i] asks: “is any position I can jump to from i good (i.e., can itself reach the end)?” If yes, i is also good.
@@ -87,7 +92,9 @@ Return dp[0]=false (correct: from 0 you can only reach 1, which is dead).
 
 
 
-// Recursive Top-Down DP
+
+
+// Method 4: Recursive Top-Down DP
 /*
 # Core idea (in words)
 
@@ -196,34 +203,3 @@ Small optimization: try farther jumps first; reaching the end earlier prunes wor
 //         return false;
 //     }
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
