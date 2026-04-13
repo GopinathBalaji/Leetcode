@@ -1,4 +1,4 @@
-// Greedy (Bottom-Up DP with path compression)
+// Method 1: Greedy (Bottom-Up DP with path compression)
 /*
 ## What the variables mean (DP view)
 
@@ -96,7 +96,7 @@ class Solution {
 
 
 
-// DP from the end while maintaining states and transitions
+// Method 2: DP from the end while maintaining states and transitions
 /*
 * Fill from right → left and finally return `dp[0]`.
 
@@ -167,7 +167,7 @@ Return `dp[0] = 2` ✅
 
 
 
-// DP from the start
+// Method 3: DP from the start
 /*
 DP formulation (from the start)
 
@@ -193,7 +193,7 @@ Processing nodes left→right is a **topological order** for this DAG, so each n
 
 ---
 
-# \U0001f50e Thorough walkthrough on `[2, 3, 1, 1, 4]`
+# 🔎 Thorough walkthrough on `[2, 3, 1, 1, 4]`
 
 `n = 5`
 Initialize: `dp = [0, ∞, ∞, ∞, ∞]`
@@ -225,7 +225,7 @@ Return `dp[4] = 2` ✅ (e.g., 0→1→4 or 0→2→4)
 
 ---
 
-# \U0001f4dd Notes & edges
+# 📝 Notes & edges
 
 * If the problem didn’t guarantee reachability, `dp[n-1]` staying `INF` means “unreachable”.
 * This is the clearest “states & transitions” DP. In interviews, you can then mention the **O(n)** layer/BFS optimization (same idea, compressed).
@@ -257,7 +257,9 @@ Return `dp[4] = 2` ✅ (e.g., 0→1→4 or 0→2→4)
 
 
 
-// Top-Down DP
+
+
+// Method 4: Top-Down DP
 /*
 ### States & transitions
 
