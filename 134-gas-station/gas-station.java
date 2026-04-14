@@ -1,4 +1,4 @@
-// Greedy Approach
+// Method 1: Greedy Approach
 /*
 Key Idea: 
 If tank ever drops below 0 at index i, then starting anywhere in the block [start … i] cannot work (you’d hit a deficit at or before i).
@@ -96,27 +96,68 @@ If you build the cumulative sum `S[k] = gain[0]+…+gain[k]`, the valid start is
 * **Time:** O(n) — one pass, each index considered once.
 * **Space:** O(1).
 */
+// class Solution {
+//     public int canCompleteCircuit(int[] gas, int[] cost) {
+//         int n = gas.length;
+//         int start = 0;     // current candidate starting index
+//         int tank = 0;      // running fuel since 'start'
+//         int total = 0;     // net fuel over the whole circle
+
+//         for (int i = 0; i < n; i++) {
+//             int gain = gas[i] - cost[i];
+//             tank  += gain;
+//             total += gain;
+
+//             // If we went negative here, 'start' can't be valid.
+//             if (tank < 0) {
+//                 start = i + 1; // skip the whole failed block [start..i]
+//                 tank = 0;      // reset tank for the next candidate
+//             }
+//         }
+//         return (total >= 0) ? start : -1; // impossible if total net < 0
+//     }
+// }
+
+
+
+
+
+// Method 1.5: My Greedy approach (similar to the one above)
+/*
+*/
 class Solution {
     public int canCompleteCircuit(int[] gas, int[] cost) {
-        int n = gas.length;
-        int start = 0;     // current candidate starting index
-        int tank = 0;      // running fuel since 'start'
-        int total = 0;     // net fuel over the whole circle
+        int sumGas = 0;
+        int sumCost = 0;
 
-        for (int i = 0; i < n; i++) {
-            int gain = gas[i] - cost[i];
-            tank  += gain;
-            total += gain;
+        for(int val: gas){
+            sumGas += val;
+        }
+        for(int val: cost){
+            sumCost += val;
+        }
 
-            // If we went negative here, 'start' can't be valid.
-            if (tank < 0) {
-                start = i + 1; // skip the whole failed block [start..i]
-                tank = 0;      // reset tank for the next candidate
+        if(sumGas < sumCost){
+            return -1;
+        }
+
+        int tank = 0;
+        int start = 0;
+
+        for(int i=0; i<gas.length; i++){
+            tank += gas[i] - cost[i];
+
+            if(tank < 0){
+                start = i + 1;
+                tank = 0;
             }
         }
-        return (total >= 0) ? start : -1; // impossible if total net < 0
+
+        return start;
     }
 }
+
+
 
 
 
