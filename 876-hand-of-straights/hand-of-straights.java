@@ -145,36 +145,81 @@ At the smallest remaining value `x`, its `c` copies **must** begin `c` consecuti
 NOTE: Question can also be solve using a similar approach and Priority Queue to maintain order instead
 of TreeMap
 */
+// class Solution {
+//     public boolean isNStraightHand(int[] hand, int groupSize) {
+//         int n = hand.length;
+//         if (n % groupSize != 0) return false;
+//         if (groupSize == 1) return true;
 
+//         TreeMap<Integer, Integer> map = new TreeMap<>();
+//         for (int card : hand) {
+//             map.put(card, map.getOrDefault(card, 0) + 1);
+//         }
+
+//         while (!map.isEmpty()) {
+//             int start = map.firstKey();      // smallest remaining
+//             int c = map.get(start);          // how many groups must start here
+
+//             // form c groups: [start, start+1, ..., start+groupSize-1]
+//             for (int v = start; v < start + groupSize; v++) {
+//                 Integer cnt = map.get(v);
+//                 if (cnt == null || cnt < c) return false; // gap or not enough
+//                 if (cnt == c) {
+//                     map.remove(v);
+//                 } else {
+//                     map.put(v, cnt - c);
+//                 }
+//             }
+//         }
+
+//         return true;
+//     }
+// }
+
+
+
+
+
+
+// Method 2: Sorted-array approach
+/*
+After sorting, suppose you see a card num:
+if its count is already zero, that means it was already used in previous groups, so skip it
+otherwise, this num is the smallest unused card, so it must start a new group
+
+Then try to consume:
+num, num+1, ..., num+groupSize-1
+*/
 class Solution {
     public boolean isNStraightHand(int[] hand, int groupSize) {
         int n = hand.length;
-        if (n % groupSize != 0) return false;
-        if (groupSize == 1) return true;
 
-        TreeMap<Integer, Integer> map = new TreeMap<>();
-        for (int card : hand) {
-            map.put(card, map.getOrDefault(card, 0) + 1);
+        if(n % groupSize != 0){
+            return false;
         }
 
-        while (!map.isEmpty()) {
-            int start = map.firstKey();      // smallest remaining
-            int c = map.get(start);          // how many groups must start here
+        Arrays.sort(hand);
+        Map<Integer, Integer> map = new HashMap<>();
 
-            // form c groups: [start, start+1, ..., start+groupSize-1]
-            for (int v = start; v < start + groupSize; v++) {
-                Integer cnt = map.get(v);
-                if (cnt == null || cnt < c) return false; // gap or not enough
-                if (cnt == c) {
-                    map.remove(v);
-                } else {
-                    map.put(v, cnt - c);
+        for(int num: hand){
+            map.put(num, map.getOrDefault(num, 0) + 1);
+        }
+    
+        for(int i=0; i<n; i++){
+            int num = hand[i];
+            if(map.get(num) == 0){
+                continue;
+            }
+
+            for(int next=num; next <= num + groupSize - 1; next++){
+                if(map.getOrDefault(next, 0) == 0){
+                    return false;
                 }
+                
+                map.computeIfPresent(next, (k, v) -> v - 1);
             }
         }
 
         return true;
     }
 }
-
-
