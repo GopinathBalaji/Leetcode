@@ -79,41 +79,42 @@ As you scan the triplets:
 * Eventually `hitA && hitB && hitC` → true.
 */
 
-class Solution {
-    public boolean mergeTriplets(int[][] triplets, int[] target) {
-        int val1 = 0;
-        int val2 = 0;
-        int val3 = 0;
+// class Solution {
+//     public boolean mergeTriplets(int[][] triplets, int[] target) {
+//         int val1 = 0;
+//         int val2 = 0;
+//         int val3 = 0;
 
-        for(int i=0; i<triplets.length; i++){
-            if(triplets[i][0] != target[0] && triplets[i][1] != target[1] && triplets[i][2] != target[2]){
-                continue;
-            }
-            if(triplets[i][0] > target[0] || triplets[i][1] > target[1] || triplets[i][2] > target[2]){
-                continue;
-            }
+//         for(int i=0; i<triplets.length; i++){
+//             if(triplets[i][0] != target[0] && triplets[i][1] != target[1] && triplets[i][2] != target[2]){
+//                 continue;
+//             }
+//             if(triplets[i][0] > target[0] || triplets[i][1] > target[1] || triplets[i][2] > target[2]){
+//                 continue;
+//             }
 
-            val1 = Math.max(val1, triplets[i][0]);
-            val2 = Math.max(val2, triplets[i][1]);
-            val3 = Math.max(val3, triplets[i][2]);
+//             val1 = Math.max(val1, triplets[i][0]);
+//             val2 = Math.max(val2, triplets[i][1]);
+//             val3 = Math.max(val3, triplets[i][2]);
 
-            for(int j=i+1; j<triplets.length; j++){
-                if(triplets[j][0] != target[0] && triplets[j][1] != target[1] && triplets[j][2] != target[2]){
-                    continue;
-                }
-                if(triplets[j][0] > target[0] || triplets[j][1] > target[1] || triplets[j][2] > target[2]){
-                    continue;
-                }
+//             for(int j=i+1; j<triplets.length; j++){
+//                 if(triplets[j][0] != target[0] && triplets[j][1] != target[1] && triplets[j][2] != target[2]){
+//                     continue;
+//                 }
+//                 if(triplets[j][0] > target[0] || triplets[j][1] > target[1] || triplets[j][2] > target[2]){
+//                     continue;
+//                 }
 
-                val1 = Math.max(val1, triplets[j][0]);
-                val2 = Math.max(val2, triplets[j][1]);
-                val3 = Math.max(val3, triplets[j][2]);
-            }
-        }
+//                 val1 = Math.max(val1, triplets[j][0]);
+//                 val2 = Math.max(val2, triplets[j][1]);
+//                 val3 = Math.max(val3, triplets[j][2]);
+//             }
+//         }
 
-        return val1 == target[0] && val2 == target[1] && val3 == target[2];
-    }
-}
+//         return val1 == target[0] && val2 == target[1] && val3 == target[2];
+//     }
+// }
+
 
 
 
@@ -162,3 +163,40 @@ After removing overshoots, merging (componentwise max) can only move coordinates
 //         return false;
 //     }
 // }
+
+
+
+
+
+// Method 2.5: My Greedy Approach (same as the above solution)
+/*
+*/
+class Solution {
+    public boolean mergeTriplets(int[][] triplets, int[] target) {
+        boolean[] found = new boolean[3];
+
+        for(int[] triplet: triplets){
+            if(triplet[0] > target[0] || triplet[1] > target[1] || triplet[2] > target[2]){
+                continue;
+            }
+
+            if(triplet[0] == target[0]){
+                found[0] = true;
+            }
+            if(triplet[1] == target[1]){
+                found[1] = true;
+            }
+            if(triplet[2] == target[2]){
+                found[2] = true;
+            }
+        }
+
+        for(boolean val: found){
+            if(!val){
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
