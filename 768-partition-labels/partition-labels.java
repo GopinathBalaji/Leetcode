@@ -61,16 +61,17 @@ Cutting earlier would split a character across partitions; cutting later would b
 */
 class Solution {
     public List<Integer> partitionLabels(String s) {
+        int n = s.length();
         List<Integer> ans = new ArrayList<>();
         HashMap<Character, Integer> map = new HashMap<>();
         
-        for(int i=0; i<s.length(); i++){
+        for(int i=0; i<n; i++){
             map.put(s.charAt(i), i);
         }
 
         int start = 0;
         int end = 0;
-        for(int i=0; i<s.length(); i++){
+        for(int i=0; i<n; i++){
             end = Math.max(end, map.get(s.charAt(i)));
             if(i == end){
                 ans.add(end - start + 1);
@@ -85,7 +86,10 @@ class Solution {
 
 
 
+
 // Method 2: Same approach (greedy, two pointer) but using arrays instead of hashmap
+/*
+*/
 // class Solution {
 //     public List<Integer> partitionLabels(String s) {
 //         List<Integer> ans = new ArrayList<>();
