@@ -6,7 +6,6 @@ With unlimited transactions and no fees, the optimal strategy is to sum all posi
 Walkthrough [7,1,5,3,6,4]
 Differences: -6, +4, -2, +3, -2 → add positives 4 + 3 = 7.
 
-
 Hint from comments:
 "I'll tell you the most basic thing to understand before doing any "Buy and Sell Stock" problem :-
 
@@ -216,3 +215,7 @@ Recurrence:
 //         return profit;
 //     }
 // };
+
+// Synced seamlessly with LeetHub Pro
+// Pro features: https://bit.ly/leethubpro | Free version: https://bit.ly/leethubv4
+// Get it here: https://chromewebstore.google.com/detail/leethub-v4/bcilpkkbokcopmabingnndookdogmbna
