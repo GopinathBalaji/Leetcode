@@ -1,1 +1,1 @@
-<h2>count-good-nodes-in-binary-tree Notes</h2><hr>[ Time taken: 16 m 51 s ]
+<h2>count-good-nodes-in-binary-tree Notes</h2><hr>[ Time taken: 27m 43s ]
