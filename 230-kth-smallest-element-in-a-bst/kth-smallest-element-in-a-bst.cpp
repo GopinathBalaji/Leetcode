@@ -10,7 +10,7 @@
  * };
  */
 
-// Method 1: Iterative Inorder traversal
+// Method 1: Recursive Inorder traversal
 /*
 ### Hint 1
 
