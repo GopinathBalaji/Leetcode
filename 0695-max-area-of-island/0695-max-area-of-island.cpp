@@ -42,13 +42,7 @@ grid[row][col] = 0;
 
 This prevents counting the same cell twice.
 
-Then the current cell contributes:
-
-```text
-1
-```
-
-to the area.
+Then the current cell contributes: 1 to the area.
 
 ### Hint 4: Add the four neighboring areas
 
@@ -90,9 +84,7 @@ for (int r = 0; r < rows; r++) {
 
 You want something like:
 
-```cpp
 maxArea = max(maxArea, dfs(grid, r, c));
-```
 
 ### Skeleton
 
