@@ -1,1 +1,1 @@
-<h2>min-cost-to-connect-all-points Notes</h2><hr>[ Time taken: 12 hrs 26 m 6 s ]
+<h2>min-cost-to-connect-all-points Notes</h2><hr>[ Time taken: 1d 1hr 30m 14s ]
