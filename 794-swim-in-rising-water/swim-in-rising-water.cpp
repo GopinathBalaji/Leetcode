@@ -163,7 +163,9 @@ public:
             auto [time, r, c] = pq.top();
             pq.pop();
 
-        
+            if(time > dist[r][c]){
+                continue;
+            }
 
             if(r == n-1 && c == n-1){
                 return time;
