@@ -1,7 +1,5 @@
 // Method 1: 1D DP
 /*
-This is a **Dynamic Programming** problem.
-
 The key idea is that at each house, you have two choices:
 
 ```text
