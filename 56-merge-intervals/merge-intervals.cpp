@@ -1,63 +1,135 @@
-// Method 1: Sorting and then merging
+// Method 1: Sorting + Greedy
 /*
-1. **First sort the intervals by start time.**
-   Once sorted, any interval that can overlap with another relevant one will appear next to it.
+## LeetCode 56: Merge Intervals (C++)
 
-2. After sorting, keep a result list `ans`.
+Approach: Sorting + Greedy | Difficulty: Medium
 
-3. Put the **first interval** into `ans`.
+### Hint 1: Sort Intervals
 
-4. For every next interval, compare it with the **last interval already in `ans`**.
+Unlike Insert Interval (57), the intervals are not necessarily sorted.
 
-5. Let:
+Sort them by their starting positions.
 
-   * last merged interval be `[a, b]`
-   * current interval be `[c, d]`
+```
+sort(intervals.begin(), intervals.end());
+```
 
-   Then there are only 2 cases:
+### Hint 2: Initialize the Result
 
-   **No overlap**
+Start with the first interval.
 
-   * if `c > b`
-   * push current interval into `ans`
+```
+vector<vector<int>> result;
+result.push_back(intervals[0]);
+```
 
-   **Overlap**
+### Hint 3: Check for Overlapping Intervals
 
-   * if `c <= b`
-   * merge them by updating the end:
-     `b = max(b, d)`
+Two sorted intervals overlap when:
 
-6. Important idea:
-   When intervals overlap, you do **not** add a new interval.
-   You just extend the end of the last merged one.
+```
+intervals[i][0] <= result.back()[1]
+```
 
-7. Why sorting helps:
+Why? The current interval starts before or exactly when the previous merged interval ends.
 
-   * after sorting by start, if current interval overlaps with the last merged interval, it belongs to the same merged block
-   * you never need to look far back, only at the last merged interval
+### Hint 4: Merge Overlapping Intervals
 
-8. Edge case:
+If intervals overlap, extend the ending position.
 
-   * if `intervals.size() <= 1`, just return it
+```
+result.back()[1] = max(result.back()[1], intervals[i][1]);
+```
+
+### Hint 5: Handle Non-Overlapping Intervals
+
+If they don't overlap, add the current interval as a new group.
+
+```
+else {
+    result.push_back(intervals[i]);
+}
+```
+
+### Complete C++ Solution
+
+```
+class Solution {
+public:
+    vector<vector<int>> merge(vector<vector<int>>& intervals) {
+        sort(intervals.begin(), intervals.end());
+
+        vector<vector<int>> result;
+
+        for (auto& interval : intervals) {
+            if (result.empty() || interval[0] > result.back()[1]) {
+                result.push_back(interval);
+            } else {
+                result.back()[1] = max(result.back()[1], interval[1]);
+            }
+        }
+
+        return result;
+    }
+};
+```
+
+### Complexity
+
+- Time: O(n log n) — Sorting dominates.
+- Space: O(n) — Result array, excluding sorting overhead.
+
+### Example
+
+```
+intervals = {{1, 3}, {2, 6}, {8, 10}, {15, 18}};
+```
+
+INTERVAL MERGING VISUALIZATION
+
+Overlapping
+
+Merged
+
+Unchanged
+
+- `[1,3]` and `[2,6]` overlap → `[1,6]`
+- `[8,10]` doesn't overlap → Keep.
+- `[15,18]` doesn't overlap → Keep.
+
+Answer: `[[1,6],[8,10],[15,18]]`
+
+### Key Intuition
+
+Sorting + Greedy = O(n log n)
+
+Once intervals are sorted by start time, you only need to compare each interval with the last merged interval.
+
+Interview tip: Remember the difference:
+
+- 56\. Merge Intervals: Sort first, then merge.
+- 57\. Insert Interval: Already sorted; insert and merge in O(n).
 */
 class Solution {
 public:
     vector<vector<int>> merge(vector<vector<int>>& intervals) {
-        std::sort(intervals.begin(), intervals.end(), [](const vector<int>& a, const vector<int>& b){
-            return a[0] < b[0];
-        });
+        std::sort(intervals.begin(), intervals.end());
 
-        vector<vector<int>> ans;
-        ans.push_back(intervals[0]);
+        vector<vector<int>> result;
+        result.push_back(intervals[0]);
 
-        for(int i=1; i<intervals.size(); i++){
-            if(intervals[i][0] > ans.back()[1]){
-                ans.push_back(intervals[i]);
+        for(auto& interval : intervals){
+            if(result.empty() || interval[0] > result.back()[1]){
+                result.push_back(interval);
             }else{
-                ans.back()[1] = std::max(ans.back()[1], intervals[i][1]);
+                result.back()[1] = std::max(result.back()[1], interval[1]);
             }
         }
 
-        return ans;
+        return result;   
     }
 };
+
+// Synced seamlessly with LeetHub Pro
+// Pro features: https://bit.ly/leethubpro | Free version: https://bit.ly/leethubv4
+// Get it here: https://chromewebstore.google.com/detail/bcilpkkbokcopmabingnndookdogmbna
